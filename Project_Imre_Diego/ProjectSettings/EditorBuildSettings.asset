@@ -6,10 +6,13 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
+    path: Assets/Game/Scenes/MainMenu.unity
     guid: 4e13952c6707ac44f861a2ccc71e3627
   - enabled: 1
-    path: Assets/Scenes/CharacterController_Test.unity
+    path: Assets/Game/Scenes/Game.unity
+    guid: a41199ac152a82f4880c34032262695a
+  - enabled: 1
+    path: Assets/AI-Tools-DEV/Scenes/CharacterController_Test.unity
     guid: cbc7c38bf60985b4f9111b8c22d4c006
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
