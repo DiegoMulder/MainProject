@@ -29,10 +29,22 @@ namespace SurvivalFP.Editor
                 motor.Teleport(new Vector3(1022.2f,.02f,1000));Physics.SyncTransforms();for(int i=0;i<10;i++)motor.Tick(default,dt);
                 Check(motor.IsGrounded,"Partial capsule support at a ledge counts as grounded");
                 motor.Tick(new PlayerCommand{JumpPressed=true},dt);Check(motor.VerticalSpeed>0 && !motor.IsGrounded,"Supported ledge permits a normal jump");
-                motor.Teleport(new Vector3(1023,1,1000));Physics.SyncTransforms();motor.Tick(default,dt);Check(!motor.IsGrounded,"Unsupported player is not grounded by distant probes");Object.DestroyImmediate(ledge);
+                motor.Teleport(new Vector3(1023,1,1000));Physics.SyncTransforms();motor.Tick(default,dt);Check(!motor.IsGrounded,"Unsupported player is not grounded by distant probes");
+                foreach(float angle in new[]{0f,22.5f,45f,67.5f})
+                {
+                    ledge.transform.rotation=Quaternion.Euler(0,angle,0);
+                    motor.Teleport(ledge.transform.TransformPoint(new Vector3(.565f,.54f,0)));
+                    Physics.SyncTransforms();bool stable=true;
+                    for(int i=0;i<180;i++){motor.Tick(default,dt);stable&=motor.IsGrounded;}
+                    Check(stable,"Three seconds of partial edge support at "+angle+" degrees");
+                }
+                ledge.transform.rotation=Quaternion.identity;
+                motor.Teleport(new Vector3(1022.35f,.02f,1000));Physics.SyncTransforms();motor.Tick(default,dt);
+                Check(!motor.IsGrounded,"Flat footprint stops supporting beyond its outer edge");
+                Object.DestroyImmediate(ledge);
                 var table=Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/SurvivalFP/Mansion/Props/Table.prefab"),new Vector3(1000,0,994),Quaternion.identity);
                 Set(new Vector3(0,.02f,-6));for(int i=0;i<60;i++)motor.Tick(new PlayerCommand{Crouch=true},dt);
-                Check(motor.Height<1.1f,"Crouch capsule fits underneath the hiding table");
+                Check(motor.Height<1.1f,"Crouch capsule fits underneath ordinary table geometry");
                 for(int i=0;i<60;i++)motor.Tick(default,dt);
                 Check(motor.Height<1.35f && motor.CeilingBlocked,"Table blocks uncrouching into its tabletop");Object.DestroyImmediate(table);
             }

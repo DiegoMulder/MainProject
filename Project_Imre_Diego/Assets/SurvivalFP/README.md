@@ -8,8 +8,9 @@ These beginner tutorials explain the systems actually present in this URP projec
 4. [Adding pickups, objectives, medkits, and item actions](Mansion/Tutorials/03-Pickups-and-Objectives.md)
 5. [Changing players, enemies, doors, and sound](Mansion/Tutorials/04-Player-Enemies-and-Doors.md)
 6. [Multiplayer, voice, menus, testing, and troubleshooting](Mansion/Tutorials/05-Multiplayer-and-Troubleshooting.md)
+7. [Closets, gameplay noise, heartbeat, and PSX visuals](Mansion/Tutorials/06-Closets-Noise-and-Presentation.md)
 
-The tutorials distinguish Inspector changes from optional programming examples. Code printed in a tutorial does not run until you create and attach the described script. These documentation changes do not change gameplay.
+The tutorials distinguish Inspector changes from optional programming examples. Code printed in a tutorial does not run until you create and attach the described script. Optional code examples remain examples; the closet, noise, heartbeat, and PSX systems described in tutorial 7 are implemented in the project.
 
 ## Where to play
 

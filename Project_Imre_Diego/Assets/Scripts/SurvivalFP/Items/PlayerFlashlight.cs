@@ -17,11 +17,16 @@ namespace SurvivalFP
         [SerializeField, Min(0f)] float fadeSpeed = 14f;
         [Tooltip("Spot light intensity calibrated for the URP scene lighting.")]
         [SerializeField, Min(0f)] float onIntensity = 12.6953125f;
+        [Header("Gameplay hearing")]
+        [Min(0)] public float toggleNoiseRadius = 3f;
         public bool IsOn { get; private set; }
         public float Intensity => beam ? beam.intensity : 0f;
         public Light Beam => beam;
         float cooldown;
         PickupItem item;
+        [Header("Beam aiming")]
+        [SerializeField, Min(.1f)] float aimResponse = 12f;
+        [SerializeField, Min(.5f)] float minimumAimDistance = 2f;
 
         public void PrimaryUse()
         {
@@ -38,12 +43,19 @@ namespace SurvivalFP
         public void Toggle()
         {
             if (!beam || cooldown > 0f) return;
+            var network = GetComponent<NetworkPickup>();
+            if (network && network.IsSpawned && !network.IsServer) return;
             IsOn = !IsOn;
             cooldown = toggleCooldown;
-            if (toggleAudio && toggleSound) toggleAudio.PlayOneShot(toggleSound);
+            var holder = GetComponentInParent<NetworkPlayer>();
+            GameplayNoiseSystem.Emit(holder ? holder.transform.position : transform.position,
+                toggleNoiseRadius, NoiseCategory.Flashlight, holder ? holder.gameObject : gameObject);
+            if (network && network.IsSpawned) network.PlaySwitchSound();
+            else PlaySwitchSound();
         }
 
         public void ApplyNetworkState(bool on) { IsOn = on; }
+        public void PlaySwitchSound() { if (toggleAudio && toggleSound) toggleAudio.PlayOneShot(toggleSound); }
 
         void Awake()
         {
@@ -74,7 +86,8 @@ namespace SurvivalFP
             beam.shadows = LightShadows.Soft;
             if (!toggleAudio) toggleAudio = GetComponent<AudioSource>();
             toggleAudio.playOnAwake = false;
-            toggleAudio.spatialBlend = 0f;
+            toggleAudio.spatialBlend = GetComponent<NetworkPickup>() ? 1f : 0f;
+            toggleAudio.minDistance = 1f; toggleAudio.maxDistance = 8f;
             if (!toggleSound) toggleSound = Resources.Load<AudioClip>("switch_002");
             IsOn = startOn;
             beam.intensity = startOn ? onIntensity : 0f;
@@ -87,7 +100,9 @@ namespace SurvivalFP
         // Run after PlayerCamera's LateUpdate, including its bob and pitch.
         void LateUpdate() => AimAtView();
 
-        public void AimAtView()
+        public void AimAtView() => AimAtView(Time.deltaTime);
+
+        public void AimAtView(float dt)
         {
             if (!beam || beam.transform == transform) return;
             var view = item ? item.HolderView : null;
@@ -104,11 +119,15 @@ namespace SurvivalFP
             {
                 if (hit.collider.transform.IsChildOf(view.root) || hit.distance >= nearest) continue;
                 nearest = hit.distance;
-                target = hit.point;
+                target = ray.GetPoint(Mathf.Max(minimumAimDistance, hit.distance));
             }
             Vector3 direction = target - beam.transform.position;
             if (direction.sqrMagnitude > .000001f)
-                beam.transform.rotation = Quaternion.LookRotation(direction, view.up);
+            {
+                Quaternion desired = Quaternion.Inverse(beam.transform.parent.rotation) * Quaternion.LookRotation(direction, view.up);
+                beam.transform.localRotation = Quaternion.Slerp(beam.transform.localRotation, desired,
+                    1f - Mathf.Exp(-aimResponse * Mathf.Max(0f,dt)));
+            }
         }
 
         public void Tick(bool togglePressed, float dt)

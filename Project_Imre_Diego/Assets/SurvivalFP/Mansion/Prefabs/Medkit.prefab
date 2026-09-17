@@ -278,6 +278,8 @@ MonoBehaviour:
   cooldown: 0.5
   radiusPerSpeed: 2
   maximumRadius: 16
+  impactClip: {fileID: 8300000, guid: dc321fe50cdad0242a2cea6722837a5d, type: 3}
+  maximumVolume: 0.65
 --- !u!114 &5556951197309512490
 MonoBehaviour:
   m_ObjectHideFlags: 0

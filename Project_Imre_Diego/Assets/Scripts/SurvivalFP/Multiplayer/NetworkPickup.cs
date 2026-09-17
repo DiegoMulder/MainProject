@@ -38,6 +38,12 @@ namespace SurvivalFP
             transform.SetParent(null,true);
         }
         void Changed(ItemLocation old, ItemLocation value) => ApplyLocation();
+        public void PlaySwitchSound() { if (IsServer) SwitchSoundRpc(); }
+        [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Server)]
+        void SwitchSoundRpc() { if (flashlight) flashlight.PlaySwitchSound(); }
+        public void PlayImpactSound(float strength) { if (IsServer) ImpactSoundRpc(strength); }
+        [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Server)]
+        void ImpactSoundRpc(float strength) { GetComponent<ImpactNoiseEmitter>()?.PlayImpact(strength); }
         void LightChanged(bool old, bool value) { if (flashlight && !IsServer) flashlight.ApplyNetworkState(value); }
         void ConfigureWorldPhysics()
         {

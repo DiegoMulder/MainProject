@@ -12,10 +12,10 @@ A **furniture prefab** is the table or shelf. A **PropSpawnPoint** marks a posit
 2. Open it in Prefab Mode and change its material or visual details.
 3. Keep solid colliders for the tabletop and legs.
 4. Inspect ItemSpawnPoint children: they are item locations. Reposition them if the tabletop changes size.
-5. Preserve HidingCover and the cloth sight blockers if this should remain a hiding table. Use Cabinet as a starting point for a solid cabinet instead.
+5. Preserve ordinary tabletop/leg collision. Use Cabinet as a starting point for a solid cabinet; use Closet for an interactable hiding spot.
 6. Save.
 
-Static furniture is not registered in NetworkPrefabs.asset. A room selects it through PropSpawnPoint variants.
+Static furniture is not registered in NetworkPrefabs.asset. A room selects it through PropSpawnPoint variants. Closets are interactive network props: register those in NetworkPrefabs.asset as well.
 
 ## Recipe: place your furniture in a room
 
@@ -58,23 +58,11 @@ For reliable required-item placement, use Chance 1 on enough furniture anchors a
 
 ItemSpawnPoint currently supplies objectives and medkits. It does not automatically spawn arbitrary keys or tools. The next tutorial supplies an optional dedicated-marker script for those.
 
-## Recipe: make a new hiding table
+## Tables are ordinary furniture
 
-1. Duplicate Table.prefab to keep a working example.
-2. Leave a crouch-sized entry and space beneath it, wider than the player's capsule.
-3. Keep a solid tabletop to prevent standing inside it.
-4. Set HidingCover's local volume to enclose the usable under-table space, not the entire room.
-5. Keep/create cloth panel colliders below HidingCover in the hierarchy. Enable Is Trigger so the player can pass through.
-6. Keep tabletop/leg colliders non-trigger so they remain solid.
-7. Place the furniture with a usable entry route; do not seal the openings against walls.
-8. Test crawling in, releasing crouch under the ceiling, leaving, and standing.
-9. Test hiding both before the enemy sees you and after it watches you enter.
+Tables no longer register as hiding spots or have special AI concealment/memory behavior. The original solid tabletop and legs remain. Crouching underneath is possible where normal collision permits it, and the tabletop prevents standing through it. There is no table hiding state and no cloth-trigger exception in enemy vision.
 
-The supplied player is about 1 metre crouched and 2 metres standing. The table underside is about 1.37 metres above the floor. If you change player height, recheck hiding clearance.
-
-Most triggers are ignored by enemy vision, but triggers beneath HidingCover can block sight while allowing movement. HidingCover is not an invisibility switch: it needs sensible volume and occluding geometry.
-
-Quiet, unseen hiding can conceal you. If the enemy saw entry or heard a sound identifying you, it retains temporary knowledge and can investigate/catch you there. Structural walls still block its catch. Hiding after a visible chase is therefore different from hiding before being noticed.
+For an actual hiding spot, use an interactable **Closet**. Enter it with E; walking into it does not activate hiding. See [closets, gameplay noise, heartbeat, and PSX visuals](06-Closets-Noise-and-Presentation.md) for the full setup recipe.
 
 ## Final checks
 
@@ -83,4 +71,4 @@ Quiet, unseen hiding can conceal you. If the enemy saw entry or heard a sound id
 - Items begin above the surface and away from edges.
 - Half-turn variation does not turn the usable side into a wall.
 - Guaranteed furniture provides enough required-item surfaces.
-- Cover admits crouching and prevents standing inside its tabletop.
+- Closet anchors reserve space for entry, exit, and the enemy approach.

@@ -13,6 +13,12 @@ namespace SurvivalFP
         public static NetworkPlayer Local => Players.FirstOrDefault(p => p && p.IsOwner);
         public NetworkVariable<PlayerLife> Life = new(PlayerLife.Alive);
         public NetworkVariable<double> BleedOutAt = new(0);
+        public NetworkVariable<ulong> HiddenClosetId=new(ClosetHideout.Empty);
+        public bool IsHidden=>HiddenClosetId.Value!=ClosetHideout.Empty;
+        public ClosetHideout HiddenCloset=>ClosetHideout.All.Find(c=>c && c.IsSpawned && c.NetworkObjectId==HiddenClosetId.Value);
+        Vector3 savedViewPosition;
+        Quaternion savedViewRotation;
+        bool hidingPresented;
         [Min(1)] public float bleedOutDuration = 300f;
         public string DisplayName => LobbyRoster.Instance ? LobbyRoster.Instance.NameOf(OwnerClientId) : $"Player {OwnerClientId+1}";
         public float BleedOutRemaining => IsSpawned ? Mathf.Max(0,(float)(BleedOutAt.Value-NetworkManager.ServerTime.Time)) : 0;
@@ -57,12 +63,14 @@ namespace SurvivalFP
             GetComponent<CharacterController>().enabled = IsServer;
             GetComponent<PlayerAudio>().enabled = IsOwner;
             foreach (var renderer in GetComponentsInChildren<Renderer>()) renderer.shadowCastingMode = IsOwner ? ShadowCastingMode.ShadowsOnly : ShadowCastingMode.On;
-            Life.OnValueChanged += OnLife; Selection.OnValueChanged += OnSelection;
+            Life.OnValueChanged += OnLife; Selection.OnValueChanged += OnSelection; HiddenClosetId.OnValueChanged+=OnHiding;
             if (IsOwner) { CameraMotion.Sensitivity = PlayerPrefs.GetFloat("SurvivalFP.Sensitivity", .1f); Controller.SetCursor(true); }
             OnLife(Life.Value, Life.Value);
         }
         public override void OnNetworkDespawn()
         {
+            if(IsServer && HiddenCloset)HiddenCloset.Forget(this);
+            HiddenClosetId.OnValueChanged-=OnHiding;
             if (IsServer && RoundManager.Instance) RoundManager.Instance.ReleaseItems(this);
             Players.Remove(this); Life.OnValueChanged -= OnLife; Selection.OnValueChanged -= OnSelection;
             if (IsOwner) Controller.SetCursor(false);
@@ -78,6 +86,31 @@ namespace SurvivalFP
             var revive = GetComponent<DownedInteractable>();
             if(revive) revive.SetDowned(value==PlayerLife.Downed);
             if (IsOwner) { CameraMotion.enabled = alive; GetComponent<PlayerAudio>().enabled = alive; if (!alive) Controller.SetCursor(false); }
+            ApplyHiding();
+        }
+        public void SetHiding(ClosetHideout closet)
+        {
+            if(!IsServer)return;
+            pending=default;Velocity.Value=Vector3.zero;Gait.Value=(int)MovementState.Idle;
+            HiddenClosetId.Value=closet?closet.NetworkObjectId:ClosetHideout.Empty;
+            ApplyHiding();
+        }
+        void OnHiding(ulong old,ulong value)=>ApplyHiding();
+        void ApplyHiding()
+        {
+            if(IsHidden && !hidingPresented){savedViewPosition=View.localPosition;savedViewRotation=View.localRotation;}
+            if(!IsHidden && hidingPresented){View.localPosition=savedViewPosition;View.localRotation=savedViewRotation;}
+            hidingPresented=IsHidden;
+            GetComponent<CharacterController>().enabled=IsServer && Alive && !IsHidden;
+            if(IsOwner){CameraMotion.enabled=Alive && !IsHidden;GetComponent<PlayerAudio>().enabled=Alive && !IsHidden;}
+            foreach(var renderer in GetComponentsInChildren<Renderer>(true))renderer.forceRenderingOff=IsHidden;
+        }
+        void LateUpdate()
+        {
+            var closet=HiddenCloset;
+            if(!closet)return;
+            transform.position=closet.hiddenPosition.position;
+            View.SetPositionAndRotation(closet.cameraPosition.position,closet.cameraPosition.rotation);
         }
         public void SetPaused(bool value)
         {
@@ -86,14 +119,14 @@ namespace SurvivalFP
         }
         public void SubmitMovement(PlayerCommand command, Transform view)
         {
-            if (!IsOwner || !Alive) return;
+            if (!IsOwner || !Alive || IsHidden) return;
             if (paused) command = default;
             MoveRpc(command.Move, command.Sprint, command.Crouch, command.JumpPressed, transform.eulerAngles.y, Mathf.DeltaAngle(0,view.localEulerAngles.x));
         }
         [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Owner, Delivery = RpcDelivery.Unreliable)]
         void MoveRpc(Vector2 move, bool sprint, bool crouch, bool jump, float yaw, float pitch)
         {
-            if (!Alive || !float.IsFinite(move.x) || !float.IsFinite(move.y) || !float.IsFinite(yaw) || !float.IsFinite(pitch)) return;
+            if (!Alive || IsHidden || !float.IsFinite(move.x) || !float.IsFinite(move.y) || !float.IsFinite(yaw) || !float.IsFinite(pitch)) return;
             pending.Move = Vector2.ClampMagnitude(move,1); pending.Sprint = sprint; pending.Crouch = crouch; pending.JumpPressed |= jump;
             inputYaw = yaw % 360f; inputPitch = Mathf.Clamp(pitch,-85,85); lastInput = Time.time;
         }
@@ -101,7 +134,7 @@ namespace SurvivalFP
         {
             if (!IsSpawned) return;
             if(IsServer && Life.Value==PlayerLife.Downed && NetworkManager.ServerTime.Time>=BleedOutAt.Value) Kill();
-            if (IsServer && Alive && RoundManager.Instance && RoundManager.Instance.Phase.Value == RoundPhase.Playing)
+            if (IsServer && Alive && !IsHidden && RoundManager.Instance && RoundManager.Instance.Phase.Value == RoundPhase.Playing)
             {
                 if (Time.time - lastInput > .3f) pending = default;
                 transform.rotation = Quaternion.Euler(0,inputYaw,0);
@@ -117,7 +150,7 @@ namespace SurvivalFP
                 }
                 if (transform.position.y < -8) Motor.Teleport(RoundManager.Instance.World.SpawnPosition);
             }
-            if (!IsServer)
+            if (!IsServer && !IsHidden)
             {
                 Motor.ApplyNetworkPresentation((MovementState)Gait.Value,Height.Value,Velocity.Value,Grounded.Value,Time.deltaTime);
                 if (!IsOwner) { transform.rotation = Quaternion.Euler(0,Yaw.Value,0); View.localPosition = Vector3.up*(Height.Value-.18f); View.localRotation = Quaternion.Euler(Pitch.Value,0,0); }
@@ -132,17 +165,23 @@ namespace SurvivalFP
         void InteractRpc(NetworkObjectReference reference, Vector3 direction)
         {
             if (!CanAct() || !float.IsFinite(direction.sqrMagnitude) || direction.sqrMagnitude < .5f || !reference.TryGet(out var target)) return;
+            if(IsHidden)
+            {
+                var closet=HiddenCloset;
+                if(closet && target==closet.NetworkObject)closet.Interact(Interaction);
+                return;
+            }
             Physics.SyncTransforms();
             var hit = Interaction.FindTarget(transform.position + Vector3.up*(Motor.Height-.18f),direction.normalized);
             if (!hit || hit.GetComponentInParent<NetworkObject>() != target || !(hit is IInteractable interactable) || !interactable.CanInteract(Interaction)) return;
             interactable.Interact(Interaction);
         }
         bool CanAct() => Alive && RoundManager.Instance && RoundManager.Instance.Phase.Value == RoundPhase.Playing;
-        public void InventoryAction(int action, int slot = -1) { if (IsOwner && Alive && !paused) InventoryRpc(action,slot); }
+        public void InventoryAction(int action, int slot = -1) { if (IsOwner && Alive && !paused && !IsHidden) InventoryRpc(action,slot); }
         [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Owner)]
         void InventoryRpc(int action, int slot)
         {
-            if (!CanAct()) return;
+            if (!CanAct() || IsHidden) return;
             if (action == 0) { Inventory.ApplySelection(slot); Selection.Value = Inventory.CurrentSlot; return; }
             if (Time.time - lastAction < .08f) return; lastAction = Time.time;
             if (action == 1 && Inventory.Current)
@@ -162,6 +201,7 @@ namespace SurvivalFP
         public void Down()
         {
             if(!IsServer || !Alive) return;
+            if(HiddenCloset && !HiddenCloset.TryExit(this))return;
             BleedOutAt.Value=NetworkManager.ServerTime.Time+bleedOutDuration;
             pending=default; Life.Value=PlayerLife.Downed; RoundManager.Instance.EvaluateRound();
         }
@@ -185,6 +225,7 @@ namespace SurvivalFP
         public void Kill()
         {
             if (!IsServer || !IsSpawned || (Life.Value!=PlayerLife.Alive && Life.Value!=PlayerLife.Downed)) return;
+            if(HiddenCloset)HiddenCloset.Forget(this);
             RoundManager.Instance.ReleaseItems(this); Life.Value = PlayerLife.Dead; pending = default; RoundManager.Instance.EvaluateRound();
         }
     }

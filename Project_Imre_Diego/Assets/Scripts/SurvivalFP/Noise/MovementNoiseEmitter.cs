@@ -11,7 +11,7 @@ namespace SurvivalFP
         void Awake() => player=GetComponent<NetworkPlayer>();
         void Update()
         {
-            if (!player.IsServer || !player.Alive || !player.Motor.IsGrounded) { travelled=0; return; }
+            if (!player.IsServer || !player.Alive || player.IsHidden || !player.Motor.IsGrounded) { travelled=0; return; }
             travelled += player.Motor.ActualSpeed * Time.deltaTime;
             if (travelled < stride) return;
             travelled %= stride;

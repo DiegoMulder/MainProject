@@ -13,7 +13,8 @@ namespace SurvivalFP
         public MonoBehaviour TargetComponent { get; private set; }
         public void Tick(Transform view, bool pressed)
         {
-            TargetComponent = FindTarget(view.position, view.forward);
+            var player=GetComponent<NetworkPlayer>();
+            TargetComponent = player && player.IsHidden ? player.HiddenCloset : FindTarget(view.position, view.forward);
             Target = TargetComponent as IInteractable;
             if (!pressed || Target == null || !Target.CanInteract(this)) return;
             var authority = GetComponent<IPlayerAuthority>();

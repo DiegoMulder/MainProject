@@ -12,27 +12,42 @@ namespace SurvivalFP
         [Header("Perception and search")]
         public float perceptionInterval=.15f, lostSightDelay=1.2f, investigationDuration=5f, searchDuration=9f, idleDuration=2f;
         [Min(1)] public float memoryDuration=10;
-        NetworkPlayer knownPlayer; float knowledgeUntil;
+        NetworkPlayer knownPlayer; ClosetHideout knownCloset; float knowledgeUntil;
+        public static readonly System.Collections.Generic.List<EnemyController> Enemies=new();
         public NetworkVariable<EnemyState> State=new(EnemyState.Idle);
         public NetworkPlayer Target {get; private set;}
         public Vector3 LastKnownPosition {get; private set;}
         public float LastSeen {get; private set;}
+        public ClosetHideout KnownHidingSpot=>Time.time<=knowledgeUntil?knownCloset:null;
         NavMeshAgent agent; EnemyPerception perception; float nextSense, stateUntil, nextSearchPoint; System.Random rng;
         public override void OnNetworkSpawn()
         {
+            Enemies.Add(this);
             agent=GetComponent<NavMeshAgent>(); perception=GetComponent<EnemyPerception>(); agent.enabled=IsServer;
             if(!IsServer) return;
             rng=new System.Random(RoundManager.Instance.Seed.Value^139);
-            GameplayNoiseSystem.Emitted+=Hear; Change(EnemyState.Idle,idleDuration);
+            GameplayNoiseSystem.Emitted+=Hear;ClosetHideout.Entering+=SeeEntry; Change(EnemyState.Idle,idleDuration);
         }
-        public override void OnNetworkDespawn() { GameplayNoiseSystem.Emitted-=Hear; }
+        public override void OnNetworkDespawn() { GameplayNoiseSystem.Emitted-=Hear;ClosetHideout.Entering-=SeeEntry;Enemies.Remove(this); }
+        void SeeEntry(NetworkPlayer player,ClosetHideout closet)
+        {
+            if(!IsServer || !perception.CanSee(player))return;
+            knownPlayer=player;knownCloset=closet;knowledgeUntil=Time.time+memoryDuration;
+            LastKnownPosition=closet.InvestigationPosition;Target=null;
+            Change(EnemyState.Investigate,investigationDuration);Go(LastKnownPosition);
+        }
         void Hear(GameplayNoise noise)
         {
-            if(!IsServer || State.Value==EnemyState.Chase || !RoundManager.Instance || RoundManager.Instance.Phase.Value!=RoundPhase.Playing) return;
+            if(!IsServer || !RoundManager.Instance || RoundManager.Instance.Phase.Value!=RoundPhase.Playing) return;
+            if(noise.Source && noise.Source.transform.IsChildOf(transform))return;
             var source=noise.Source?noise.Source.GetComponentInParent<NetworkPlayer>():null;
             if(source && source.Life.Value!=PlayerLife.Alive && source.Life.Value!=PlayerLife.Downed)return;
             if(Vector3.Distance(transform.position,noise.Position)>noise.Radius*perception.hearingMultiplier) return;
-            LastKnownPosition=noise.Position; Change(EnemyState.Investigate,investigationDuration); Go(LastKnownPosition);
+            if(State.Value==EnemyState.Chase && source!=Target)return;
+            // Do not replace fresh, identified hiding evidence with incidental ambient noise.
+            if(KnownHidingSpot && knownPlayer && knownPlayer.HiddenCloset==knownCloset && source!=knownPlayer)return;
+            knownCloset=source?source.HiddenCloset:null;
+            LastKnownPosition=knownCloset?knownCloset.InvestigationPosition:noise.Position; Change(EnemyState.Investigate,investigationDuration); Go(LastKnownPosition);
             if(source && source.Alive){knownPlayer=source;knowledgeUntil=Time.time+memoryDuration;}
         }
         void Update()
@@ -44,9 +59,9 @@ namespace SurvivalFP
             {
                 nextSense=Time.time+perceptionInterval;
                 var seen=perception.FindVisible();
-                if(seen) { Target=seen;knownPlayer=seen;knowledgeUntil=Time.time+memoryDuration; LastKnownPosition=seen.transform.position; LastSeen=Time.time; if(State.Value!=EnemyState.Chase) Change(EnemyState.Chase,0); }
+                if(seen) { knownCloset=null;Target=seen;knownPlayer=seen;knowledgeUntil=Time.time+memoryDuration; LastKnownPosition=seen.transform.position; LastSeen=Time.time; if(State.Value!=EnemyState.Chase) Change(EnemyState.Chase,0); }
                 foreach(var door in RoundManager.Instance.World.Doors)
-                    if(door && !(door is ExitDoor) && !door.Open.Value && Vector3.Distance(transform.position,door.transform.position)<2.5f) door.SetOpen(true);
+                    if(door && !(door is ExitDoor) && !door.Open.Value && Vector3.Distance(transform.position,door.transform.position)<2.5f) door.SetOpen(true,gameObject);
             }
             agent.speed=State.Value==EnemyState.Chase?chaseSpeed:roamSpeed;
             switch(State.Value)
@@ -74,13 +89,14 @@ namespace SurvivalFP
         }
         void TryCatchRememberedPlayer()
         {
-            if(!knownPlayer || !knownPlayer.Alive || Time.time>knowledgeUntil || Vector3.Distance(knownPlayer.transform.position,LastKnownPosition)>2 || Vector3.Distance(transform.position,knownPlayer.transform.position)>killDistance+agent.radius)return;
-            var cover=HidingCover.For(knownPlayer);if(!cover)return;
-            // Knowledge can overcome furniture occlusion, never walls or another floor.
-            Vector3 delta=knownPlayer.View.position-perception.Eye;
+            if(!knownPlayer || !knownPlayer.Alive || !knownCloset || Time.time>knowledgeUntil ||
+                knownPlayer.HiddenCloset!=knownCloset || Vector3.Distance(transform.position,knownCloset.InvestigationPosition)>killDistance+agent.radius)return;
+            // Evidence bypasses the closet door only, never walls or another floor.
+            Vector3 delta=knownCloset.entryPoint.position+Vector3.up-perception.Eye;
             foreach(var hit in Physics.RaycastAll(perception.Eye,delta.normalized,delta.magnitude,perception.obstacles,QueryTriggerInteraction.Ignore))
-                if(!hit.transform.IsChildOf(transform) && !hit.transform.IsChildOf(knownPlayer.transform) && !hit.transform.IsChildOf(cover.transform))return;
-            knownPlayer.Down();knownPlayer=null;Target=null;Change(EnemyState.Search,searchDuration);
+                if(!hit.transform.IsChildOf(transform) && !hit.transform.IsChildOf(knownPlayer.transform) && !hit.transform.IsChildOf(knownCloset.transform))return;
+            if(knownCloset.Catch(knownPlayer))
+            {knownPlayer=null;knownCloset=null;Target=null;Change(EnemyState.Search,searchDuration);}
         }
         void Change(EnemyState state,float duration) { State.Value=state; stateUntil=Time.time+duration; if(state==EnemyState.Idle && agent.isOnNavMesh) agent.ResetPath(); }
         bool Arrived()=>!agent.pathPending && agent.remainingDistance<.5f;

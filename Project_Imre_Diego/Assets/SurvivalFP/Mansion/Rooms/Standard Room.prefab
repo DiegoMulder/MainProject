@@ -433,6 +433,7 @@ Transform:
   - {fileID: 4536316384308736700}
   - {fileID: 4680277581130935795}
   - {fileID: 4702725889515348041}
+  - {fileID: 7445610624080770172}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8547968971871318803
@@ -448,6 +449,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.RoomModule
   size: {x: 10, y: 3, z: 10}
+  staircase: 0
+  navigationAnchor: {x: 0, y: 0, z: 0}
   connectors:
   - {fileID: 82365724982363911}
   - {fileID: 4792724462715639955}
@@ -456,6 +459,7 @@ MonoBehaviour:
   propAnchors:
   - {fileID: 8197436585441045100}
   - {fileID: 548437755578423548}
+  - {fileID: 8683880695665912560}
 --- !u!1 &2090626325532848215
 GameObject:
   m_ObjectHideFlags: 0
@@ -1176,6 +1180,56 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &5775036856994826626
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7445610624080770172}
+  - component: {fileID: 8683880695665912560}
+  m_Layer: 0
+  m_Name: Closet anchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7445610624080770172
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5775036856994826626}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.9, y: 0, z: -3.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4974426232358736643}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8683880695665912560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5775036856994826626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eca00dff5785bbd46a27efa37f605ffa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PropSpawnPoint
+  category: Closet
+  chance: 0.45
+  variants:
+  - prefab: {fileID: 2536918570503591490, guid: da7bb33bd18942949bef685828d268c2, type: 3}
+    weight: 1
+  randomHalfTurn: 0
 --- !u!1 &6400213845537160148
 GameObject:
   m_ObjectHideFlags: 0

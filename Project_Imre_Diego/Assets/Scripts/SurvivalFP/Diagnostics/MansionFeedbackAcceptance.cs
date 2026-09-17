@@ -55,22 +55,7 @@ namespace SurvivalFP.Editor
             yield return new WaitForSecondsRealtime(.6f);
             Check(client.Life.Value==PlayerLife.Downed,"Monster catch enters Downed rather than spectator state");
             enemy.enabled=false;agent.isStopped=true;client.Revive();
-            var cover=FindObjectsByType<HidingCover>().OrderByDescending(c=>c.transform.position.sqrMagnitude).First();
-            void Hide(){client.Motor.Teleport(cover.transform.position+Vector3.up*.03f);for(int tick=0;tick<60;tick++)client.Motor.Tick(new PlayerCommand{Crouch=true},1f/60);client.View.localPosition=Vector3.up*(client.Motor.Height-.18f);Physics.SyncTransforms();}
-            void PlaceEnemy(float distance){agent.Warp(cover.transform.position+cover.transform.forward*distance);enemy.transform.rotation=Quaternion.LookRotation(-cover.transform.forward);Physics.SyncTransforms();}
-            Hide();PlaceEnemy(2.2f);
-            Check(HidingCover.For(client)==cover && !enemy.GetComponent<EnemyPerception>().HasLineOfSight(client) && enemy.GetComponent<EnemyPerception>().FindVisible()!=client,"Quiet crouched player is concealed by table cloth and not acquired");
-            client.Motor.Teleport(cover.transform.position+cover.transform.forward*1.4f+Vector3.up*.03f);for(int tick=0;tick<60;tick++)client.Motor.Tick(default,1f/60);
-            enemy.killDistance=.1f;enemy.enabled=true;yield return new WaitForSecondsRealtime(.4f);
-            Check(enemy.Target==client,"Monster sees the player before entry into hiding cover");
-            Hide();PlaceEnemy(1.2f);enemy.killDistance=1.1f;yield return new WaitForSecondsRealtime(.4f);
-            Check(client.Life.Value==PlayerLife.Downed,"Remembered hiding location permits a catch through furniture occlusion");
-            enemy.enabled=false;agent.isStopped=true;client.Revive();Hide();PlaceEnemy(2.2f);enemy.State.Value=EnemyState.Idle;
-            GameplayNoiseSystem.Emit(client.transform.position,16,NoiseCategory.Voice,client.gameObject);
-            Check(enemy.State.Value==EnemyState.Investigate,"Voice from hidden player causes normal investigation");
-            PlaceEnemy(1.2f);enemy.enabled=true;yield return new WaitForSecondsRealtime(.4f);
-            Check(client.Life.Value==PlayerLife.Downed,"Monster can catch a hidden player located through hearing");
-            enemy.enabled=false;agent.isStopped=true;client.Revive();
+            // Closet evidence and occupancy are covered by the current feedback-round validation.
             var objective=FindObjectsByType<NetworkPickup>().First(i=>i.GetComponent<ObjectiveItem>());Check(objective.Claim(client),"Objective assigned through standard inventory before downing");
             var medkit=kits[0].GetComponent<NetworkPickup>();Check(medkit.Claim(host),"Medkit occupies a normal inventory slot");
             client.Motor.Teleport(new Vector3(0,.03f,1));host.Motor.Teleport(new Vector3(0,.03f,-1));yield return new WaitForSecondsRealtime(.5f);

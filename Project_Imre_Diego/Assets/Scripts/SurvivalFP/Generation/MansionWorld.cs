@@ -39,8 +39,13 @@ namespace SurvivalFP
             foreach(var prop in round.Props)
             {
                 var anchor=Rooms[prop.room].propAnchors[prop.anchor];
-                var instance=Instantiate(anchor.variants[prop.variant].prefab,anchor.transform.position,anchor.transform.rotation*Quaternion.Euler(0,prop.halfTurn*180,0),geometry.transform);
+                var prefab=anchor.variants[prop.variant].prefab;
                 PropInstanceCount++;
+                // Static props reconstruct on peers; interactive props spawn once on the server.
+                if(prefab.GetComponent<Unity.Netcode.NetworkObject>() && !round.IsServer)continue;
+                var instance=Instantiate(prefab,anchor.transform.position,anchor.transform.rotation*Quaternion.Euler(0,prop.halfTurn*180,0),geometry.transform);
+                var network=instance.GetComponent<Unity.Netcode.NetworkObject>();
+                if(network){network.AutoObjectParentSync=false;network.Spawn();}
                 foreach(var itemAnchor in instance.GetComponentsInChildren<ItemSpawnPoint>()) { itemAnchor.RoomIndex=prop.room; ItemAnchors.Add(itemAnchor); }
             }
             foreach(var room in Rooms)
@@ -63,6 +68,10 @@ namespace SurvivalFP
                     if(!NavMesh.SamplePosition(approach,out var end,1.2f,NavMesh.AllAreas)||!NavMesh.CalculatePath(start.position,end.position,NavMesh.AllAreas,path)||path.status!=NavMeshPathStatus.PathComplete)
                         throw new System.InvalidOperationException("Unreachable connector: "+room.name+" / "+connector.name);
                 }
+                foreach(var closet in ClosetHideout.All)
+                    if(!NavMesh.SamplePosition(closet.InvestigationPosition,out var approach,.4f,NavMesh.AllAreas) ||
+                       !NavMesh.CalculatePath(start.position,approach.position,NavMesh.AllAreas,path) || path.status!=NavMeshPathStatus.PathComplete)
+                        throw new System.InvalidOperationException("Unreachable closet approach: "+closet.name);
                 ItemAnchors.RemoveAll(anchor=>!NavMesh.SamplePosition(anchor.Approach,out var end,1.2f,NavMesh.AllAreas) || !NavMesh.CalculatePath(start.position,end.position,NavMesh.AllAreas,path) || path.status!=NavMeshPathStatus.PathComplete);
             }
             Built=true;

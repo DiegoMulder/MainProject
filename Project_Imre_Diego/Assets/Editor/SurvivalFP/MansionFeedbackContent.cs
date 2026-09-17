@@ -66,25 +66,9 @@ namespace SurvivalFP.Editor
             EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity");var session=UnityEngine.Object.FindAnyObjectByType<GameSession>();session.lobbyPrefab=lobby.GetComponent<LobbyRoster>();
             if(!session.GetComponent<ProximityVoice>())session.gameObject.AddComponent<ProximityVoice>();
             EditorSceneManager.MarkSceneDirty(session.gameObject.scene);EditorSceneManager.SaveScene(session.gameObject.scene);AssetDatabase.SaveAssets();
-            Debug.Log("Feedback prefabs, stairs, medkits, hiding cover and lobby references configured.");
+            Debug.Log("Feedback prefabs, stairs, medkits and lobby references configured.");
         }
-        static void UpdateTable()
-        {
-            string path=Root+"/Props/Table.prefab";var table=PrefabUtility.LoadPrefabContents(path);
-            if(!table.GetComponent<HidingCover>())
-            {
-                foreach(Transform child in table.transform.Cast<Transform>().ToArray())UnityEngine.Object.DestroyImmediate(child.gameObject);
-                var cover=table.AddComponent<HidingCover>();cover.size=new Vector3(2.1f,1.3f,1.4f);
-                Box(table.transform,"Tabletop",new Vector3(0,1.45f,0),new Vector3(2.4f,.16f,1.6f),Material("Furniture"));
-                foreach(float x in new[]{-1.05f,1.05f})foreach(float z in new[]{-.65f,.65f})Box(table.transform,"Leg",new Vector3(x,.7f,z),new Vector3(.14f,1.4f,.14f),Material("Furniture"));
-                // Soft cloth blocks vision but can be pushed through while crouched.
-                foreach(float z in new[]{-.79f,.79f})Box(table.transform,"Cloth",new Vector3(0,.83f,z),new Vector3(2.4f,1.2f,.025f),Material("Furniture")).GetComponent<BoxCollider>().isTrigger=true;
-                foreach(float x in new[]{-1.19f,1.19f})Box(table.transform,"Cloth",new Vector3(x,.83f,0),new Vector3(.025f,1.2f,1.6f),Material("Furniture")).GetComponent<BoxCollider>().isTrigger=true;
-                foreach(float x in new[]{-.65f,0,.65f})Anchor(table.transform,new Vector3(x,1.73f,0),new Vector3(0,-1.73f,1.2f));
-                PrefabUtility.SaveAsPrefabAsset(table,path);
-            }
-            PrefabUtility.UnloadPrefabContents(table);
-        }
+        static void UpdateTable() { /* Tables are ordinary furniture; authored geometry is preserved. */ }
         static void Anchor(Transform parent,Vector3 position,Vector3 approach){var go=new GameObject("Item Surface",typeof(ItemSpawnPoint));go.transform.SetParent(parent,false);go.transform.localPosition=position;go.GetComponent<ItemSpawnPoint>().approachOffset=approach;}
         static void ExtraAnchors(string name)
         {

@@ -62,7 +62,7 @@ F only operates a flashlight actually carried in inventory. The held beam aims t
 2. On EnemyPerception, adjust Sight Distance, Field Of View, Hearing Multiplier, and Obstacles.
 3. On EnemyController, adjust Roam Speed, Chase Speed, Kill Distance, and timing fields.
 4. Change one category at a time and test in a simple layout.
-5. Test being unseen, walking versus sprinting nearby, visible chasing, losing sight around a corner, hiding under cover, and stair traversal.
+5. Test being unseen, walking versus sprinting nearby, visible chasing, losing sight around a corner, entering a closet, and stair traversal.
 
 | Field | Meaning |
 | --- | --- |
@@ -76,9 +76,9 @@ F only operates a flashlight actually carried in inventory. The held beam aims t
 | Perception Interval | Time between sensing updates |
 | Lost Sight Delay | Brief persistence before leaving the direct chase |
 | Investigation/Search/Idle Duration | Time spent in those phases |
-| Memory Duration | Duration of remembered player knowledge relevant to cover |
+| Memory Duration | Duration of remembered player knowledge relevant to a closet |
 
-The states are Idle, Roam, Investigate, Chase, and Search. Seeing a living player starts pursuit. Losing sight leads toward the last known position and then a bounded search. Hearing creates investigation behavior. The AI does not need a separate table-specific controller.
+The states are Idle, Roam, Investigate, Chase, and Search. Seeing a living player starts pursuit. Losing sight leads toward the last known position and then a bounded search. Hearing creates investigation behavior. Closet evidence uses the same state machine; ordinary tables have no special hiding behavior.
 
 ## Recipe: create another enemy appearance
 
@@ -145,3 +145,5 @@ Custom server-side noises call GameplayNoiseSystem.Emit(position, radius, catego
 6. Test in the actual mansion lighting.
 
 Pink materials usually indicate an unsupported or missing shader. Inspect that material before changing gameplay scripts. The project is URP; installing HDRP is not part of adding an item or room. For glowing materials, emission makes the surface look bright, while a Light component provides illumination of nearby geometry.
+
+See [the current noise/presentation tutorial](06-Closets-Noise-and-Presentation.md) for flashlight clicks, impact AudioClips, closet hearing, heartbeat distances, and PSX configuration.

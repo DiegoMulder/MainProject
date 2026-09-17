@@ -455,6 +455,7 @@ GameObject:
   - component: {fileID: 990725376954748076}
   - component: {fileID: 7410597084338697373}
   - component: {fileID: 5186781720661433610}
+  - component: {fileID: 371034483048915378}
   m_Layer: 0
   m_Name: Network Survivor
   m_TagString: Untagged
@@ -760,6 +761,11 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
+  HiddenClosetId:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 18446744073709551615
   bleedOutDuration: 300
   voiceNoiseRadius: 16
   voiceNoiseInterval: 0.65
@@ -844,6 +850,73 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.DownedInteractable
   interactionBody: {fileID: 5507582725729834992}
+--- !u!114 &371034483048915378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7000563005437309295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 880aabcc610384e48a63acd406a2d4e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.HeartbeatFeedback
+  heartbeatClip: {fileID: 8300000, guid: cfba1f8b0765967498bfb1511e0eb610, type: 3}
+  maximumDistance: 20
+  intenseDistance: 3
+  minimumInterval: 0.38
+  maximumInterval: 1.35
+  smoothing: 3
+  maximumVolume: 0.65
+  volumeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  pitchCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.9
+      inSlope: 0
+      outSlope: 0.25
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1.15
+      inSlope: 0.25
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &8239911441503884807
 GameObject:
   m_ObjectHideFlags: 0
@@ -857,6 +930,7 @@ GameObject:
   - component: {fileID: 783942036513252033}
   - component: {fileID: 1949975936791561599}
   - component: {fileID: 8907923666874331320}
+  - component: {fileID: 221203266196754300}
   m_Layer: 0
   m_Name: Player Camera
   m_TagString: MainCamera
@@ -1025,3 +1099,16 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &221203266196754300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8239911441503884807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d31c58c4bede6ec489a991849abc3218, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PsxCameraPresentation
+  profile: {fileID: 11400000, guid: f46e9d1cb6e8b994b97e57431dfaeb63, type: 2}

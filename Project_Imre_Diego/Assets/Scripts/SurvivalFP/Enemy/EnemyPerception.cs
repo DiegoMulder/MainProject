@@ -21,6 +21,12 @@ namespace SurvivalFP
             }
             return nearest;
         }
+        public bool CanSee(NetworkPlayer player)
+        {
+            if(!player || !player.Alive)return false;
+            var delta=player.View.position-Eye;
+            return delta.magnitude<=sightDistance && Vector3.Angle(transform.forward,delta)<=fieldOfView*.5f && HasLineOfSight(player);
+        }
         public Vector3 Eye=>eyes?eyes.position:transform.position+Vector3.up*1.7f;
         public bool HasLineOfSight(NetworkPlayer player)
         {
@@ -30,7 +36,7 @@ namespace SurvivalFP
             foreach(var hit in hits)
             {
                 if(hit.transform.IsChildOf(transform)) continue;
-                if(hit.collider.isTrigger && !hit.collider.GetComponentInParent<HidingCover>())continue;
+                if(hit.collider.isTrigger)continue;
                 return hit.collider.GetComponentInParent<NetworkPlayer>()==player;
             }
             return true;

@@ -63,7 +63,7 @@ namespace SurvivalFP
                 }
                 var exitSocket=World.Connector(ExitRoom.Value,ExitConnector.Value);
                 Exit=Instantiate(settings.exit,exitSocket.transform.position,exitSocket.transform.rotation);
-                Exit.Required.Value=settings.objectiveCount; Exit.GetComponent<NetworkObject>().Spawn();
+                Exit.GetComponent<NetworkObject>().Spawn(); Exit.Required.Value=settings.objectiveCount;
                 var rng=new System.Random(Seed.Value^719);
                 var anchors=World.ItemAnchors.Where(a=>a.RoomIndex!=0).OrderBy(_=>rng.Next()).ToList();
                 if(settings.preferDifferentRooms) anchors=anchors.GroupBy(a=>a.RoomIndex).SelectMany(g=>g.Take(1)).Concat(anchors).Distinct().ToList();
@@ -73,9 +73,9 @@ namespace SurvivalFP
                     var item=Instantiate(settings.objective,anchors[i].transform.position,anchors[i].transform.rotation);
                     item.SafeAnchor=anchors[i].transform.position;
                     string kind=settings.objectiveTypes!=null && settings.objectiveTypes.Length>0?settings.objectiveTypes[i%settings.objectiveTypes.Length]:"Seal";
-                    item.GetComponent<ObjectiveItem>().Kind.Value=new FixedString64Bytes(kind);
                     outstanding[kind]=outstanding.GetValueOrDefault(kind)+1;
                     item.GetComponent<NetworkObject>().Spawn();
+                    item.GetComponent<ObjectiveItem>().Kind.Value=new FixedString64Bytes(kind);
                 }
                 if(settings.medkitCount>0 && !settings.medkit)throw new InvalidOperationException("Assign the medkit network prefab.");
                 for(int i=0;i<settings.medkitCount;i++)

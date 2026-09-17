@@ -318,6 +318,7 @@ MonoBehaviour:
   investigationDuration: 5
   searchDuration: 9
   idleDuration: 2
+  memoryDuration: 10
   State:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0

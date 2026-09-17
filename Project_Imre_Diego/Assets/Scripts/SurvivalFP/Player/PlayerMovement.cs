@@ -68,6 +68,7 @@ namespace SurvivalFP
         bool steepContact;
         float verticalSpeed, heightVelocity, coyoteRemaining, bufferRemaining;
         float airSpeedLimit, defaultStepOffset;
+        float flatSupportHeight=float.NaN;
         readonly Collider[] ceilingHits = new Collider[24];
         readonly RaycastHit[] groundHits = new RaycastHit[16];
 
@@ -144,7 +145,12 @@ namespace SurvivalFP
             Vector3 start = transform.position;
             float impactVelocity = verticalSpeed;
             steepContact = false;
-            CollisionFlags flags = capsule.Move((surfaceVelocity + slideVelocity + Vector3.up * verticalSpeed) * dt);
+            float verticalStep=verticalSpeed*dt;
+            // Ground stick must not push the rounded capsule down and off a thin edge.
+            // The flat foot sets the lowest feet position while that surface supports us.
+            if(IsGrounded && verticalSpeed<=0 && !float.IsNaN(flatSupportHeight))
+                verticalStep=Mathf.Max(verticalStep,flatSupportHeight-transform.position.y);
+            CollisionFlags flags = capsule.Move((surfaceVelocity + slideVelocity) * dt + Vector3.up * verticalStep);
             // Follow descending treads only from supported motion, never during a jump/fall.
             if(wasSupported && verticalSpeed<=0 && !IsSliding && horizontalVelocity.sqrMagnitude>.01f)
             {
@@ -245,6 +251,7 @@ namespace SurvivalFP
         bool ProbeGround(out Vector3 normal)
         {
             normal = Vector3.up;
+            flatSupportHeight=float.NaN;
             float radius = capsule.radius * 0.88f;
             Vector3 origin = transform.position + Vector3.up * (capsule.radius + 0.06f);
             int count = Physics.SphereCastNonAlloc(origin, radius, Vector3.down, groundHits,
@@ -261,6 +268,20 @@ namespace SurvivalFP
                 found = true;
             }
             // A sphere cast can report a bevel normal or miss a thin supporting edge.
+            // A shallow flat footprint covers the gaps between the sample rays.
+            // Keep the capsule body for stairs, walls and smooth crouching.
+            int supports=Physics.BoxCastNonAlloc(transform.position+Vector3.up*.1f,
+                new Vector3(capsule.radius,.02f,capsule.radius),Vector3.down,groundHits,
+                Quaternion.identity,.08f+groundProbeDistance,collisionMask,QueryTriggerInteraction.Ignore);
+            for(int i=0;i<supports;i++)
+            {
+                var hit=groundHits[i];
+                if(hit.collider==capsule || hit.transform.IsChildOf(transform) || hit.distance<=0f
+                    || Vector3.Angle(hit.normal,Vector3.up)>capsule.slopeLimit)continue;
+                normal=hit.normal;
+                if(hit.normal.y>.999f)flatSupportHeight=hit.point.y;
+                return true;
+            }
             // Short footprint rays find real walkable support without extending ground reach.
             float closestSupport=float.MaxValue;Vector3 supportNormal=Vector3.up;
             for(int probe=0;probe<9;probe++)
@@ -295,9 +316,10 @@ namespace SurvivalFP
 
         public void Teleport(Vector3 feetPosition)
         {
+            bool wasEnabled=capsule.enabled;
             capsule.enabled = false;
             transform.position = feetPosition;
-            capsule.enabled = true;
+            capsule.enabled = wasEnabled;
             horizontalVelocity = Vector3.zero;
             slideVelocity = Vector3.zero;
             verticalSpeed = coyoteRemaining = bufferRemaining = ActualSpeed = 0f;

@@ -111,7 +111,7 @@ Advanced developer utilities also exist under Diagnostics, including MansionGeom
 | 'Not enough reachable surfaces' | Objective + medkit capacity after excluding starting room, absent props, and rejected approaches |
 | Navigation failure | Solid route, accurate room bounds, clear anchors/doorway approaches, compatible stairs |
 | Enemy sees through walls | Wall colliders and EnemyPerception obstacle layers |
-| Hiding never works | Clearance, HidingCover volume, sight blockers, and whether enemy saw/heard entry |
+| Hiding never works | Closet occupancy/positions, solid door colliders, and whether enemy saw entry or heard the occupant |
 | Everyone downed ends round immediately | Expected: no living reviver remains |
 | Host/join fails | Actual online error, project link, service access, network connectivity, same project/build |
 | Lobby works but voice does not | Vivox access/configuration first, then mute/devices/levels; see existing 403 blocker |

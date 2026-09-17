@@ -107,7 +107,8 @@ namespace SurvivalFP
             }
             float dt = Mathf.Min(Time.deltaTime, 0.05f);
             if (ignoreLookFrames > 0) ignoreLookFrames--;
-            playerCamera.Look(command.Look, dt);
+            var networkPlayer=GetComponent<NetworkPlayer>();
+            if(!networkPlayer || !networkPlayer.IsHidden)playerCamera.Look(command.Look, dt);
             var authority = GetComponent<IPlayerAuthority>();
             if (authority != null && authority.Active) authority.SubmitMovement(command, playerCamera.transform);
             else movement.Tick(command, dt);

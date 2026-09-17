@@ -407,6 +407,7 @@ MonoBehaviour:
   toggleCooldown: 0.2
   fadeSpeed: 14
   onIntensity: 97.65625
+  toggleNoiseRadius: 3
 --- !u!114 &5856341902533052892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -497,6 +498,11 @@ MonoBehaviour:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
+    m_InternalValue:
+      carrier: 18446744073709551615
+      slot: -1
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
   LightOn:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
@@ -518,3 +524,5 @@ MonoBehaviour:
   cooldown: 0.5
   radiusPerSpeed: 2
   maximumRadius: 16
+  impactClip: {fileID: 8300000, guid: dc321fe50cdad0242a2cea6722837a5d, type: 3}
+  maximumVolume: 0.65

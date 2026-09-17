@@ -272,6 +272,7 @@ GameObject:
   - component: {fileID: 1481877091}
   - component: {fileID: 1481877093}
   - component: {fileID: 1481877092}
+  - component: {fileID: 1481877095}
   m_Layer: 0
   m_Name: Menu Camera
   m_TagString: Untagged
@@ -397,6 +398,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1481877095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1481877090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d31c58c4bede6ec489a991849abc3218, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PsxCameraPresentation
+  profile: {fileID: 11400000, guid: f46e9d1cb6e8b994b97e57431dfaeb63, type: 2}
 --- !u!1 &1743639413
 GameObject:
   m_ObjectHideFlags: 0

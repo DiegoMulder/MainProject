@@ -338,6 +338,24 @@ namespace SurvivalFP.Editor
             Check((torch.transform.localScale - heldScale).sqrMagnitude < 0.000001f && torch.transform.localPosition.sqrMagnitude < 0.000001f,
                 "Repeated hand assignment keeps the item transform stable");
             inventoryForItems.UsePrimary();
+            var aimWall=GameObject.CreatePrimitive(PrimitiveType.Cube);
+            aimWall.transform.position=camera.transform.position+camera.transform.forward;
+            aimWall.transform.localScale=new Vector3(2,2,.1f);Physics.SyncTransforms();
+            var modelPosition=torch.transform.localPosition;var modelRotation=torch.transform.localRotation;
+            torch.Beam.transform.localRotation=Quaternion.identity;
+            torch.AimAtView(Dt);var firstAim=torch.Beam.transform.localRotation;
+            for(int i=0;i<120;i++)torch.AimAtView(Dt);
+            float fullAim=Quaternion.Angle(Quaternion.identity,torch.Beam.transform.localRotation);
+            Check(Quaternion.Angle(Quaternion.identity,firstAim)>0 && Quaternion.Angle(Quaternion.identity,firstAim)<fullAim*.4f,
+                "Flashlight approaches a nearby surface gradually instead of snapping");
+            var nearAim=torch.Beam.transform.localRotation;
+            UnityEngine.Object.DestroyImmediate(aimWall);Physics.SyncTransforms();
+            torch.AimAtView(Dt);var firstFarAim=torch.Beam.transform.localRotation;
+            for(int i=0;i<120;i++)torch.AimAtView(Dt);
+            Check(Quaternion.Angle(nearAim,firstFarAim)<Quaternion.Angle(nearAim,torch.Beam.transform.localRotation)*.4f,
+                "Flashlight smoothly crosses a near-to-far depth discontinuity");
+            Check(torch.transform.localPosition==modelPosition && Quaternion.Angle(torch.transform.localRotation,modelRotation)<.01f,
+                "Beam aiming preserves the held model pose");
             Step(default, 20);
             Check(torch.IsOn, "Equipped flashlight responds to primary use");
             inventoryForItems.Tick(new PlayerCommand { Slot2Pressed = true }, camera.transform);
