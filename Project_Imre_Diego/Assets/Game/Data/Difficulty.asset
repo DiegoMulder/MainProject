@@ -14,14 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.DifficultyConfig
   profiles:
   - name: Easy
-    targetRoomCount: 24
-    requiredObjectiveCount: 20
+    targetRoomCount: 50
+    requiredObjectiveCount: 10
+    enemyCount: 1
   - name: Medium
     targetRoomCount: 60
-    requiredObjectiveCount: 100
+    requiredObjectiveCount: 15
+    enemyCount: 1
   - name: Hard
-    targetRoomCount: 85
-    requiredObjectiveCount: 140
+    targetRoomCount: 80
+    requiredObjectiveCount: 20
+    enemyCount: 1
   - name: Extreme
-    targetRoomCount: 120
-    requiredObjectiveCount: 200
+    targetRoomCount: 150
+    requiredObjectiveCount: 35
+    enemyCount: 2

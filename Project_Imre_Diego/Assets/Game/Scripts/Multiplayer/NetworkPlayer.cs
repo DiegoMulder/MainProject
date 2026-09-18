@@ -214,7 +214,7 @@ namespace SurvivalFP
             {
                 var item=Inventory.Current.GetComponent<NetworkPickup>();
                 if(item && SafeItemDrop.TryFind(Inventory.Current,transform,View,out var position,out var rotation))
-                    item.Release(position,rotation,rotation*Vector3.forward*1.2f+Vector3.up*.5f);
+                    item.Release(position,rotation,Inventory.DropVelocity(View));
             }
             else if (action == 2 && Inventory.Current) Inventory.Current.UsePrimary();
             else if (action == 3) GetComponent<PlayerFlashlightShortcut>().Tick(true);

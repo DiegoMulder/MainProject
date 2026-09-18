@@ -5,19 +5,19 @@ namespace SurvivalFP
 {
     public static class ExitPlacement
     {
-        public static Bounds LocalClearance(ExitDoor door)
+        public static Bounds LocalClearance(DoorInteractable door,bool bothSides=false)
         {
             var bounds=new Bounds(new Vector3(0,1,-.85f),new Vector3(1.1f,2,1.7f));
             if(!door)return bounds;
             foreach(var collider in door.GetComponentsInChildren<BoxCollider>(true))
-                for(int i=0;i<=12;i++)
+                for(int i=bothSides?-12:0;i<=12;i++)
                 {
                     var matrix=DoorMatrix(door,collider.transform,door.openAngle*i/12f);
                     Encapsulate(ref bounds,collider.center,collider.size,matrix);
                 }
             bounds.Expand(.12f);return bounds;
         }
-        static Matrix4x4 DoorMatrix(ExitDoor door,Transform part,float angle)
+        static Matrix4x4 DoorMatrix(DoorInteractable door,Transform part,float angle)
         {
             if(door.hinge && part.IsChildOf(door.hinge))
                 return door.transform.worldToLocalMatrix*door.hinge.parent.localToWorldMatrix*

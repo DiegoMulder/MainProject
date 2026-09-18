@@ -24,6 +24,7 @@ namespace SurvivalFP
         public DoorInteractable door;
         public ExitDoor exit;
         public EnemyController enemy;
+        [Min(0)] public int enemyCount=1;
         [Header("Objectives")]
         [Min(1)] public int objectiveCount = 5;
         public string[] objectiveTypes = { "Seal" };

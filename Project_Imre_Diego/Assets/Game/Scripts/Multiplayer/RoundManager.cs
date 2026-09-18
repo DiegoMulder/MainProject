@@ -93,11 +93,28 @@ namespace SurvivalFP
                 for(int i=0;i<settings.radioCount;i++){var anchor=anchors[settings.objectiveCount+settings.medkitCount+i];var radio=Instantiate(settings.walkieTalkie,anchor.transform.position,anchor.transform.rotation);radio.SafeAnchor=anchor.transform.position;radio.GetComponent<NetworkObject>().Spawn();}
                 Ready.Value=true; Phase.Value=RoundPhase.Playing;
                 foreach(var id in NetworkManager.ConnectedClientsIds.ToArray()) SpawnPlayer(id);
-                var farthest=World.Rooms.OrderByDescending(r=>(r.transform.position-World.SpawnPosition).sqrMagnitude).First();
-                if(!NavMesh.SamplePosition(farthest.NavigationPosition,out var spawn,1.2f,NavMesh.AllAreas)) throw new InvalidOperationException("No enemy spawn on generated navigation.");
-                var enemy=Instantiate(settings.enemy,spawn.position,Quaternion.identity); enemy.GetComponent<NetworkObject>().Spawn();
+                SpawnEnemies();
             }
             catch(Exception ex) { Failure.Value=new FixedString512Bytes(ex.Message.Length>400?ex.Message.Substring(0,400):ex.Message); Phase.Value=RoundPhase.Failed; Debug.LogException(ex); }
+        }
+        void SpawnEnemies()
+        {
+            if(settings.enemyCount==0)return;
+            if(!settings.enemy)throw new InvalidOperationException("Assign the enemy network prefab.");
+            var positions=new List<Vector3>();
+            // Reserve every position before spawning any monster, so bad content fails cleanly.
+            foreach(var room in World.Rooms.OrderByDescending(r=>(r.NavigationPosition-World.SpawnPosition).sqrMagnitude))
+            {
+                if(!NavMesh.SamplePosition(room.NavigationPosition,out var sample,1.2f,NavMesh.AllAreas))continue;
+                if(NetworkPlayer.Players.Any(p=>Vector3.Distance(p.transform.position,sample.position)<8f))continue;
+                if(positions.Any(p=>Vector3.Distance(p,sample.position)<3f))continue;
+                var path=new NavMeshPath();
+                if(!NavMesh.CalculatePath(World.SpawnPosition,sample.position,NavMesh.AllAreas,path)||path.status!=NavMeshPathStatus.PathComplete)continue;
+                positions.Add(sample.position);
+                if(positions.Count==settings.enemyCount)break;
+            }
+            if(positions.Count<settings.enemyCount)throw new InvalidOperationException("Not enough separated, reachable enemy spawn positions. Add rooms or reduce Enemy Count.");
+            foreach(var position in positions)Instantiate(settings.enemy,position,Quaternion.identity).GetComponent<NetworkObject>().Spawn();
         }
         public void SpawnPlayer(ulong id)
         {

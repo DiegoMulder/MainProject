@@ -87,7 +87,7 @@ namespace SurvivalFP
             if (renderers == null) return;
             foreach (var r in renderers) if (r) r.enabled = equipped;
         }
-        public void Drop(Vector3 position, Quaternion rotation, Vector3 initialVelocity = default)
+        public void Drop(Vector3 position, Quaternion rotation, Vector3? initialVelocity = null)
         {
             Held = false;
             HolderView = null;
@@ -105,7 +105,7 @@ namespace SurvivalFP
                 body.detectCollisions = true;
                 body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
                 body.interpolation = RigidbodyInterpolation.Interpolate;
-                body.linearVelocity = initialVelocity == default ? rotation * Vector3.forward * 2.3f + Vector3.up * .8f : initialVelocity;
+                body.linearVelocity = initialVelocity ?? (rotation * Vector3.forward * 2.3f + Vector3.up * .8f);
                 body.angularVelocity = Vector3.zero;
                 body.WakeUp();
             }

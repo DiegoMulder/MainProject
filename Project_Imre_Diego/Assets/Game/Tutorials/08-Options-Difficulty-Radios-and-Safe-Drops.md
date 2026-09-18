@@ -58,7 +58,7 @@ The Difficulty asset is referenced by both **Game/Data/MansionSettings.asset** a
 
 ## Dropping items safely
 
-Both the offline inventory and server-owned multiplayer drop use **Game/Scripts/Items/SafeItemDrop.cs**. It measures the item's normal collider bounds, uses the player's actual capsule height/radius, and searches a limited set of nearby directions and heights. The preferred direction is horizontally forward, even when the camera points at the floor. A sphere sweep and overlap test check room for the whole item.
+Both the offline inventory and server-owned multiplayer drop use **Game/Scripts/Items/SafeItemDrop.cs**. It measures the item's normal collider bounds, uses the player's actual capsule height/radius, and tries the full camera direction first, including up and down. Limited upward/outward corrections keep the item clear of the player and floor. A sphere sweep and overlap test check room for the whole item.
 
 If no candidate is safe, the item stays in your inventory. Move away from the obstruction and press Q again. Crouching itself never disables dropping. The physics check runs only when you drop, not continuously for every item.
 
@@ -115,3 +115,6 @@ PlayerRadio validates ownership, a powered item, round state and life state on t
 The input action **Player/RadioTransmit** is in **Game/Input/InputSystem_Actions.inputactions** and defaults to V. Change its binding there to choose another key. The screen's V hint is plain UI text; update that hint too when changing the default binding.
 
 ProximityVoice joins the session's positional channel and a separate radio channel. During PTT it transmits to both, while each listener selects proximity or radio for that speaker. It uses the server-approved PlayerRadio state to suppress invalid radio reception. Testing real voice requires a configured Vivox project, working microphones and at least two connected clients; local direct-IP tests can verify state and AI noise but do not connect Vivox.
+
+
+For the current camera-directed drop settings, two-way ordinary doors, editable enemy counts and matching-build instructions, continue with [tutorial 09](09-Builds-Drops-Doors-and-Multiple-Enemies.md).

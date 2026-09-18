@@ -81,6 +81,13 @@ namespace SurvivalFP
                 ExitRoom=exit.room;ExitConnector=exit.connector;reserved=clearance;foundExit=true;break;
             }
             if(!foundExit)throw new InvalidOperationException("No exit has enough door-swing and approach clearance. Adjust room spacing or eligible connectors.");
+            var doorClearances=new List<Bounds>();
+            var localDoorClearance=ExitPlacement.LocalClearance(settings.door,true);
+            foreach(var connection in Connections)
+            {
+                var room=Rooms[connection.a];var socket=settings.rooms[room.module].prefab.connectors[connection.ac];
+                if(socket.allowDoor)doorClearances.Add(ExitPlacement.WorldBounds(localDoorClearance,room.position+room.Rotation*socket.transform.localPosition,room.Rotation*socket.transform.localRotation));
+            }
             for (int r = 0; r < Rooms.Count; r++)
             {
                 var anchors = settings.rooms[Rooms[r].module].prefab.propAnchors;
@@ -93,7 +100,8 @@ namespace SurvivalFP
                     int turn=anchor.randomHalfTurn?rng.Next(2):0;
                     var placement=Rooms[r];var propPosition=placement.position+placement.Rotation*anchor.transform.localPosition;
                     var propRotation=placement.Rotation*anchor.transform.localRotation*Quaternion.Euler(0,turn*180,0);
-                    if(ExitPlacement.PrefabBounds(anchor.variants[selected].prefab,propPosition,propRotation).Intersects(reserved))continue;
+                    var propBounds=ExitPlacement.PrefabBounds(anchor.variants[selected].prefab,propPosition,propRotation);
+                    if(propBounds.Intersects(reserved)||doorClearances.Exists(clearance=>clearance.Intersects(propBounds)))continue;
                     Props.Add(new PropPlacement { room = r, anchor = a, variant = selected, halfTurn = turn });
                 }
             }

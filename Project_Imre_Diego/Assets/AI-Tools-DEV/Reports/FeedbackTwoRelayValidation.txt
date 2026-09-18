@@ -1,0 +1,173 @@
+PASS two network peers connected
+PASS identical network configuration hashes over Relay
+PASS safe camera-directed drop crouch=False pitch=0
+PASS drop rotation and impulse preserve full camera direction
+PASS item clears ground
+PASS safe camera-directed drop crouch=False pitch=-70
+PASS drop rotation and impulse preserve full camera direction
+PASS item clears ground
+PASS safe camera-directed drop crouch=False pitch=70
+PASS drop rotation and impulse preserve full camera direction
+PASS item clears ground
+PASS safe camera-directed drop crouch=True pitch=0
+PASS drop rotation and impulse preserve full camera direction
+PASS item clears ground
+PASS safe camera-directed drop crouch=True pitch=-70
+PASS drop rotation and impulse preserve full camera direction
+PASS item clears ground
+PASS safe camera-directed drop crouch=True pitch=70
+PASS drop rotation and impulse preserve full camera direction
+PASS item clears ground
+PASS drop cannot cross a wall
+PASS drop clears furniture or safely retains item
+PASS drop clears a stair tread
+PASS released item uses physics and emits impact noise
+PASS impact audio clip remains configured
+PASS client sees difficulty 0
+PASS client cannot override host difficulty
+PASS server and client enemy count 1
+PASS identical complete mansion layout
+PASS single persistent networking foundation
+PASS monsters spawn away from players
+PASS monster spawns are separated
+PASS all monsters independently hear an in-range event
+PASS only nearby monster hears a short-range event
+PASS heartbeat uses nearest monster
+PASS door opens away yaw=0 side=1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=0 side=-1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=90 side=1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=90 side=-1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=180 side=1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=180 side=-1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=270 side=1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=270 side=-1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS matching client layout size and objective requirement 0
+PASS client hides own body and sees host body
+PASS host sees client body
+PASS radio ownership and power replicate
+PASS nearby players use proximity without duplicate radio audio
+PASS active distant radio eligible for reception
+PASS transmit and receiver noise emitted at throttled intervals
+PASS OFF radio rejects remote transmission
+PASS downed player retains radio exception
+PASS remote downed body remains visible and prone
+PASS dead spectator cannot transmit
+PASS client spectates surviving host
+PASS client reports no errors
+PASS all monsters cleaned up
+PASS both peers return to editable lobby
+PASS client sees difficulty 3
+PASS client cannot override host difficulty
+PASS server and client enemy count 2
+PASS identical complete mansion layout
+PASS single persistent networking foundation
+PASS monsters spawn away from players
+PASS monster spawns are separated
+PASS all monsters independently hear an in-range event
+PASS only nearby monster hears a short-range event
+PASS heartbeat uses nearest monster
+PASS door opens away yaw=0 side=1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=0 side=-1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=90 side=1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=90 side=-1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=180 side=1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=180 side=-1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=270 side=1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=270 side=-1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS matching client layout size and objective requirement 3
+PASS client hides own body and sees host body
+PASS host sees client body
+PASS radio ownership and power replicate
+PASS nearby players use proximity without duplicate radio audio
+PASS active distant radio eligible for reception
+PASS transmit and receiver noise emitted at throttled intervals
+PASS OFF radio rejects remote transmission
+PASS downed player retains radio exception
+PASS remote downed body remains visible and prone
+PASS dead spectator cannot transmit
+PASS client spectates surviving host
+PASS client reports no errors
+PASS all monsters cleaned up
+PASS both peers return to editable lobby
+PASS client sees difficulty 3
+PASS client cannot override host difficulty
+PASS server and client enemy count 3
+PASS identical complete mansion layout
+PASS single persistent networking foundation
+PASS monsters spawn away from players
+PASS monster spawns are separated
+PASS all monsters independently hear an in-range event
+PASS only nearby monster hears a short-range event
+PASS heartbeat uses nearest monster
+PASS door opens away yaw=0 side=1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=0 side=-1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=90 side=1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=90 side=-1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=180 side=1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=180 side=-1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=270 side=1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS door opens away yaw=270 side=-1
+PASS door direction synchronized to client
+PASS door closes from either direction
+PASS matching client layout size and objective requirement 3
+PASS client hides own body and sees host body
+PASS host sees client body
+PASS radio ownership and power replicate
+PASS nearby players use proximity without duplicate radio audio
+PASS active distant radio eligible for reception
+PASS transmit and receiver noise emitted at throttled intervals
+PASS OFF radio rejects remote transmission
+PASS downed player retains radio exception
+PASS remote downed body remains visible and prone
+PASS dead spectator cannot transmit
+PASS client spectates surviving host
+PASS client reports no errors
+PASS all monsters cleaned up
+PASS both peers return to editable lobby
+DONE 172 passed / 0 failed

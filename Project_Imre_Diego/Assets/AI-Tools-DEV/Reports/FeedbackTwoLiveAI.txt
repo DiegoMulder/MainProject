@@ -1,0 +1,4 @@
+PASS two enabled monsters simultaneously chase different players
+PASS one monster downs its target while the other continues chasing
+PASS last survivor downed ends the round normally
+PASS live AI round cleanup retains both peers in lobby

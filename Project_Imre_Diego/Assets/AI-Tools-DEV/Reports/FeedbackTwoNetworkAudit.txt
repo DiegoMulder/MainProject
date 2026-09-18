@@ -1,0 +1,10 @@
+Network mismatch investigation
+Reproduced the exact NGO NetworkConfig mismatch warning by connecting Builds/MansionFeedbackRound/SurvivalFP.exe (17 September) to the current editor before this round's gameplay changes.
+The authored shared registry gained Walkie Talkie in commit d4e710a after that build. The current game has 11 unique prefab hashes. No missing, duplicate, development-only or dynamically registered gameplay prefab was found in the active session list.
+The old build is incompatible; the current matching build successfully joined through Unity Relay.
+Protocol is now explicitly 1 because DoorInteractable gained replicated SwingAngle. ForceSamePrefabs and EnableSceneManagement remain enabled. All participants must update their full build folder.
+Current output: Builds/Current/SurvivalFP.exe with NetworkCompatibility.txt.
+Three consecutive Relay rounds: Easy 1, Extreme 2, edited Extreme 3; complete layout equality, enemy replication, names, difficulty authority, radio state, cleanup and lobby restart verified. Final automated result: 172 PASS / 0 FAIL.
+An additional generated-mansion audit found all 119 ordinary doors clear on both opening sides after reserving furniture clearance.
+Radio hearing/state tests simulate speech reports with live voice polling temporarily disabled in the development harness. They do not certify human microphone/audio quality.
+Build succeeded with zero errors. Unity emitted 492 package shader warnings (Core debug shader stripping and AI Inference/Sentis shader warnings); these are not C# compilation or gameplay runtime errors. Both peer runtime logs were checked separately.

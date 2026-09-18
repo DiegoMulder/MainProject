@@ -16,7 +16,7 @@ MonoBehaviour:
   randomSeed: 1
   roomCount: 60
   attemptsPerRoom: 80
-  floorCount: 2
+  floorCount: 4
   floorHeight: 4
   rooms:
   - prefab: {fileID: 8547968971871318803, guid: 4a50d20375a69e843a2a2013b615a1bd, type: 3}
@@ -44,6 +44,7 @@ MonoBehaviour:
   door: {fileID: 5786953601169760269, guid: 676fc50b002ed754d999cf9f606f3426, type: 3}
   exit: {fileID: 8742598040443380567, guid: df6f2e525a300404c99d9532e0eb1de6, type: 3}
   enemy: {fileID: 5424273498486042716, guid: 16cf8ea201531fc4eb4bbcf117e93c9c, type: 3}
+  enemyCount: 1
   objectiveCount: 100
   objectiveTypes:
   - Seal

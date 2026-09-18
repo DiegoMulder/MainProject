@@ -13,6 +13,8 @@ These beginner tutorials explain the systems actually present in this URP projec
 
 9. [Options, difficulty, walkie talkies, safe drops and exit clearance](Tutorials/08-Options-Difficulty-Radios-and-Safe-Drops.md)
 
+10. [Matching builds, camera-directed drops, two-way doors and multiple enemies](Tutorials/09-Builds-Drops-Doors-and-Multiple-Enemies.md)
+
 The tutorials distinguish Inspector changes from optional programming examples. Code printed in a tutorial does not run until you create and attach the described script. Optional code examples remain examples; the closet, noise, heartbeat, and PSX systems described in tutorial 7 are implemented in the project.
 
 ## Where to play

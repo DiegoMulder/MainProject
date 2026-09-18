@@ -634,6 +634,11 @@ MonoBehaviour:
   handAnchor: {fileID: 5625438275474778116}
   playerCamera: {fileID: 1949975936791561599}
   pickupDistance: 5
+  dropForwardDistance: 0.9
+  dropForwardImpulse: 2.3
+  dropMinimumClearance: 0.04
+  dropCheckPadding: 0.015
+  dropVerticalCorrectionLimit: 0.45
   slots:
   - {fileID: 0}
   - {fileID: 0}
@@ -867,7 +872,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.HeartbeatFeedback
   heartbeatClip: {fileID: 8300000, guid: cfba1f8b0765967498bfb1511e0eb610, type: 3}
-  maximumDistance: 20
+  maximumDistance: 40
   intenseDistance: 3
   minimumInterval: 0.38
   maximumInterval: 1.35

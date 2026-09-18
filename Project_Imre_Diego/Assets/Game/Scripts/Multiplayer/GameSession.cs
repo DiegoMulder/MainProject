@@ -136,7 +136,7 @@ namespace SurvivalFP
         void Disconnected(ulong id)
         {
             if(leaving)return;
-            if(id==manager.LocalClientId || !manager.IsServer){MenuNotice="Connection ended. The host may have left or the lobby is unavailable.";ReturnToMenu();}
+            if(id==manager.LocalClientId || !manager.IsServer){MenuNotice="Connection ended. Check that everyone uses the same latest build; the host may also have left.";ReturnToMenu();}
             else if(RoundManager.Instance)RoundManager.Instance.EvaluateRound();
         }
         public async void ReturnToMenu()

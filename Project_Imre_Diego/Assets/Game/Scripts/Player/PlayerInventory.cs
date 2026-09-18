@@ -8,6 +8,13 @@ namespace SurvivalFP
         [SerializeField] Transform handAnchor;
         [SerializeField] PlayerCamera playerCamera;
         [SerializeField] float pickupDistance = 5f;
+        [Header("Dropping")]
+        [Min(.1f)] public float dropForwardDistance=.9f;
+        [Min(0)] public float dropForwardImpulse=2.3f;
+        [Min(0)] public float dropMinimumClearance=.04f;
+        [Min(0)] public float dropCheckPadding=.015f;
+        [Min(0)] public float dropVerticalCorrectionLimit=.45f;
+        public Vector3 DropVelocity(Transform view)=>view.forward*dropForwardImpulse;
         [SerializeField] PickupItem[] slots = new PickupItem[3];
         [SerializeField] int currentSlot = -1;
 
@@ -108,11 +115,11 @@ namespace SurvivalFP
             var item = Current;
             if (!item) return;
             if(!SafeItemDrop.TryFind(item,transform,view,out var position,out var rotation))return;
-            item.Drop(position,rotation,rotation*Vector3.forward*1.2f+Vector3.up*.5f);
+            item.Drop(position,rotation,DropVelocity(view));
             slots[currentSlot] = null;
             currentSlot = -1;
             for (int i = 0; i < slots.Length; i++)
                 if (slots[i]) { currentSlot = i; slots[i].SetHeld(handAnchor); break; }
         }
     }
-}
+}

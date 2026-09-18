@@ -25,7 +25,7 @@ namespace SurvivalFP
             Enemies.Add(this);
             agent=GetComponent<NavMeshAgent>(); perception=GetComponent<EnemyPerception>(); agent.enabled=IsServer;
             if(!IsServer) return;
-            rng=new System.Random(RoundManager.Instance.Seed.Value^139);
+            rng=new System.Random(RoundManager.Instance.Seed.Value^139^unchecked((int)NetworkObjectId*397));
             GameplayNoiseSystem.Emitted+=Hear;ClosetHideout.Entering+=SeeEntry; Change(EnemyState.Idle,idleDuration);
         }
         public override void OnNetworkDespawn() { GameplayNoiseSystem.Emitted-=Hear;ClosetHideout.Entering-=SeeEntry;Enemies.Remove(this); }

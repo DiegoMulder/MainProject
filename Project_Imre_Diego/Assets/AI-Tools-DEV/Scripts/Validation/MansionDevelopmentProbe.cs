@@ -17,7 +17,7 @@ namespace SurvivalFP
             public string[] names;
             public bool matchStarted;
             public float bleedOut;
-            public int seed,rooms,props,players,slot,command,activeCameras;
+            public int seed,rooms,props,players,slot,command,activeCameras,enemies; public string configHash;
             public float time,timeScale,stamina,height,vertical,immediateDistance;public int corrections;public string scene;public bool grounded;
             public bool paused,light,hidden,radioOn,radioTransmitting,localBodyHidden;
             public int difficulty,requiredObjectives; public float fov; public string voiceStatus; public string[] bodyVisibility;
@@ -63,6 +63,7 @@ namespace SurvivalFP
                     {
                         switch(command.action)
                         {
+                            case "voicepause":GameSession.Instance.GetComponent<ProximityVoice>().enabled=false;break;
                             case "start":GameSession.Instance.StartMatch();break;
                             case "difficulty":LobbyRoster.Instance.SelectDifficulty(command.slot);break;
                             case "radio":player.GetComponent<PlayerRadio>().Report(command.slot!=0,command.slot==2);break;
@@ -97,6 +98,7 @@ namespace SurvivalFP
             if(Time.unscaledTime<nextSnapshot) return;nextSnapshot=Time.unscaledTime+.2f;
             var round=RoundManager.Instance;
             var snapshot=new Snapshot {scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene().name,immediateDistance=immediateDistance,phase=round?round.Phase.Value.ToString():"Menu",time=Time.time,timeScale=Time.timeScale,command=handled,error=lastError,players=NetworkPlayer.Players.Count,activeCameras=Camera.allCamerasCount};
+            snapshot.enemies=EnemyController.Enemies.Count;snapshot.configHash=NetworkManager.Singleton?NetworkManager.Singleton.NetworkConfig.GetConfig(false).ToString():"";
             var lobby=LobbyRoster.Instance;var names=new System.Collections.Generic.List<string>();if(lobby)foreach(var member in lobby.Members)names.Add(member.name.ToString());snapshot.names=names.ToArray();
             snapshot.difficulty=lobby?lobby.Difficulty.Value:-1;snapshot.requiredObjectives=round?round.RequiredObjectives.Value:0;
             snapshot.voiceStatus=GameSession.Instance?GameSession.Instance.GetComponent<ProximityVoice>().Status:"";
@@ -124,7 +126,7 @@ namespace SurvivalFP
             }
             snapshot.closets=ClosetHideout.All.Where(c=>c && c.IsSpawned).Select(c=>$"{c.NetworkObjectId}:{c.Occupant.Value}").ToArray();
             snapshot.items=FindObjectsByType<NetworkPickup>().Where(i=>i.IsSpawned).Select(i=>$"{i.NetworkObjectId}:{i.Location.Value.carrier}:{i.Location.Value.slot}").ToArray();
-            snapshot.doors=FindObjectsByType<DoorInteractable>().Where(d=>d.IsSpawned).Select(d=>$"{d.NetworkObjectId}:{d.Open.Value}"+(d is ExitDoor e?$":{e.Deposited.Value}/{e.Required.Value}":"")).ToArray();
+            snapshot.doors=FindObjectsByType<DoorInteractable>().Where(d=>d.IsSpawned).Select(d=>$"{d.NetworkObjectId}:{d.Open.Value}:{d.SwingAngle.Value}"+(d is ExitDoor e?$":{e.Deposited.Value}/{e.Required.Value}":"")).ToArray();
             // A concurrent test reader may briefly hold the report; publish on the next tick.
             try{File.WriteAllText(Path.Combine(directory,mode+".snapshot.json"),JsonUtility.ToJson(snapshot,true));}catch(IOException){}
         }

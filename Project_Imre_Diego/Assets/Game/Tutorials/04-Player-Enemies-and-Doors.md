@@ -89,7 +89,7 @@ The states are Idle, Roam, Investigate, Chase, and Search. Seeing a living playe
 5. Assign it to MansionSettings > Enemy.
 6. Test doors, stairs, narrow paths, and catching distance.
 
-The current round spawns **one enemy from the Enemy reference**. Registering multiple variants does not randomly choose or spawn them all. Multiple enemies or a weighted enemy catalog requires modifying RoundManager's server-side spawning. A new animated mesh also needs its own Animator/controller; the supplied movement code does not automatically provide animation clips for any imported model.
+The current round spawns the selected difficulty profile's **Enemy Count**, using the Enemy reference. Easy, Medium and Hard default to one; Extreme defaults to two. Edit Game/Data/Difficulty.asset to change these counts; see [tutorial 09](09-Builds-Drops-Doors-and-Multiple-Enemies.md). Registering multiple variants does not randomly choose them: a weighted enemy catalog would still require extending the server spawner. A new animated mesh also needs its own Animator/controller; the supplied movement code does not automatically provide animation clips for any imported model.
 
 ## Downing, death, and revival tuning
 
