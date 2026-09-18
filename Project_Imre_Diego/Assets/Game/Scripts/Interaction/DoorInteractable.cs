@@ -10,7 +10,7 @@ namespace SurvivalFP
         public AudioSource audioSource;
         public AudioClip sound;
         public NetworkVariable<bool> Open = new(false);
-        public override void OnNetworkSpawn() { Open.OnValueChanged+=Changed; if(IsServer) Open.Value=startOpen; }
+        public override void OnNetworkSpawn() { AudioVolumeBus.RouteSfx(audioSource);Open.OnValueChanged+=Changed; if(IsServer) Open.Value=startOpen; }
         public override void OnNetworkDespawn() => Open.OnValueChanged-=Changed;
         void Changed(bool old,bool value) { if(audioSource && sound) audioSource.PlayOneShot(sound); }
         public virtual string Prompt(PlayerInteraction player) => "E  " + (Open.Value ? "Close door" : "Open door");

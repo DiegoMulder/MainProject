@@ -53,6 +53,10 @@ namespace SurvivalFP
         Vector2 latestLook;
         public float Sensitivity { get => sensitivity; set => sensitivity = Mathf.Clamp(value, .01f, .5f); }
         public float LandingOffset => landingOffset;
+        public bool SmoothingEnabled=>smoothMouse && mouseSmoothTime>0;
+        public float BaseFov=>baseFov;
+        public float TargetYaw=>targetYaw;
+        public void ApplySettings(){Sensitivity=LocalSettings.Sensitivity;baseFov=LocalSettings.Fov;smoothMouse=LocalSettings.Smoothing;mouseSmoothTime=LocalSettings.SmoothTime;if(view)view.fieldOfView=baseFov;}
         public Vector3 BobOffset => bobOffset;
 
         void Awake()
@@ -64,21 +68,21 @@ namespace SurvivalFP
             yaw = targetYaw = yawRoot.eulerAngles.y;
             view.fieldOfView = baseFov;
         }
-        void OnEnable() { if (movement) movement.Landed += OnLanded; }
-        void OnDisable() { if (movement) movement.Landed -= OnLanded; }
+        void OnEnable() { if (movement) movement.Landed += OnLanded; LocalSettings.Changed+=ApplySettings;ApplySettings(); }
+        void OnDisable() { if (movement) movement.Landed -= OnLanded;LocalSettings.Changed-=ApplySettings; }
 
         public void Look(Vector2 delta, float dt)
         {
             latestLook = delta * sensitivity;
             targetYaw += latestLook.x;
             targetPitch = Mathf.Clamp(targetPitch - latestLook.y, pitchLimits.x, pitchLimits.y);
-            if (smoothMouse)
+            if (SmoothingEnabled)
             {
                 yaw = Mathf.SmoothDampAngle(yaw, targetYaw, ref yawVelocity, mouseSmoothTime, Mathf.Infinity, dt);
                 pitch = Mathf.SmoothDampAngle(pitch, targetPitch, ref pitchVelocity, mouseSmoothTime, Mathf.Infinity, dt);
             }
-            else { yaw = targetYaw; pitch = targetPitch; }
-            yawRoot.rotation = Quaternion.Euler(0f, yaw, 0f);
+            else { yaw = targetYaw; pitch = targetPitch; yawVelocity=pitchVelocity=0; }
+            yawRoot.rotation = Quaternion.Euler(0f, targetYaw, 0f);
         }
 
         void LateUpdate() => TickEffects(Mathf.Min(Time.deltaTime, 0.05f));
@@ -113,7 +117,7 @@ namespace SurvivalFP
             float sideways = Vector3.Dot(movement.HorizontalVelocity, yawRoot.right) / 7f;
             float targetRoll = Mathf.Clamp(-sideways * strafeRoll - latestLook.x * lookSway, -1.5f, 1.5f) * motionScale;
             roll = Mathf.Lerp(roll, targetRoll, blend);
-            transform.localRotation = Quaternion.Euler(pitch, 0f, roll);
+            transform.localRotation = Quaternion.Euler(pitch, Mathf.DeltaAngle(targetYaw,yaw), roll);
             float targetFov = baseFov + (movement.State == MovementState.Sprinting ? sprintFovIncrease : 0f);
             view.fieldOfView = Mathf.Lerp(view.fieldOfView, targetFov, 1f - Mathf.Exp(-fovBlendSpeed * dt));
         }

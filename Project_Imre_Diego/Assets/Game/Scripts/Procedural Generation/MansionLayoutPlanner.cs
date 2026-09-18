@@ -65,7 +65,22 @@ namespace SurvivalFP
             if(!Rooms.Exists(r=>r.position.y>=(settings.floorCount-1)*settings.floorHeight-.1f))throw new InvalidOperationException("Placement attempts exhausted before connecting every requested floor.");
             var exits = open.FindAll(c => (settings.allowExitInStartingRoom || c.room != 0) && settings.rooms[Rooms[c.room].module].prefab.connectors[c.connector].exitEligible);
             if (exits.Count == 0) throw new InvalidOperationException("No eligible exit connector.");
-            var exit = exits[rng.Next(exits.Count)]; ExitRoom = exit.room; ExitConnector = exit.connector;
+            // Reject full swept-door/approach volumes, not just a connector point.
+            Bounds reserved=default;bool foundExit=false;
+            while(exits.Count>0)
+            {
+                int index=rng.Next(exits.Count);var exit=exits[index];exits.RemoveAt(index);
+                var placement=Rooms[exit.room];var socket=settings.rooms[placement.module].prefab.connectors[exit.connector];
+                var position=placement.position+placement.Rotation*socket.transform.localPosition;
+                var rotation=placement.Rotation*socket.transform.localRotation;
+                var clearance=ExitPlacement.WorldBounds(ExitPlacement.LocalClearance(settings.exit),position,rotation);
+                bool blocked=false;
+                for(int r=0;r<Rooms.Count;r++)if(r!=exit.room)
+                {var bounds=BoundsOf(Rooms[r],settings.rooms[Rooms[r].module].prefab.size);bounds.Expand(.3f);if(bounds.Intersects(clearance)){blocked=true;break;}}
+                if(blocked)continue;
+                ExitRoom=exit.room;ExitConnector=exit.connector;reserved=clearance;foundExit=true;break;
+            }
+            if(!foundExit)throw new InvalidOperationException("No exit has enough door-swing and approach clearance. Adjust room spacing or eligible connectors.");
             for (int r = 0; r < Rooms.Count; r++)
             {
                 var anchors = settings.rooms[Rooms[r].module].prefab.propAnchors;
@@ -75,7 +90,11 @@ namespace SurvivalFP
                     int total = 0; foreach (var v in anchor.variants) total += Math.Max(1,v.weight);
                     int roll = rng.Next(total), selected = 0;
                     for (int v = 0; v < anchor.variants.Length; v++) { roll -= Math.Max(1,anchor.variants[v].weight); if (roll < 0) { selected = v; break; } }
-                    Props.Add(new PropPlacement { room = r, anchor = a, variant = selected, halfTurn = anchor.randomHalfTurn ? rng.Next(2) : 0 });
+                    int turn=anchor.randomHalfTurn?rng.Next(2):0;
+                    var placement=Rooms[r];var propPosition=placement.position+placement.Rotation*anchor.transform.localPosition;
+                    var propRotation=placement.Rotation*anchor.transform.localRotation*Quaternion.Euler(0,turn*180,0);
+                    if(ExitPlacement.PrefabBounds(anchor.variants[selected].prefab,propPosition,propRotation).Intersects(reserved))continue;
+                    Props.Add(new PropPlacement { room = r, anchor = a, variant = selected, halfTurn = turn });
                 }
             }
             void AddOpen(int room, int exclude)

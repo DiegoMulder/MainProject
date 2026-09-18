@@ -31,17 +31,17 @@ The values shown on an existing prefab win over initial values written in a scri
 
 Keep the player root at unit scale with its origin at the feet. To change step traversal, use PlayerMovement > Step Height: the motor establishes the controller's step offset at startup. Editing only CharacterController's step offset is not enough. Keep ground probes short rather than enlarging them to disguise gaps or overly tall stairs.
 
-Moving-platform carrying, multiplayer prediction, and a larger inventory are additional features, not settings already implemented by these components.
+Multiplayer prediction is implemented. Moving-platform carrying and a larger inventory would require additional work rather than simply changing these fields.
 
 ## Recipe: reduce camera motion or change the view
 
 1. Open the appropriate player prefab.
 2. Find its PlayerCamera component in the camera hierarchy.
 3. Set Motion Scale closer to 0 to reduce bob, sway, and landing motion. Zero removes those procedural motion effects.
-4. Tune Base Fov and Sprint Fov Increase separately if desired.
+4. Set your own FOV in Options. Change starting FOV defaults in Game/Resources/Settings/Local Settings Defaults.asset. Sprint Fov Increase remains a separate PlayerCamera field.
 5. Save and test walking, sprinting, crouching, looking around, and landing.
 
-The mansion's Options menu saves sensitivity locally and applies it when playing. A saved preference can therefore override what you expected from prefab sensitivity. Use Options to check the active value before assuming the prefab change failed.
+The Options menu saves sensitivity, FOV and look smoothing locally. These preferences override the corresponding starting camera settings. Motion Scale still controls bob/sway separately. See [settings and camera smoothing](08-Options-Difficulty-Radios-and-Safe-Drops.md) for the defaults asset and extension instructions.
 
 Keep only the local player's camera and AudioListener active. The network player already handles local/remote presentation; adding another always-enabled camera or listener to a model can break this.
 

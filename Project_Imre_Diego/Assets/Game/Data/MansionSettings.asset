@@ -37,6 +37,9 @@ MonoBehaviour:
   flashlight: {fileID: 8338934286537262607, guid: ba69dfe6c24114449a3023daddd42e58, type: 3}
   objective: {fileID: 1573285919620233640, guid: 1ebac9527f929434e919c713b2c7627f, type: 3}
   medkit: {fileID: 5095833613441459520, guid: 6ae388c71a5f0894c9fa91e5d050a211, type: 3}
+  walkieTalkie: {fileID: 7199304500093247456, guid: ed1073e5658eb5748b5ec8d3ee42e46f, type: 3}
+  radioCount: 4
+  difficultyConfig: {fileID: 11400000, guid: 2148a69924e937545b8efdeb1d3ee31a, type: 2}
   medkitCount: 8
   door: {fileID: 5786953601169760269, guid: 676fc50b002ed754d999cf9f606f3426, type: 3}
   exit: {fileID: 8742598040443380567, guid: df6f2e525a300404c99d9532e0eb1de6, type: 3}

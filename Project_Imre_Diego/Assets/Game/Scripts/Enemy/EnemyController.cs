@@ -41,7 +41,7 @@ namespace SurvivalFP
             if(!IsServer || !RoundManager.Instance || RoundManager.Instance.Phase.Value!=RoundPhase.Playing) return;
             if(noise.Source && noise.Source.transform.IsChildOf(transform))return;
             var source=noise.Source?noise.Source.GetComponentInParent<NetworkPlayer>():null;
-            if(source && !source.Alive)return;
+            if(source && !source.Alive && !(source.Life.Value==PlayerLife.Downed && (noise.Category==NoiseCategory.RadioVoice || noise.Category==NoiseCategory.RadioReceiver)))return;
             if(Vector3.Distance(transform.position,noise.Position)>noise.Radius*perception.hearingMultiplier) return;
             if(State.Value==EnemyState.Chase && source!=Target)return;
             // Do not replace fresh, identified hiding evidence with incidental ambient noise.

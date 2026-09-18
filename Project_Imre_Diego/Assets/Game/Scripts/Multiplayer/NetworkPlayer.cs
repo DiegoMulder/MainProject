@@ -74,9 +74,9 @@ namespace SurvivalFP
             GetComponent<CharacterController>().enabled = IsServer || IsOwner;
             if(IsOwner && !IsServer)GetComponent<NetworkTransform>().enabled=false;
             GetComponent<PlayerAudio>().enabled = IsOwner;
-            foreach (var renderer in GetComponentsInChildren<Renderer>()) renderer.shadowCastingMode = IsOwner ? ShadowCastingMode.ShadowsOnly : ShadowCastingMode.On;
+            ApplyBodyVisibility();
             Life.OnValueChanged += OnLife; Selection.OnValueChanged += OnSelection; HiddenClosetId.OnValueChanged+=OnHiding;
-            if (IsOwner) { CameraMotion.Sensitivity = PlayerPrefs.GetFloat("SurvivalFP.Sensitivity", .1f); Controller.SetCursor(true); }
+            if (IsOwner) { CameraMotion.ApplySettings(); Controller.SetCursor(true); }
             OnLife(Life.Value, Life.Value);
         }
         public override void OnNetworkDespawn()
@@ -123,8 +123,15 @@ namespace SurvivalFP
             if(IsOwner){CameraMotion.enabled=(Alive || Life.Value==PlayerLife.Downed) && !IsHidden;GetComponent<PlayerAudio>().enabled=Alive && !IsHidden;}
             foreach(var renderer in GetComponentsInChildren<Renderer>(true))renderer.forceRenderingOff=IsHidden;
         }
+        public void ApplyBodyVisibility()
+        {
+            if(!visualBody)return;
+            foreach(var renderer in visualBody.GetComponentsInChildren<Renderer>(true))
+                renderer.shadowCastingMode=IsOwner && (Alive || Life.Value==PlayerLife.Downed)?ShadowCastingMode.ShadowsOnly:ShadowCastingMode.On;
+        }
         void LateUpdate()
         {
+            ApplyBodyVisibility();
             var closet=HiddenCloset;
             if(!closet)return;
             transform.position=closet.hiddenPosition.position;
@@ -206,12 +213,8 @@ namespace SurvivalFP
             if (action == 1 && Inventory.Current)
             {
                 var item=Inventory.Current.GetComponent<NetworkPickup>();
-                Vector3 position=View.position+View.forward*1.2f;
-                if(item && item.GetComponent<ObjectiveItem>() &&
-                    (!UnityEngine.AI.NavMesh.SamplePosition(position,out var hit,2f,UnityEngine.AI.NavMesh.AllAreas) ||
-                    Physics.OverlapSphere(position,.25f).Any(c=>!c.transform.IsChildOf(transform) && !c.transform.IsChildOf(item.transform))))
-                    position=RoundManager.Instance.World.RecoveryPosition(item,transform.position);
-                item?.Release(position,View.rotation,View.forward*2.3f+Vector3.up*.8f);
+                if(item && SafeItemDrop.TryFind(Inventory.Current,transform,View,out var position,out var rotation))
+                    item.Release(position,rotation,rotation*Vector3.forward*1.2f+Vector3.up*.5f);
             }
             else if (action == 2 && Inventory.Current) Inventory.Current.UsePrimary();
             else if (action == 3) GetComponent<PlayerFlashlightShortcut>().Tick(true);

@@ -1,0 +1,6 @@
+PASS Relay session with two peers
+PASS host and client connected to Vivox proximity + radio
+PASS two participants in each voice channel
+PASS final crouched downward drop from clear position
+PASS downed radio noise ignored outside radius and investigated inside radius
+Microphone speech/audio quality was not assessed with two human speakers.

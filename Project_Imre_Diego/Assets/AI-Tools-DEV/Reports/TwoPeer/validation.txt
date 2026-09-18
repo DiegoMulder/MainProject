@@ -1,0 +1,23 @@
+PASS two network peers connected
+PASS client sees difficulty 0
+PASS client cannot override host difficulty
+PASS matching client layout size and objective requirement 0
+PASS client hides own body and sees host body
+PASS host sees client body
+PASS radio ownership and power replicate
+PASS nearby players use proximity without duplicate radio audio
+PASS active distant radio eligible for reception
+PASS transmit and receiver noise emitted at throttled intervals
+PASS OFF radio rejects remote transmission
+PASS downed player retains radio exception
+PASS remote downed body remains visible and prone
+PASS dead spectator cannot transmit
+PASS client spectates surviving host
+PASS client reports no errors
+PASS both peers return to editable lobby
+PASS client sees difficulty 3
+PASS client cannot override host difficulty
+PASS matching client layout size and objective requirement 3
+PASS client hides own body and sees host body
+PASS host sees client body
+PASS radio ownership and power replicate

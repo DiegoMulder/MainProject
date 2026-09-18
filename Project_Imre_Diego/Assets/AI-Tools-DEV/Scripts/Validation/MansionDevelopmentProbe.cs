@@ -1,4 +1,4 @@
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEBUG
 using System;
 using System.Collections;
 using System.IO;
@@ -19,7 +19,8 @@ namespace SurvivalFP
             public float bleedOut;
             public int seed,rooms,props,players,slot,command,activeCameras;
             public float time,timeScale,stamina,height,vertical,immediateDistance;public int corrections;public string scene;public bool grounded;
-            public bool paused,light,hidden;
+            public bool paused,light,hidden,radioOn,radioTransmitting,localBodyHidden;
+            public int difficulty,requiredObjectives; public float fov; public string voiceStatus; public string[] bodyVisibility;
             public float heartbeat; public int internalWidth,internalHeight; public string[] closets;
             public Vector3 position;
             public string[] inventory,items,doors;
@@ -63,6 +64,8 @@ namespace SurvivalFP
                         switch(command.action)
                         {
                             case "start":GameSession.Instance.StartMatch();break;
+                            case "difficulty":LobbyRoster.Instance.SelectDifficulty(command.slot);break;
+                            case "radio":player.GetComponent<PlayerRadio>().Report(command.slot!=0,command.slot==2);break;
                             case "speech":player.ReportSpeech();break;
                             case "interact":
                                 if(NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(ulong.Parse(command.target),out var target))
@@ -95,6 +98,8 @@ namespace SurvivalFP
             var round=RoundManager.Instance;
             var snapshot=new Snapshot {scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene().name,immediateDistance=immediateDistance,phase=round?round.Phase.Value.ToString():"Menu",time=Time.time,timeScale=Time.timeScale,command=handled,error=lastError,players=NetworkPlayer.Players.Count,activeCameras=Camera.allCamerasCount};
             var lobby=LobbyRoster.Instance;var names=new System.Collections.Generic.List<string>();if(lobby)foreach(var member in lobby.Members)names.Add(member.name.ToString());snapshot.names=names.ToArray();
+            snapshot.difficulty=lobby?lobby.Difficulty.Value:-1;snapshot.requiredObjectives=round?round.RequiredObjectives.Value:0;
+            snapshot.voiceStatus=GameSession.Instance?GameSession.Instance.GetComponent<ProximityVoice>().Status:"";
             snapshot.matchStarted=lobby && lobby.Started.Value;snapshot.lobbyCode=GameSession.Instance?GameSession.Instance.JoinCode:"";snapshot.status=GameSession.Instance?GameSession.Instance.Status:"";
             if(round)
             {
@@ -108,6 +113,9 @@ namespace SurvivalFP
                 snapshot.height=player.Motor.Height;snapshot.vertical=player.Motor.VerticalSpeed;snapshot.grounded=player.Motor.IsGrounded;snapshot.corrections=player.GetComponent<PlayerPrediction>().Corrections;
                 snapshot.hidden=player.IsHidden;snapshot.heartbeat=player.GetComponent<HeartbeatFeedback>()?player.GetComponent<HeartbeatFeedback>().Intensity:0;
                 var psx=player.View.GetComponent<PsxCameraPresentation>();if(psx){snapshot.internalWidth=psx.InternalSize.x;snapshot.internalHeight=psx.InternalSize.y;}
+                var radio=player.GetComponent<PlayerRadio>();snapshot.radioOn=radio && radio.ActiveRadio;snapshot.radioTransmitting=radio && radio.Transmitting.Value;
+                snapshot.localBodyHidden=player.visualBody && player.visualBody.GetComponentsInChildren<Renderer>().All(r=>r.shadowCastingMode==UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly);snapshot.fov=player.View.GetComponent<Camera>().fieldOfView;
+                snapshot.bodyVisibility=NetworkPlayer.Players.Where(p=>p && p.visualBody).Select(p=>p.OwnerClientId+":"+p.visualBody.GetComponent<Renderer>().shadowCastingMode).ToArray();
                 snapshot.life=player.Life.Value.ToString();snapshot.position=player.transform.position;snapshot.paused=player.Paused;snapshot.slot=player.Inventory.CurrentSlot;snapshot.stamina=player.Stamina.Value;
                 snapshot.bleedOut=player.BleedOutRemaining;var spectator=player.GetComponent<SpectatorController>();snapshot.spectating=spectator.Target?spectator.Target.DisplayName:"";
                 snapshot.prompt=player.Interaction.CurrentPrompt;

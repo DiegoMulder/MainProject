@@ -14,6 +14,8 @@ namespace SurvivalFP
     {
         public static RoundManager Instance {get;private set;}
         public MansionSettings settings;
+        MansionSettings runtimeSettings;
+        public NetworkVariable<int> Difficulty=new(1),TargetRooms=new(0),RequiredObjectives=new(0);
         public NetworkVariable<int> Seed=new(0),ExitRoom=new(0),ExitConnector=new(0);
         public NetworkVariable<bool> Ready=new(false);
         public NetworkVariable<int> ExpectedRooms=new(0),ExpectedProps=new(0);
@@ -29,9 +31,11 @@ namespace SurvivalFP
         public override void OnNetworkSpawn()
         {
             Instance=this; Ready.OnValueChanged+=OnReady;
+            if(IsServer){runtimeSettings=Instantiate(settings);settings=runtimeSettings;Difficulty.Value=LobbyRoster.Instance?LobbyRoster.Instance.Difficulty.Value:1;
+                if(settings.difficultyConfig)settings.difficultyConfig.Apply(settings,Difficulty.Value);TargetRooms.Value=settings.roomCount;RequiredObjectives.Value=settings.objectiveCount;}
             if(IsServer) StartCoroutine(Setup()); else if(Ready.Value) StartCoroutine(BuildClientWorld());
         }
-        public override void OnNetworkDespawn() { Ready.OnValueChanged-=OnReady; if(Instance==this) Instance=null; }
+        public override void OnNetworkDespawn() { Ready.OnValueChanged-=OnReady; if(Instance==this) Instance=null;if(runtimeSettings)Destroy(runtimeSettings); }
         void OnReady(bool old,bool ready) { if(ready && !World.Built && !IsServer) StartCoroutine(BuildClientWorld()); }
         IEnumerator BuildClientWorld()
         {
@@ -62,12 +66,13 @@ namespace SurvivalFP
                     door.GetComponent<NetworkObject>().Spawn(); World.Doors.Add(door);
                 }
                 var exitSocket=World.Connector(ExitRoom.Value,ExitConnector.Value);
+                if(!ExitPlacement.ValidatePhysical(settings.exit,exitSocket.transform,World.SpawnPosition,out var exitError))throw new InvalidOperationException(exitError);
                 Exit=Instantiate(settings.exit,exitSocket.transform.position,exitSocket.transform.rotation);
                 Exit.GetComponent<NetworkObject>().Spawn(); Exit.Required.Value=settings.objectiveCount;
                 var rng=new System.Random(Seed.Value^719);
                 var anchors=World.ItemAnchors.Where(a=>a.RoomIndex!=0).OrderBy(_=>rng.Next()).ToList();
                 if(settings.preferDifferentRooms) anchors=anchors.GroupBy(a=>a.RoomIndex).SelectMany(g=>g.Take(1)).Concat(anchors).Distinct().ToList();
-                if(anchors.Count<settings.objectiveCount+settings.medkitCount) throw new InvalidOperationException("Not enough reachable surfaces for configured objectives and medkits. Add surface anchors or reduce item counts.");
+                if(anchors.Count<settings.objectiveCount+settings.medkitCount+settings.radioCount) throw new InvalidOperationException("Not enough reachable surfaces for configured objectives, medkits and radios. Add surface anchors or reduce item counts.");
                 for(int i=0;i<settings.objectiveCount;i++)
                 {
                     var item=Instantiate(settings.objective,anchors[i].transform.position,anchors[i].transform.rotation);
@@ -84,6 +89,8 @@ namespace SurvivalFP
                     var kit=Instantiate(settings.medkit,anchor.transform.position,anchor.transform.rotation);
                     kit.SafeAnchor=anchor.transform.position;kit.GetComponent<NetworkObject>().Spawn();
                 }
+                if(settings.radioCount>0 && !settings.walkieTalkie)throw new InvalidOperationException("Assign the Walkie Talkie network prefab.");
+                for(int i=0;i<settings.radioCount;i++){var anchor=anchors[settings.objectiveCount+settings.medkitCount+i];var radio=Instantiate(settings.walkieTalkie,anchor.transform.position,anchor.transform.rotation);radio.SafeAnchor=anchor.transform.position;radio.GetComponent<NetworkObject>().Spawn();}
                 Ready.Value=true; Phase.Value=RoundPhase.Playing;
                 foreach(var id in NetworkManager.ConnectedClientsIds.ToArray()) SpawnPlayer(id);
                 var farthest=World.Rooms.OrderByDescending(r=>(r.transform.position-World.SpawnPosition).sqrMagnitude).First();

@@ -28,7 +28,7 @@ namespace SurvivalFP
         float distance;
         int previousStep = -1;
 
-        void Awake() { if (!movement) movement = GetComponent<PlayerMovement>(); }
+        void Awake() { if (!movement) movement = GetComponent<PlayerMovement>(); AudioVolumeBus.RouteSfx(footsteps);AudioVolumeBus.RouteSfx(body); }
         void OnEnable()
         {
             if (!movement) movement = GetComponent<PlayerMovement>();

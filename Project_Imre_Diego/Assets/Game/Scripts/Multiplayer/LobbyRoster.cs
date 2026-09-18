@@ -15,6 +15,11 @@ namespace SurvivalFP
         public static LobbyRoster Instance {get;private set;}
         public NetworkList<LobbyMember> Members;
         public NetworkVariable<bool> Started=new(false);
+        public DifficultyConfig difficultyConfig;
+        public NetworkVariable<int> Difficulty=new(1);
+        public string DifficultyName=>difficultyConfig?difficultyConfig.Get(Difficulty.Value).name:"Medium";
+        public void SelectDifficulty(int index)
+        {if(IsServer && !Started.Value && difficultyConfig && index>=0 && index<difficultyConfig.profiles.Length)Difficulty.Value=index;}
         void Awake()=>Members=new();
         public static string Sanitize(string name)
         {

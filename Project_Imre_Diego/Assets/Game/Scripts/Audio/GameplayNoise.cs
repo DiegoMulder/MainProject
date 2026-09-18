@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 namespace SurvivalFP
 {
-    public enum NoiseCategory { Footstep, Impact, Door, Other, Voice, Flashlight }
+    public enum NoiseCategory { Footstep, Impact, Door, Other, Voice, Flashlight, RadioVoice, RadioReceiver }
     public readonly struct GameplayNoise
     {
         public readonly Vector3 Position;

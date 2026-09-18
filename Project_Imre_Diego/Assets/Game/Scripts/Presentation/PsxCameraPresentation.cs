@@ -17,7 +17,7 @@ namespace SurvivalFP
         void Awake(){view=GetComponent<Camera>();cameraData=GetComponent<UniversalAdditionalCameraData>();}
         void LateUpdate()
         {
-            if(!profile || !profile.effectEnabled || !view.enabled || !view.gameObject.activeInHierarchy){Release();return;}
+            if(!profile || !profile.effectEnabled || !LocalSettings.Psx || !view.enabled || !view.gameObject.activeInHierarchy){Release();return;}
             int height=Mathf.Min(Screen.height,Mathf.Clamp(profile.internalHeight,120,720));
             int width=Mathf.Max(1,Mathf.RoundToInt(height*(float)Screen.width/Mathf.Max(1,Screen.height)));
             if(!configured)

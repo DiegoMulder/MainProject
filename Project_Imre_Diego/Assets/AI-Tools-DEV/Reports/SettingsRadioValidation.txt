@@ -1,0 +1,55 @@
+PASS round 0 generated: 
+PASS difficulty room/objective counts 0
+PASS difficulty frozen during round 0
+PASS exit physical clearance and reachability 0 
+PASS radio spawn count 0
+PASS local sensitivity and FOV apply immediately
+PASS camera smooths visible look while body responds immediately
+PASS zero smoothing has raw response
+PASS central preferences save and reload
+PASS local body hidden with shadows retained
+PASS central SFX bus gain
+PASS safe drop candidate standing
+PASS drop stays above floor 0
+PASS safe drop candidate crouched looking down
+PASS drop stays above floor 1
+PASS safe drop candidate beside wall
+PASS drop stays above floor 2
+PASS safe drop candidate stairs
+PASS drop stays above floor 3
+PASS dropped items still emit collision GameplayNoise
+PASS modular radio primary use powers on
+PASS server radio permission and throttled transmit noise
+PASS powered-off radio rejects transmission
+PASS return to editable lobby 0
+PASS round 1 generated: 
+PASS difficulty room/objective counts 1
+PASS difficulty frozen during round 1
+PASS exit physical clearance and reachability 1 
+PASS radio spawn count 1
+PASS return to editable lobby 1
+PASS round 2 generated: 
+PASS difficulty room/objective counts 2
+PASS difficulty frozen during round 2
+PASS exit physical clearance and reachability 2 
+PASS radio spawn count 2
+PASS return to editable lobby 2
+PASS round 3 generated: 
+PASS difficulty room/objective counts 3
+PASS difficulty frozen during round 3
+PASS exit physical clearance and reachability 3 
+PASS radio spawn count 3
+PASS return to editable lobby 3
+PASS round 4 generated: 
+PASS difficulty room/objective counts 4
+PASS difficulty frozen during round 4
+PASS exit physical clearance and reachability 4 
+PASS radio spawn count 4
+PASS return to editable lobby 4
+PASS round 5 generated: 
+PASS difficulty room/objective counts 5
+PASS difficulty frozen during round 5
+PASS exit physical clearance and reachability 5 
+PASS radio spawn count 5
+PASS return to editable lobby 5
+DONE 54 passed / 0 failed

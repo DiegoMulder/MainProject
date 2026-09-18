@@ -11,6 +11,8 @@ These beginner tutorials explain the systems actually present in this URP projec
 7. [Closets, gameplay noise, heartbeat, and PSX visuals](Tutorials/06-Closets-Noise-and-Presentation.md)
 8. [Scenes, predicted movement, downed crawling, impact audio and replaying rounds](Tutorials/07-Scenes-Movement-and-Downed-Players.md)
 
+9. [Options, difficulty, walkie talkies, safe drops and exit clearance](Tutorials/08-Options-Difficulty-Radios-and-Safe-Drops.md)
+
 The tutorials distinguish Inspector changes from optional programming examples. Code printed in a tutorial does not run until you create and attach the described script. Optional code examples remain examples; the closet, noise, heartbeat, and PSX systems described in tutorial 7 are implemented in the project.
 
 ## Where to play
@@ -35,6 +37,7 @@ The offline player is **Assets/AI-Tools-DEV/Prefabs/SurvivalPlayer.prefab**. Mul
 | 1 / 2 / 3 or mouse wheel | Select an inventory slot |
 | Q | Drop selected item |
 | F | Toggle a flashlight carried in any slot |
+| Hold V | Transmit through a powered Walkie Talkie in your inventory |
 | Escape | Mansion pause menu; release cursor in the offline course |
 | Tab while spectating | Change spectator target |
 

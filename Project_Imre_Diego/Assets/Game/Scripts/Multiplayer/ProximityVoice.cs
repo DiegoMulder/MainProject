@@ -5,43 +5,91 @@ using Unity.Services.Vivox;
 using UnityEngine;
 namespace SurvivalFP
 {
-    // Vivox owns microphone capture, encoding, transport and spatial mixing.
+    // One microphone/VAD source feeds proximity and optional radio transmission.
     public sealed class ProximityVoice : MonoBehaviour
     {
         [Min(2)] public int maximumDistance=24;
         [Min(1)] public int conversationalDistance=3;
         [Range(.1f,4)] public float falloff=1;
         [Range(0,1)] public float speechThreshold=.01f;
-        public bool Muted {get;set;}
+        public bool Muted=>LocalSettings.Muted;
         public string Status {get;private set;}="Voice connects when the match starts.";
-        public int InputVolume {get;private set;}=0;
-        public int OutputVolume {get;private set;}=0;
-        bool initialized,busy,joined,failed,closing;string channel;float nextUpdate;
+        public bool Connected=>joined;
+        public int InputVolume=>0;
+        public int OutputVolume=>Mathf.RoundToInt(20*Mathf.Log10(Mathf.Max(.0032f,LocalSettings.Master*LocalSettings.Voice)));
+        bool initialized,busy,joined,failed,closing,radioTransmission;
+        string channel,radioChannel;float nextUpdate;
+        void OnEnable()=>LocalSettings.Changed+=ApplyVolumes;
+        void OnDisable()=>LocalSettings.Changed-=ApplyVolumes;
+        void OnDestroy(){if(initialized)VivoxService.Instance.ParticipantAddedToChannel-=ParticipantAdded;}
+        void ParticipantAdded(VivoxParticipant participant)
+        {
+            // New radio participants are inaudible until their server state is known.
+            if(!participant.IsSelf && participant.ChannelName==radioChannel)participant.MutePlayerLocally();
+        }
+        void ApplyVolumes()
+        {
+            if(!initialized)return;
+            var voice=VivoxService.Instance;
+            voice.SetOutputDeviceVolume(Mathf.Clamp(OutputVolume,-50,0));
+            if(LocalSettings.Master*LocalSettings.Voice<=0)voice.MuteOutputDevice();else voice.UnmuteOutputDevice();
+            if(Muted)voice.MuteInputDevice();
+        }
         async void Update()
         {
-            if(closing)return;
+            if(closing||busy)return;
             var player=NetworkPlayer.Local;
             bool worldVoice=player && player.IsSpawned && (player.Alive||player.Life.Value==PlayerLife.Downed);
             if(!worldVoice)
             {
                 if(initialized)VivoxService.Instance.MuteInputDevice();
-                if(joined && !busy){VivoxService.Instance.MuteInputDevice();await LeaveChannel();}
+                if(joined)await LeaveChannel();
                 return;
             }
             string desired=GameSession.Instance?GameSession.Instance.VoiceChannel:null;
             if(string.IsNullOrEmpty(desired)){Status="Voice requires a Unity Services lobby.";return;}
-            if(!joined && !busy && !failed){await Join(desired);return;}
+            if(!joined && !failed){await Join(desired);return;}
             if(!joined||Time.unscaledTime<nextUpdate)return;
             nextUpdate=Time.unscaledTime+.1f;
             try
             {
-                if(Muted)VivoxService.Instance.MuteInputDevice();else VivoxService.Instance.UnmuteInputDevice();
-                VivoxService.Instance.Set3DPosition(player.View.position,player.View.position,player.View.forward,Vector3.up,channel);
-                if(!Muted && VivoxService.Instance.ActiveChannels.TryGetValue(channel,out var participants))
+                var voice=VivoxService.Instance;var radio=player.GetComponent<PlayerRadio>();
+                radio?.RegisterVoice(voice.SignedInPlayerId);
+                bool transmit=radio && radio.WantsTransmit;
+                // Both channels while holding PTT; listeners choose exactly one path.
+                if(transmit!=radioTransmission)
                 {
-                    var self=participants.FirstOrDefault(p=>p.IsSelf);
-                    if(self!=null && self.SpeechDetected && self.AudioEnergy>=speechThreshold)player.ReportSpeech();
+                    busy=true;
+                    try{await voice.SetChannelTransmissionModeAsync(transmit?TransmissionMode.All:TransmissionMode.Single,transmit?null:channel);radioTransmission=transmit;}
+                    finally{busy=false;}
+                    if(closing)return;
                 }
+                if(Muted)voice.MuteInputDevice();else voice.UnmuteInputDevice();
+                voice.Set3DPosition(player.View.position,player.View.position,player.View.forward,Vector3.up,channel);
+                bool speaking=false;
+                if(voice.ActiveChannels.TryGetValue(channel,out var localParticipants))
+                {
+                    var self=localParticipants.FirstOrDefault(p=>p.IsSelf);
+                    speaking=!Muted && self!=null && self.SpeechDetected && self.AudioEnergy>=speechThreshold;
+                }
+                radio?.Report(transmit,speaking);
+                if(speaking && !transmit)player.ReportSpeech();
+                foreach(var pair in voice.ActiveChannels)
+                {
+                    if(pair.Key!=channel && pair.Key!=radioChannel)continue;
+                    foreach(var participant in pair.Value)
+                    {
+                        if(participant.IsSelf)continue;
+                        var sender=NetworkPlayer.Players.FirstOrDefault(p=>p && p.GetComponent<PlayerRadio>() &&
+                            p.GetComponent<PlayerRadio>().VoiceId.Value.ToString()==participant.PlayerId);
+                        bool hearRadio=PlayerRadio.ReceiveRadio(player,sender);
+                        bool alive=sender && (sender.Alive||sender.Life.Value==PlayerLife.Downed);
+                        bool mute=pair.Key==radioChannel?!hearRadio:(!alive||hearRadio);
+                        if(mute && !participant.IsMuted)participant.MutePlayerLocally();
+                        else if(!mute && participant.IsMuted)participant.UnmutePlayerLocally();
+                    }
+                }
+                Status=transmit?"Radio transmitting - release V for proximity":"Proximity + radio connected";
             }
             catch(Exception ex){Status="Voice: "+ex.Message;failed=true;await LeaveChannel();}
         }
@@ -50,34 +98,38 @@ namespace SurvivalFP
             busy=true;
             try
             {
-                if(!initialized){await VivoxService.Instance.InitializeAsync();initialized=true;}
+                var voice=VivoxService.Instance;
+                if(!initialized){await voice.InitializeAsync();initialized=true;voice.ParticipantAddedToChannel+=ParticipantAdded;}
                 if(closing)return;
-                if(!VivoxService.Instance.IsLoggedIn)await VivoxService.Instance.LoginAsync(new LoginOptions{DisplayName=GameSession.Instance.PlayerName,ParticipantUpdateFrequency=ParticipantPropertyUpdateFrequency.FivePerSecond});
+                if(!voice.IsLoggedIn)await voice.LoginAsync(new LoginOptions{DisplayName=GameSession.Instance.PlayerName,ParticipantUpdateFrequency=ParticipantPropertyUpdateFrequency.FivePerSecond});
                 if(closing)return;
-                channel=name;
+                voice.MuteInputDevice();
+                channel=name;radioChannel=name+"_radio";
                 var properties=new Channel3DProperties(maximumDistance,Mathf.Min(conversationalDistance,maximumDistance-1),falloff,AudioFadeModel.LinearByDistance);
-                await VivoxService.Instance.JoinPositionalChannelAsync(channel,ChatCapability.AudioOnly,properties);
-                joined=true;SetVolumes(InputVolume,OutputVolume);Status="Proximity voice connected";
-                var player=NetworkPlayer.Local;
-                if(closing || !player || (player.Life.Value!=PlayerLife.Alive && player.Life.Value!=PlayerLife.Downed))VivoxService.Instance.MuteInputDevice();
+                await voice.JoinPositionalChannelAsync(channel,ChatCapability.AudioOnly,properties);
+                await voice.SetChannelTransmissionModeAsync(TransmissionMode.Single,channel);
+                await voice.JoinGroupChannelAsync(radioChannel,ChatCapability.AudioOnly,new ChannelOptions{MakeActiveChannelUponJoining=false});
+                radioTransmission=false;joined=true;ApplyVolumes();Status="Proximity + radio connected";
             }
-            catch(Exception ex){failed=true;Status=ex is NullReferenceException?"Voice unavailable: enable Vivox and fetch this project's configuration in Project Settings > Services > Vivox.":"Voice unavailable: "+ex.Message;}
+            catch(Exception ex)
+            {
+                failed=true;Status="Voice unavailable: "+ex.Message;
+                // Also clean up a successful positional join if radio joining failed.
+                await LeaveJoinedChannels();
+            }
             finally{busy=false;}
         }
         public void Retry(){failed=false;}
-        public void SetVolumes(int input,int output)
+        async Task LeaveJoinedChannels()
         {
-            InputVolume=Mathf.Clamp(input,-50,50);OutputVolume=Mathf.Clamp(output,-50,50);
             if(!initialized)return;
-            VivoxService.Instance.SetInputDeviceVolume(InputVolume);VivoxService.Instance.SetOutputDeviceVolume(OutputVolume);
+            foreach(var name in new[]{radioChannel,channel})
+                if(!string.IsNullOrEmpty(name) && VivoxService.Instance.ActiveChannels.ContainsKey(name))
+                    try{await VivoxService.Instance.LeaveChannelAsync(name);}catch(Exception ex){Status="Voice disconnected: "+ex.Message;}
+            joined=false;radioTransmission=false;
         }
         async Task LeaveChannel()
-        {
-            busy=true;
-            try{if(joined)await VivoxService.Instance.LeaveChannelAsync(channel);}
-            catch(Exception ex){Status="Voice disconnected: "+ex.Message;}
-            finally{joined=false;busy=false;}
-        }
+        {busy=true;try{await LeaveJoinedChannels();}finally{busy=false;}}
         public async Task Leave()
         {
             closing=true;

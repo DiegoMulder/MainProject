@@ -54,7 +54,7 @@ For same-machine development, the editor and standalone use separate authenticat
 3. Adjust maximum audible distance, conversational distance, falloff strength, and speech threshold as desired.
 4. Save the prefab and test with two configured peers, preferably separate machines and headphones.
 5. Confirm near conversation, increasing distance, turning/moving, muting, and leaving the round.
-6. Check the Options menu's microphone mute and input/output levels on both peers.
+6. Check the Options menu's microphone mute, Master and Voice / radio volumes on both peers.
 
 Vivox handles microphone capture, encoding, transport, and positional audio. The game supplies position/orientation updates. Alive and Downed players can talk; Dead/Escaped players leave positional voice.
 

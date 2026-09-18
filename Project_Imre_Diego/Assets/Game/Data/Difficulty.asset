@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea21b1f450b0e994aa66a75e48773ac7, type: 3}
+  m_Name: Difficulty
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.DifficultyConfig
+  profiles:
+  - name: Easy
+    targetRoomCount: 24
+    requiredObjectiveCount: 20
+  - name: Medium
+    targetRoomCount: 60
+    requiredObjectiveCount: 100
+  - name: Hard
+    targetRoomCount: 85
+    requiredObjectiveCount: 140
+  - name: Extreme
+    targetRoomCount: 120
+    requiredObjectiveCount: 200

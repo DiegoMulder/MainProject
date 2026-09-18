@@ -36,7 +36,7 @@ namespace SurvivalFP
             Status=MenuNotice;MenuNotice="";
             manager.OnServerStarted+=ServerStarted;manager.OnClientConnectedCallback+=Connected;manager.OnClientDisconnectCallback+=Disconnected;
             manager.NetworkConfig.ConnectionApproval=true;manager.ConnectionApprovalCallback=Approve;
-            AudioListener.volume=PlayerPrefs.GetFloat("SurvivalFP.Volume",.8f);
+            AudioListener.volume=LocalSettings.Master;
         }
         public void SetPlayerName(string value)
         {

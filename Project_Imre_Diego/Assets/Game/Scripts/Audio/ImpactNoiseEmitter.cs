@@ -36,7 +36,7 @@ namespace SurvivalFP
             if(!speaker)
             {
                 speaker=gameObject.AddComponent<AudioSource>();speaker.playOnAwake=false;
-                speaker.spatialBlend=1;speaker.minDistance=1;
+                speaker.spatialBlend=1;speaker.minDistance=1;AudioVolumeBus.RouteSfx(speaker);
             }
             speaker.maxDistance=Mathf.Max(1,maximumRadius);
             speaker.pitch=Mathf.Clamp(pitch,.1f,3f);

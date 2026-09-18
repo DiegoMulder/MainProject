@@ -18,7 +18,7 @@ namespace SurvivalFP
         {
             player=GetComponent<NetworkPlayer>();
             var audio=new GameObject("Local heartbeat");audio.transform.SetParent(transform,false);
-            speaker=audio.AddComponent<AudioSource>();speaker.playOnAwake=false;speaker.spatialBlend=0;
+            speaker=audio.AddComponent<AudioSource>();speaker.playOnAwake=false;speaker.spatialBlend=0;AudioVolumeBus.RouteSfx(speaker);
         }
         public float ProximityIntensity(Vector3 position)
         {
@@ -33,11 +33,11 @@ namespace SurvivalFP
                 (player.Life.Value==PlayerLife.Alive || player.Life.Value==PlayerLife.Downed);
             if(!listen) {Intensity=0;if(speaker.isPlaying)speaker.Stop();return;}
             Intensity=Mathf.Lerp(Intensity,ProximityIntensity(player.transform.position),1-Mathf.Exp(-smoothing*Time.unscaledDeltaTime));
-            speaker.volume=Mathf.Clamp01(volumeCurve.Evaluate(Intensity))*maximumVolume;
+            
             speaker.pitch=Mathf.Clamp(pitchCurve.Evaluate(Intensity),.5f,2f);
             if(Intensity<.01f){if(speaker.isPlaying)speaker.Stop();nextBeat=Time.unscaledTime;return;}
             if(heartbeatClip && Time.unscaledTime>=nextBeat)
-            {speaker.PlayOneShot(heartbeatClip);nextBeat=Time.unscaledTime+Interval;}
+            {speaker.PlayOneShot(heartbeatClip,Mathf.Clamp01(volumeCurve.Evaluate(Intensity))*maximumVolume);nextBeat=Time.unscaledTime+Interval;}
         }
         void OnDisable(){Intensity=0;if(speaker)speaker.Stop();}
     }

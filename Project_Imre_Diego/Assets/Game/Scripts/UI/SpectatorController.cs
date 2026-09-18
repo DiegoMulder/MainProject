@@ -16,7 +16,16 @@ namespace SurvivalFP
             if(!target || !target.Alive) target=living.FirstOrDefault();
             if(Keyboard.current!=null && Keyboard.current.tabKey.wasPressedThisFrame && living.Length>1)
                 target=living[(System.Array.IndexOf(living,target)+1)%living.Length];
-            if(target) player.View.SetPositionAndRotation(target.View.position,target.View.rotation);
+            if(target)
+            {
+                Vector3 focus=target.View.position;
+                Vector3 direction=(-target.View.forward+Vector3.up*.15f).normalized;
+                float distance=2.4f;
+                foreach(var hit in Physics.SphereCastAll(focus,.18f,direction,distance,~0,QueryTriggerInteraction.Ignore))
+                    if(!hit.transform.IsChildOf(target.transform) && !hit.transform.IsChildOf(player.transform))distance=Mathf.Min(distance,Mathf.Max(.1f,hit.distance-.05f));
+                player.View.SetPositionAndRotation(focus+direction*distance,Quaternion.LookRotation(-direction));
+                player.View.GetComponent<Camera>().fieldOfView=LocalSettings.Fov;
+            }
         }
     }
 }

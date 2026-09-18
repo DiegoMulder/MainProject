@@ -107,12 +107,12 @@ namespace SurvivalFP
             if (authority != null && authority.Active) { authority.InventoryAction(1); return; }
             var item = Current;
             if (!item) return;
-            item.Drop(view.position + view.forward * 1.5f + Vector3.down * .25f,
-                Quaternion.LookRotation(view.forward, Vector3.up), view.forward * 2.3f + Vector3.up * .8f);
+            if(!SafeItemDrop.TryFind(item,transform,view,out var position,out var rotation))return;
+            item.Drop(position,rotation,rotation*Vector3.forward*1.2f+Vector3.up*.5f);
             slots[currentSlot] = null;
             currentSlot = -1;
             for (int i = 0; i < slots.Length; i++)
                 if (slots[i]) { currentSlot = i; slots[i].SetHeld(handAnchor); break; }
         }
     }
-}
+}

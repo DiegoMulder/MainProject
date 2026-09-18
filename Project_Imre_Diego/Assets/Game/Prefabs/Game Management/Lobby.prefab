@@ -82,3 +82,9 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
+  difficultyConfig: {fileID: 11400000, guid: 2148a69924e937545b8efdeb1d3ee31a, type: 2}
+  Difficulty:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 1

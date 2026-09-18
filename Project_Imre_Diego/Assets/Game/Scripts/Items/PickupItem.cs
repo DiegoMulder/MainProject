@@ -18,10 +18,14 @@ namespace SurvivalFP
         Collider[] colliders;
         Renderer[] renderers;
         Rigidbody body;
+        Vector3 dropCenter;float dropRadius=.2f;
+        public float DropRadius=>dropRadius;
+        public Vector3 DropCenterOffset(Quaternion rotation)=>rotation*dropCenter;
         void Awake()
         {
             colliders = GetComponentsInChildren<Collider>();
             renderers = GetComponentsInChildren<Renderer>(true);
+            if(colliders.Length>0){var bounds=colliders[0].bounds;foreach(var c in colliders)if(!c.isTrigger)bounds.Encapsulate(c.bounds);dropRadius=Mathf.Max(.06f,bounds.extents.magnitude)+.035f;dropCenter=Quaternion.Inverse(transform.rotation)*(bounds.center-transform.position);}
             body = GetComponent<Rigidbody>();
             if (!body) body = gameObject.AddComponent<Rigidbody>();
             body.interpolation = RigidbodyInterpolation.Interpolate;

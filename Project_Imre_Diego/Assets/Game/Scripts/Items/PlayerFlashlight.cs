@@ -87,6 +87,7 @@ namespace SurvivalFP
             if (!toggleAudio) toggleAudio = GetComponent<AudioSource>();
             toggleAudio.playOnAwake = false;
             toggleAudio.spatialBlend = GetComponent<NetworkPickup>() ? 1f : 0f;
+            AudioVolumeBus.RouteSfx(toggleAudio);
             toggleAudio.minDistance = 1f; toggleAudio.maxDistance = 8f;
             if (!toggleSound) toggleSound = Resources.Load<AudioClip>("Flashlight/switch_002");
             IsOn = startOn;
