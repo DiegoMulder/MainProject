@@ -14,7 +14,7 @@ namespace SurvivalFP
             NetworkPlayer nearest=null; float best=sightDistance;
             foreach(var player in NetworkPlayer.Players)
             {
-                if(!player || !player.Alive) continue;
+                if(!EnemyTargetRules.CanTarget(player)) continue;
                 Vector3 offset=player.View.position-Eye;
                 if(offset.magnitude>best || Vector3.Angle(transform.forward,offset)>fieldOfView*.5f || !HasLineOfSight(player)) continue;
                 nearest=player; best=offset.magnitude;
@@ -23,14 +23,14 @@ namespace SurvivalFP
         }
         public bool CanSee(NetworkPlayer player)
         {
-            if(!player || !player.Alive)return false;
+            if(!EnemyTargetRules.CanTarget(player))return false;
             var delta=player.View.position-Eye;
             return delta.magnitude<=sightDistance && Vector3.Angle(transform.forward,delta)<=fieldOfView*.5f && HasLineOfSight(player);
         }
         public Vector3 Eye=>eyes?eyes.position:transform.position+Vector3.up*1.7f;
         public bool HasLineOfSight(NetworkPlayer player)
         {
-            if(!player || !player.Alive || player.IsHidden)return false;
+            if(!EnemyTargetRules.CanTarget(player) || player.IsHidden)return false;
             Vector3 delta=player.View.position-Eye;
             var hits=Physics.RaycastAll(Eye,delta.normalized,delta.magnitude,obstacles,QueryTriggerInteraction.Collide);
             Array.Sort(hits,(a,b)=>a.distance.CompareTo(b.distance));

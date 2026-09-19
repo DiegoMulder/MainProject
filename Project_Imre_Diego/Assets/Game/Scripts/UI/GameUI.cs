@@ -58,9 +58,11 @@ namespace SurvivalFP
                     GUILayout.Label("LOBBY  /  "+session.JoinCode,title);
                     GUILayout.Label("Players",text);
                     foreach(var member in roster.Members)GUILayout.Label(member.name.ToString(),text);
-                    GUILayout.Space(8);GUILayout.Label("DIFFICULTY",text);
-                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(8);
                     GUI.enabled=NetworkManager.Singleton.IsServer && !roster.Started.Value && !session.Starting;
+                    int mapCount=roster.maps==null?0:roster.maps.Length;
+                    if(mapCount>0){GUILayout.BeginHorizontal();GUILayout.Label("Map: "+roster.MapName,text);if(GUILayout.Button("Change map",GUILayout.Width(130)))roster.SelectMap((roster.Map.Value+1)%mapCount);GUILayout.EndHorizontal();}
+                    GUILayout.Label("DIFFICULTY",text);GUILayout.BeginHorizontal();
                     int count=roster.difficultyConfig?roster.difficultyConfig.profiles.Length:4;
                     if(GUILayout.Button("<",GUILayout.Width(48),GUILayout.Height(34)))roster.SelectDifficulty((roster.Difficulty.Value+count-1)%count);
                     GUILayout.Label(roster.DifficultyName,text);

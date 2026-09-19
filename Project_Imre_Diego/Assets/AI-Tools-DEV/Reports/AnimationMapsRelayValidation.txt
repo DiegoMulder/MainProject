@@ -1,0 +1,95 @@
+PASS two Relay peers connected
+PASS both lobby names visible
+PASS matching network protocol and prefab configuration
+PASS map selection replicated 0
+PASS client cannot change map
+PASS same generated map on both peers
+PASS only selected map structural assets used
+PASS shared difficulty drives map objectives and enemies
+PASS owner body hidden, other character visible
+PASS one equipped item uses remote hand and local camera anchors
+PASS imported hand scale does not enlarge equipped item
+PASS idle is not forced into downed state
+PASS walking animation on host and owning client
+PASS sprint raises Blend
+PASS crouched movement drives Crouch
+PASS standing exits crouch
+PASS genuine client jump synchronizes
+PASS landing clears jump state
+PASS stationary crouch uses idle pose on remote client
+PASS speech state and facial layer replicate
+PASS talking while walking preserves locomotion
+PASS talking while crouching preserves posture
+PASS speech release restores base face
+PASS radio toggles with assigned ON/OFF cues
+PASS slot switch keeps radio on right hand
+PASS server starts kill on alive player
+PASS busy enemy rejects second victim
+PASS victim lock and kill state replicate
+PASS victim camera follows animated enemy head
+PASS kill presentation precedes downing and end UI
+PASS full four-second animation completes before downing
+PASS post-kill stagger starts
+PASS downed player excluded from vision and attacks
+PASS downed animation synchronized
+PASS crawl speed drives Down blend
+PASS revive succeeds
+PASS revive restores locomotion
+PASS stagger ends without hardcoded kill duration
+PASS final survivor grabbed
+PASS end screen stays hidden after animation until delay
+PASS end screen not shown early
+PASS five-second post-animation defeat delay
+PASS client has no runtime errors
+PASS both peers return to lobby with world cleanup
+PASS map selection persists between rounds
+PASS map selection replicated 1
+PASS client cannot change map
+PASS same generated map on both peers
+PASS only selected map structural assets used
+PASS shared difficulty drives map objectives and enemies
+PASS owner body hidden, other character visible
+PASS one equipped item uses remote hand and local camera anchors
+PASS imported hand scale does not enlarge equipped item
+PASS idle is not forced into downed state
+PASS walking animation on host and owning client
+PASS sprint raises Blend
+PASS crouched movement drives Crouch
+PASS standing exits crouch
+PASS genuine client jump synchronizes
+PASS landing clears jump state
+PASS stationary crouch uses idle pose on remote client
+PASS speech state and facial layer replicate
+PASS talking while walking preserves locomotion
+PASS talking while crouching preserves posture
+PASS speech release restores base face
+PASS radio toggles with assigned ON/OFF cues
+PASS slot switch keeps radio on right hand
+PASS server starts kill on alive player
+PASS busy enemy rejects second victim
+PASS victim lock and kill state replicate
+PASS victim camera follows animated enemy head
+PASS kill presentation precedes downing and end UI
+PASS other enemy remains independent
+PASS full four-second animation completes before downing
+PASS post-kill stagger starts
+PASS downed player excluded from vision and attacks
+PASS downed animation synchronized
+PASS crawl speed drives Down blend
+PASS revive succeeds
+PASS revive restores locomotion
+PASS stagger ends without hardcoded kill duration
+PASS final survivor grabbed
+PASS end screen stays hidden after animation until delay
+PASS end screen not shown early
+PASS five-second post-animation defeat delay
+PASS client has no runtime errors
+PASS both peers return to lobby with world cleanup
+PASS map selection persists between rounds
+DONE 88 passed / 0 failed
+
+Test setup: Unity Editor host and Windows Development player client, real Relay connection. Mansion/Easy followed by Slaughterhouse/Extreme in the same lobby.
+Editor Error/Exception console entries after final verification: 0. Client runtime error snapshot: empty.
+Speech/VAD state was simulated for deterministic animation checks. Live Vivox participant tap and receiver filters were inspected separately; a two-person microphone listening test is still needed for perceived sound quality.
+Build: succeeded, zero errors; 492 Unity package shader warnings on the rebuilt player. See AnimationMapsBuild.txt.
+Both peers must use the new build (network protocol 2).

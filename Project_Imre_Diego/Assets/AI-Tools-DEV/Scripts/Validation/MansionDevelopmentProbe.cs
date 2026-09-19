@@ -8,13 +8,16 @@ using UnityEngine;
 namespace SurvivalFP
 {
     // Opt-in local integration harness. Never instantiated in a non-development player.
+    [DefaultExecutionOrder(600)]
     public sealed class MansionDevelopmentProbe : MonoBehaviour
     {
         [Serializable] public class Command { public int id; public string action; public string target; public int slot; }
+        [Serializable] public class AnimationSnapshot
+        {public ulong owner;public float blend,crouch,down,talkingWeight,killCameraError=-1;public bool jump,talking,isDown,isCrouching,bodyHidden,grabbed;public string itemParent;public int state;public Vector3 cameraPos;}
         [Serializable] public class Snapshot
         {
             public string phase,layout,life,prompt,error,lobbyCode,status,spectating;
-            public string[] names;
+            public string[] names;public int map;public string[] roomNames,enemyStates;public AnimationSnapshot[] animations;
             public bool matchStarted;
             public float bleedOut;
             public int seed,rooms,props,players,slot,command,activeCameras,enemies; public string configHash;
@@ -47,6 +50,12 @@ namespace SurvivalFP
         }
         void Log(string message,string trace,LogType type) { if(type==LogType.Exception || type==LogType.Error) lastError=message+"\n"+trace; }
         void OnDestroy()=>Application.logMessageReceived-=Log;
+        float CameraError(NetworkPlayer p)
+        {
+            if(!p.IsOwner||!p.IsGrabbed||!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(p.GrabbedBy.Value,out var enemy))return -1;
+            var sequence=enemy.GetComponent<EnemyKillSequence>();
+            return sequence&&sequence.killCameraPoint?Vector3.Distance(p.View.position,sequence.killCameraPoint.position):-1;
+        }
         void Update()
         {
             if(string.IsNullOrEmpty(directory)) return;
@@ -64,6 +73,8 @@ namespace SurvivalFP
                         switch(command.action)
                         {
                             case "voicepause":GameSession.Instance.GetComponent<ProximityVoice>().enabled=false;break;
+                            case "map":LobbyRoster.Instance.SelectMap(command.slot);break;
+                            case "talk":player.GetComponent<PlayerAnimationDriver>().ReportTalking(command.slot!=0);break;
                             case "start":GameSession.Instance.StartMatch();break;
                             case "difficulty":LobbyRoster.Instance.SelectDifficulty(command.slot);break;
                             case "radio":player.GetComponent<PlayerRadio>().Report(command.slot!=0,command.slot==2);break;
@@ -95,11 +106,18 @@ namespace SurvivalFP
                     catch(Exception ex){lastError=ex.ToString();}
                 }
             }
+        }
+        void LateUpdate()
+        {
+            if(string.IsNullOrEmpty(directory))return;
+            var player=NetworkPlayer.Local;
             if(Time.unscaledTime<nextSnapshot) return;nextSnapshot=Time.unscaledTime+.2f;
             var round=RoundManager.Instance;
             var snapshot=new Snapshot {scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene().name,immediateDistance=immediateDistance,phase=round?round.Phase.Value.ToString():"Menu",time=Time.time,timeScale=Time.timeScale,command=handled,error=lastError,players=NetworkPlayer.Players.Count,activeCameras=Camera.allCamerasCount};
             snapshot.enemies=EnemyController.Enemies.Count;snapshot.configHash=NetworkManager.Singleton?NetworkManager.Singleton.NetworkConfig.GetConfig(false).ToString():"";
             var lobby=LobbyRoster.Instance;var names=new System.Collections.Generic.List<string>();if(lobby)foreach(var member in lobby.Members)names.Add(member.name.ToString());snapshot.names=names.ToArray();
+            snapshot.map=lobby?lobby.Map.Value:-1;snapshot.roomNames=round?round.World.Rooms.Select(r=>r.name).ToArray():Array.Empty<string>();snapshot.enemyStates=EnemyController.Enemies.Select(e=>e.State.Value.ToString()).ToArray();
+            snapshot.animations=NetworkPlayer.Players.Where(p=>p&&p.IsSpawned&&p.GetComponent<PlayerAnimationDriver>()).Select(p=>{var a=p.GetComponent<PlayerAnimationDriver>().animator;return new AnimationSnapshot{owner=p.OwnerClientId,blend=a.GetFloat("Blend"),crouch=a.GetFloat("Crouch"),down=a.GetFloat("Down"),talkingWeight=a.GetLayerWeight(1),jump=a.GetBool("Jump"),talking=a.GetBool("IsTalking"),isDown=a.GetBool("IsDown"),isCrouching=a.GetBool("IsCrouching"),grabbed=p.IsGrabbed,itemParent=p.Inventory.Current&&p.Inventory.Current.transform.parent?p.Inventory.Current.transform.parent.name:"",state=a.GetCurrentAnimatorStateInfo(0).fullPathHash,cameraPos=p.View.position,killCameraError=CameraError(p),bodyHidden=p.visualBody.GetComponentsInChildren<Renderer>().Where(r=>!r.GetComponentInParent<PickupItem>()).All(r=>r.shadowCastingMode==UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly)};}).ToArray();
             snapshot.difficulty=lobby?lobby.Difficulty.Value:-1;snapshot.requiredObjectives=round?round.RequiredObjectives.Value:0;
             snapshot.voiceStatus=GameSession.Instance?GameSession.Instance.GetComponent<ProximityVoice>().Status:"";
             snapshot.matchStarted=lobby && lobby.Started.Value;snapshot.lobbyCode=GameSession.Instance?GameSession.Instance.JoinCode:"";snapshot.status=GameSession.Instance?GameSession.Instance.Status:"";
@@ -117,7 +135,7 @@ namespace SurvivalFP
                 var psx=player.View.GetComponent<PsxCameraPresentation>();if(psx){snapshot.internalWidth=psx.InternalSize.x;snapshot.internalHeight=psx.InternalSize.y;}
                 var radio=player.GetComponent<PlayerRadio>();snapshot.radioOn=radio && radio.ActiveRadio;snapshot.radioTransmitting=radio && radio.Transmitting.Value;
                 snapshot.localBodyHidden=player.visualBody && player.visualBody.GetComponentsInChildren<Renderer>().All(r=>r.shadowCastingMode==UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly);snapshot.fov=player.View.GetComponent<Camera>().fieldOfView;
-                snapshot.bodyVisibility=NetworkPlayer.Players.Where(p=>p && p.visualBody).Select(p=>p.OwnerClientId+":"+p.visualBody.GetComponent<Renderer>().shadowCastingMode).ToArray();
+                snapshot.bodyVisibility=NetworkPlayer.Players.Where(p=>p && p.visualBody).Select(p=>p.OwnerClientId+":"+p.visualBody.GetComponentInChildren<Renderer>().shadowCastingMode).ToArray();
                 snapshot.life=player.Life.Value.ToString();snapshot.position=player.transform.position;snapshot.paused=player.Paused;snapshot.slot=player.Inventory.CurrentSlot;snapshot.stamina=player.Stamina.Value;
                 snapshot.bleedOut=player.BleedOutRemaining;var spectator=player.GetComponent<SpectatorController>();snapshot.spectating=spectator.Target?spectator.Target.DisplayName:"";
                 snapshot.prompt=player.Interaction.CurrentPrompt;

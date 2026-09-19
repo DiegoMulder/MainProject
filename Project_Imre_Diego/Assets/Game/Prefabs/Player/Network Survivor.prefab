@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &402826598250364695
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1588134418378279400}
+  m_Layer: 0
+  m_Name: Right Hand Item Hold
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1588134418378279400
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 402826598250364695}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.5, y: -0.4999999, z: -0.50000006, w: -0.50000006}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.010000001, y: 0.010000001, z: 0.010000003}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6866693679631504495}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &900945326557824727
 GameObject:
   m_ObjectHideFlags: 0
@@ -48,7 +79,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 900945326557824727}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -459,6 +490,8 @@ GameObject:
   - component: {fileID: 307631787094927711}
   - component: {fileID: 2535529698226877296}
   - component: {fileID: 1698993392958605915}
+  - component: {fileID: 6255894680365797756}
+  - component: {fileID: 3230071029491776850}
   m_Layer: 0
   m_Name: Network Survivor
   m_TagString: Untagged
@@ -634,6 +667,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerInventory
   handAnchor: {fileID: 5625438275474778116}
+  rightHandAnchor: {fileID: 1588134418378279400}
   playerCamera: {fileID: 1949975936791561599}
   pickupDistance: 5
   dropForwardDistance: 0.9
@@ -765,6 +799,11 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
+  GrabbedBy:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 18446744073709551615
   BleedOutAt:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
@@ -819,7 +858,7 @@ MonoBehaviour:
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 1
   downedCrawlSpeed: 0.65
-  visualBody: {fileID: 8317310669251154405}
+  visualBody: {fileID: 2311623557733311405}
 --- !u!114 &990725376954748076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1126,7 +1165,64 @@ MonoBehaviour:
       NameHash: 2107543273
       Synchronize: 1
       ParameterType: 4
+    - name: Jump
+      NameHash: 125937960
+      Synchronize: 1
+      ParameterType: 4
+    - name: Crouch
+      NameHash: -2015693266
+      Synchronize: 1
+      ParameterType: 1
+    - name: IsCrouching
+      NameHash: -1154928320
+      Synchronize: 1
+      ParameterType: 4
+    - name: IsDown
+      NameHash: -1167163391
+      Synchronize: 1
+      ParameterType: 4
+    - name: Down
+      NameHash: -1127399675
+      Synchronize: 1
+      ParameterType: 1
   AnimatorParametersExpanded: 0
+--- !u!114 &6255894680365797756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7000563005437309295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b73fae087c5cdcf4f9adb67514af5b85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerAnimationDriver
+  ShowTopMostFoldoutHeaderGroup: 1
+  animator: {fileID: 7093932193381512731}
+  damping: 0.12
+  Jumping:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  Talking:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+--- !u!114 &3230071029491776850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7000563005437309295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05aa0bae3d65ae2409c9728faa99bddd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerKillCamera
 --- !u!1 &8239911441503884807
 GameObject:
   m_ObjectHideFlags: 0
@@ -1376,12 +1472,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 6136718950469490534, guid: 92330c6f8cd6efe4bb6469d0c664f8ef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1588134418378279400}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 92330c6f8cd6efe4bb6469d0c664f8ef, type: 3}
 --- !u!4 &2311623557733311405 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3059612908475457700, guid: 92330c6f8cd6efe4bb6469d0c664f8ef, type: 3}
+  m_PrefabInstance: {fileID: 747989901038797577}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6866693679631504495 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6136718950469490534, guid: 92330c6f8cd6efe4bb6469d0c664f8ef, type: 3}
   m_PrefabInstance: {fileID: 747989901038797577}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &7093932193381512731 stripped

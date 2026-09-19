@@ -10,7 +10,9 @@ namespace SurvivalFP
         Roam,
         Investigate,
         Chase,
-        Search
+        Search,
+        Kill,
+        Stagger
     }
 
     [RequireComponent(typeof(NavMeshAgent), typeof(EnemyPerception))]
@@ -67,10 +69,13 @@ namespace SurvivalFP
         private System.Random rng;
 
         private bool targetVisible;
+        EnemyKillSequence killSequence;
+        public void ClearPlayerMemory(){Target=null;knownPlayer=null;knownCloset=null;targetVisible=false;knowledgeUntil=0;LastKnownPosition=transform.position;}
 
         public override void OnNetworkSpawn()
         {
             Enemies.Add(this);
+            killSequence=GetComponent<EnemyKillSequence>();
 
             agent = GetComponent<NavMeshAgent>();
             perception = GetComponent<EnemyPerception>();
@@ -105,7 +110,7 @@ namespace SurvivalFP
 
         private void SeeEntry(NetworkPlayer player, ClosetHideout closet)
         {
-            if (!IsServer || !perception.CanSee(player))
+            if (!IsServer || (killSequence&&killSequence.Busy) || !perception.CanSee(player))
                 return;
 
             knownPlayer = player;
@@ -122,7 +127,7 @@ namespace SurvivalFP
 
         private void Hear(GameplayNoise noise)
         {
-            if (!IsServer ||
+            if (!IsServer || (killSequence&&killSequence.Busy) ||
                 !RoundManager.Instance ||
                 RoundManager.Instance.Phase.Value != RoundPhase.Playing)
                 return;
@@ -167,7 +172,7 @@ namespace SurvivalFP
 
             Go(LastKnownPosition);
 
-            if (source && source.Alive)
+            if (EnemyTargetRules.CanTarget(source))
             {
                 knownPlayer = source;
                 knowledgeUntil = Time.time + memoryDuration;
@@ -192,9 +197,11 @@ namespace SurvivalFP
                 return;
             }
 
+            if(killSequence&&killSequence.Busy){agent.isStopped=true;agent.velocity=Vector3.zero;networkBlend.Value=0;return;}
+            if(knownPlayer&&!EnemyTargetRules.CanTarget(knownPlayer)){ClearPlayerMemory();Change(EnemyState.Roam,12);Go(RoomDestination());}
             agent.isStopped = false;
 
-            if (Target && !Target.Alive)
+            if (Target && !EnemyTargetRules.CanTarget(Target))
             {
                 Target = null;
                 knownPlayer = null;
@@ -284,7 +291,7 @@ namespace SurvivalFP
 
                 case EnemyState.Chase:
                     {
-                        if (targetVisible && Target && Target.Alive)
+                        if (targetVisible && EnemyTargetRules.CanTarget(Target))
                         {
                             LastKnownPosition = Target.transform.position;
 
@@ -296,15 +303,8 @@ namespace SurvivalFP
                                 ) <= killDistance &&
                                 perception.HasLineOfSight(Target))
                             {
-                                Target.Down();
-
-                                Target = null;
-                                knownPlayer = null;
-                                knownCloset = null;
-                                targetVisible = false;
-
-                                Change(EnemyState.Search, searchDuration);
-                                nextSearchPoint = 0f;
+                                if(killSequence)killSequence.TryBegin(Target);
+                                return;
                             }
 
                             break;
@@ -358,7 +358,7 @@ namespace SurvivalFP
         private void TryCatchRememberedPlayer()
         {
             if (!knownPlayer ||
-                !knownPlayer.Alive ||
+                !EnemyTargetRules.CanTarget(knownPlayer) ||
                 !knownCloset ||
                 Time.time > knowledgeUntil ||
                 knownPlayer.HiddenCloset != knownCloset ||
@@ -386,14 +386,12 @@ namespace SurvivalFP
                     return;
             }
 
-            if (knownCloset.Catch(knownPlayer))
+            if (knownCloset.TryExit(knownPlayer) && killSequence && killSequence.TryBegin(knownPlayer))
             {
                 knownPlayer = null;
                 knownCloset = null;
                 Target = null;
 
-                Change(EnemyState.Search, searchDuration);
-                nextSearchPoint = 0f;
             }
         }
 

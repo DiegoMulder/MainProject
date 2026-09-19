@@ -13,6 +13,8 @@ namespace SurvivalFP
         public static readonly List<NetworkPlayer> Players = new();
         public static NetworkPlayer Local => Players.FirstOrDefault(p => p && p.IsOwner);
         public NetworkVariable<PlayerLife> Life = new(PlayerLife.Alive);
+        public NetworkVariable<ulong> GrabbedBy=new(ulong.MaxValue);
+        public bool IsGrabbed=>GrabbedBy.Value!=ulong.MaxValue;
         public NetworkVariable<double> BleedOutAt = new(0);
         public NetworkVariable<ulong> HiddenClosetId=new(ClosetHideout.Empty);
         public bool IsHidden=>HiddenClosetId.Value!=ClosetHideout.Empty;
@@ -32,7 +34,7 @@ namespace SurvivalFP
         public NetworkVariable<int> Selection = new(-1), Gait = new(0);
         public NetworkVariable<bool> Grounded = new(true);
         public bool Active => IsSpawned;
-        public bool CanMove=>IsSpawned && (Life.Value==PlayerLife.Alive || Life.Value==PlayerLife.Downed) && !IsHidden
+        public bool CanMove=>IsSpawned && (Life.Value==PlayerLife.Alive || Life.Value==PlayerLife.Downed) && !IsHidden && !IsGrabbed
             && RoundManager.Instance && RoundManager.Instance.Phase.Value==RoundPhase.Playing;
         [Header("Downed posture")]
         [Min(0)] public float downedCrawlSpeed=.65f;
@@ -94,7 +96,7 @@ namespace SurvivalFP
             bool alive = value == PlayerLife.Alive;
             bool downed=value==PlayerLife.Downed;pending=default;
             Motor.SetDowned(downed,downedCrawlSpeed);
-            if(visualBody){visualBody.localPosition=downed?new Vector3(0,.3f,0):bodyPosition;
+            if(visualBody && !GetComponent<PlayerAnimationDriver>()){visualBody.localPosition=downed?new Vector3(0,.3f,0):bodyPosition;
                 visualBody.localRotation=downed?Quaternion.Euler(90,0,0)*bodyRotation:bodyRotation;}
             Controller.InputBlocked = (!alive && !downed) || paused;
             GetComponent<CharacterController>().enabled = (IsServer || IsOwner) && (alive || downed);
@@ -127,7 +129,7 @@ namespace SurvivalFP
         {
             if(!visualBody)return;
             foreach(var renderer in visualBody.GetComponentsInChildren<Renderer>(true))
-                renderer.shadowCastingMode=IsOwner && (Alive || Life.Value==PlayerLife.Downed)?ShadowCastingMode.ShadowsOnly:ShadowCastingMode.On;
+                if(!renderer.GetComponentInParent<PickupItem>())renderer.shadowCastingMode=IsOwner && (Alive || Life.Value==PlayerLife.Downed)?ShadowCastingMode.ShadowsOnly:ShadowCastingMode.On;
         }
         void LateUpdate()
         {
@@ -202,7 +204,7 @@ namespace SurvivalFP
             if (!hit || hit.GetComponentInParent<NetworkObject>() != target || !(hit is IInteractable interactable) || !interactable.CanInteract(Interaction)) return;
             interactable.Interact(Interaction);
         }
-        bool CanAct() => Alive && RoundManager.Instance && RoundManager.Instance.Phase.Value == RoundPhase.Playing;
+        bool CanAct() => Alive && !IsGrabbed && RoundManager.Instance && RoundManager.Instance.Phase.Value == RoundPhase.Playing;
         public void InventoryAction(int action, int slot = -1) { if (IsOwner && Alive && !paused && !IsHidden) InventoryRpc(action,slot); }
         [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Owner)]
         void InventoryRpc(int action, int slot)

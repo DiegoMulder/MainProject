@@ -15,6 +15,15 @@ namespace SurvivalFP
         public static RoundManager Instance {get;private set;}
         public MansionSettings settings;
         MansionSettings runtimeSettings;
+        public MapDefinition[] maps;
+        public NetworkVariable<int> MapIndex=new(0);
+        [Min(0)] public float finalKillGameOverDelay=5;
+        public NetworkVariable<double> EndScreenAt=new(0);
+        int activeKills;
+        public void BeginKill(){if(IsServer)activeKills++;}
+        public void EndKill(bool completed){if(!IsServer)return;activeKills=Mathf.Max(0,activeKills-1);if(completed)EndScreenAt.Value=NetworkManager.ServerTime.Time+finalKillGameOverDelay;EvaluateRound();}
+        void Update(){if(IsServer&&EndScreenAt.Value>0&&NetworkManager.ServerTime.Time>=EndScreenAt.Value)EvaluateRound();}
+        void SelectContent(){if(maps!=null&&maps.Length>0){var map=maps[Mathf.Clamp(MapIndex.Value,0,maps.Length-1)];settings=map.content;RenderSettings.ambientLight=map.ambientColor;}}
         public NetworkVariable<int> Difficulty=new(1),TargetRooms=new(0),RequiredObjectives=new(0);
         public NetworkVariable<int> Seed=new(0),ExitRoom=new(0),ExitConnector=new(0);
         public NetworkVariable<bool> Ready=new(false);
@@ -31,7 +40,7 @@ namespace SurvivalFP
         public override void OnNetworkSpawn()
         {
             Instance=this; Ready.OnValueChanged+=OnReady;
-            if(IsServer){runtimeSettings=Instantiate(settings);settings=runtimeSettings;Difficulty.Value=LobbyRoster.Instance?LobbyRoster.Instance.Difficulty.Value:1;
+            if(IsServer){MapIndex.Value=LobbyRoster.Instance?LobbyRoster.Instance.Map.Value:0;SelectContent();runtimeSettings=Instantiate(settings);settings=runtimeSettings;Difficulty.Value=LobbyRoster.Instance?LobbyRoster.Instance.Difficulty.Value:1;
                 if(settings.difficultyConfig)settings.difficultyConfig.Apply(settings,Difficulty.Value);TargetRooms.Value=settings.roomCount;RequiredObjectives.Value=settings.objectiveCount;}
             if(IsServer) StartCoroutine(Setup()); else if(Ready.Value) StartCoroutine(BuildClientWorld());
         }
@@ -43,7 +52,7 @@ namespace SurvivalFP
             // Wait until the complete manifest has arrived, then construct exactly once.
             yield return null;
             while(IsSpawned && Ready.Value && (ExpectedRooms.Value<4 || Layout.Count!=ExpectedRooms.Value || Connections.Count!=ExpectedRooms.Value-1 || Props.Count!=ExpectedProps.Value))yield return null;
-            if(IsSpawned && Ready.Value && !World.Built)World.Build(this,false);
+            if(IsSpawned && Ready.Value && !World.Built){SelectContent();World.Build(this,false);}
         }
         IEnumerator Setup()
         {
@@ -142,7 +151,9 @@ namespace SurvivalFP
         {
             if(!IsServer || Phase.Value!=RoundPhase.Playing) return;
             var participants=NetworkPlayer.Players.Where(p=>p && p.IsSpawned).ToList();
-            if(participants.Any(p=>p.Alive)) return;
+            if(participants.Any(p=>p.Alive)) {EndScreenAt.Value=0;return;}
+            if(activeKills>0||NetworkManager.ServerTime.Time<EndScreenAt.Value)return;
+            EndScreenAt.Value=0;
             Phase.Value=participants.Any(p=>p.Life.Value==PlayerLife.Escaped)?RoundPhase.Won:RoundPhase.Lost;
             // With no living reviver, waiting five minutes cannot change the result.
             foreach(var player in participants.Where(p=>p.Life.Value==PlayerLife.Downed)) player.Kill();

@@ -55,6 +55,8 @@ namespace SurvivalFP
         public float CrouchFraction => Mathf.InverseLerp(standingHeight, crouchingHeight, Height);
         public Vector3 HorizontalVelocity => horizontalVelocity;
         public float ActualSpeed { get; private set; }
+        public float AnimationRunSpeed=>sprintSpeed;
+        public float AnimationCrouchSpeed=>crouchSpeed;
         public float VerticalSpeed => verticalSpeed;
         public float SpeedFraction => Mathf.Clamp01(ActualSpeed / walkSpeed);
         public event Action<float> Landed;

@@ -160,6 +160,7 @@ GameObject:
   - component: {fileID: 7755158370437404988}
   - component: {fileID: 5424273498486042716}
   - component: {fileID: 4124200906359927453}
+  - component: {fileID: 8027595216068101059}
   m_Layer: 0
   m_Name: Mansion Stalker
   m_TagString: Untagged
@@ -321,12 +322,12 @@ MonoBehaviour:
   searchDuration: 9
   idleDuration: 2
   memoryDuration: 10
+  animator: {fileID: 7694223965447825364}
   State:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
-  animator: {fileID: 7694223965447825364}
 --- !u!114 &4124200906359927453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -343,14 +344,7 @@ MonoBehaviour:
   NetworkAnimatorExpanded: 0
   AuthorityMode: 0
   m_Animator: {fileID: 7694223965447825364}
-  TransitionStateInfoList:
-  - IsCrossFadeExit: 0
-    Layer: 0
-    OriginatingState: -453240694
-    DestinationState: 1850155996
-    TransitionDuration: 0
-    TriggerNameHash: -1491338921
-    TransitionIndex: 0
+  TransitionStateInfoList: []
   AnimatorParameterEntries:
     ParameterEntries:
     - name: Blend
@@ -362,6 +356,59 @@ MonoBehaviour:
       Synchronize: 1
       ParameterType: 9
   AnimatorParametersExpanded: 0
+--- !u!114 &8027595216068101059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4913353664386796471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07f0be04a979f524ea82ea19813b557a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.EnemyKillSequence
+  ShowTopMostFoldoutHeaderGroup: 1
+  animator: {fileID: 7694223965447825364}
+  killCameraPoint: {fileID: 8766723845603639118}
+  postKillStaggerDuration: 2
+  maximumGrabDistance: 2
+  Victim:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 18446744073709551615
+--- !u!1 &7432319880728549369
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8766723845603639118}
+  m_Layer: 0
+  m_Name: KillCameraPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8766723845603639118
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7432319880728549369}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7093387, y: 0.21702956, z: -0.5783299, w: -0.33951625}
+  m_LocalPosition: {x: -0.2804558, y: 0.3052888, z: 0.041886073}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8476186035472391091}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5569984598344740459
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -416,7 +463,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4102208826378909144, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8766723845603639118}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
 --- !u!4 &1460912369894446707 stripped
@@ -427,5 +477,10 @@ Transform:
 --- !u!95 &7694223965447825364 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 2849600529329064383, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+  m_PrefabInstance: {fileID: 5569984598344740459}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8476186035472391091 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4102208826378909144, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
   m_PrefabInstance: {fileID: 5569984598344740459}
   m_PrefabAsset: {fileID: 0}

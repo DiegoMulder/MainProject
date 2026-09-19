@@ -12,6 +12,9 @@ namespace SurvivalFP
         [Min(1)] public int conversationalDistance=3;
         [Range(.1f,4)] public float falloff=1;
         [Range(0,1)] public float speechThreshold=.01f;
+        [Header("Radio receiver filter")]
+        public float radioHighPass=350,radioLowPass=3000;
+        [Range(0,1)] public float radioDistortion=.18f;
         public bool Muted=>LocalSettings.Muted;
         public string Status {get;private set;}="Voice connects when the match starts.";
         public bool Connected=>joined;
@@ -25,7 +28,14 @@ namespace SurvivalFP
         void ParticipantAdded(VivoxParticipant participant)
         {
             // New radio participants are inaudible until their server state is known.
-            if(!participant.IsSelf && participant.ChannelName==radioChannel)participant.MutePlayerLocally();
+            if(!participant.IsSelf && participant.ChannelName==radioChannel)
+            {
+                var tap=participant.CreateVivoxParticipantTap("Radio voice receiver",true);
+                if(tap){tap.transform.SetParent(transform);var audio=tap.GetComponent<AudioSource>();audio.spatialBlend=0;audio.volume=LocalSettings.Voice;audio.mute=true;
+                    tap.AddComponent<AudioHighPassFilter>().cutoffFrequency=radioHighPass;
+                    tap.AddComponent<AudioLowPassFilter>().cutoffFrequency=radioLowPass;
+                    tap.AddComponent<AudioDistortionFilter>().distortionLevel=radioDistortion;}
+            }
         }
         void ApplyVolumes()
         {
@@ -73,6 +83,7 @@ namespace SurvivalFP
                     speaking=!Muted && self!=null && self.SpeechDetected && self.AudioEnergy>=speechThreshold;
                 }
                 radio?.Report(transmit,speaking);
+                player.GetComponent<PlayerAnimationDriver>()?.ReportTalking(speaking);
                 if(speaking && !transmit)player.ReportSpeech();
                 foreach(var pair in voice.ActiveChannels)
                 {
@@ -84,7 +95,8 @@ namespace SurvivalFP
                             p.GetComponent<PlayerRadio>().VoiceId.Value.ToString()==participant.PlayerId);
                         bool hearRadio=PlayerRadio.ReceiveRadio(player,sender);
                         bool alive=sender && (sender.Alive||sender.Life.Value==PlayerLife.Downed);
-                        bool mute=pair.Key==radioChannel?!hearRadio:(!alive||hearRadio);
+                        if(pair.Key==radioChannel){var output=participant.ParticipantTapAudioSource;if(output){output.mute=!hearRadio;output.volume=LocalSettings.Voice;}continue;}
+                        bool mute=!alive||hearRadio;
                         if(mute && !participant.IsMuted)participant.MutePlayerLocally();
                         else if(!mute && participant.IsMuted)participant.UnmutePlayerLocally();
                     }

@@ -1,0 +1,14 @@
+Blend Float
+IsTalking Bool
+Jump Bool
+Crouch Float
+IsCrouching Bool
+IsDown Bool
+Down Float
+All locomotion transitions conditional: True
+Talking mask only facial transforms: True active=19
+Animator body root: Business_Man
+Remote hand: Right Hand Item Hold
+Slaughterhouse content: Assets/Game/Data/Maps/Slaughterhouse Content.asset
+Separate Slaughterhouse prefabs: 14
+No original structural prefab dependencies: True

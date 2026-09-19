@@ -11,6 +11,9 @@ namespace SurvivalFP
         [SerializeField] MonoBehaviour primaryUse;
         [Tooltip("Optional model rotation while held. The hand anchor itself stays aligned with the camera.")]
         [SerializeField] Vector3 heldEulerAngles;
+        public Vector3 rightHandPosition,rightHandEuler;
+        public Vector3 rightHandScale=Vector3.one;
+        [Min(.01f)] public float firstPersonScale=.55f;
         [HideInInspector] public bool Held { get; private set; }
         public Transform HolderView { get; private set; }
         Vector3 oldScale;
@@ -55,7 +58,8 @@ namespace SurvivalFP
                 originalTransformCaptured = true;
             }
             Held = true;
-            HolderView = hand.parent;
+            var carrier=hand.GetComponentInParent<NetworkPlayer>();
+            HolderView = carrier && carrier.View?carrier.View:hand.parent;
             // Remove the item from the physics scene before moving it into the
             // camera hand. This prevents the pickup collider from pushing the
             // player or causing a one-frame camera/anchor jump.
@@ -77,8 +81,10 @@ namespace SurvivalFP
             foreach (var c in colliders) if (c) c.enabled = false;
             transform.SetParent(hand, false);
             transform.localPosition = Vector3.zero;
-            transform.localRotation = Quaternion.Euler(heldEulerAngles);
-            transform.localScale = oldScale * 0.55f;
+            bool thirdPerson=hand.name=="Right Hand Item Hold";
+            transform.localPosition=thirdPerson?rightHandPosition:Vector3.zero;
+            transform.localRotation = Quaternion.Euler(thirdPerson?rightHandEuler:heldEulerAngles);
+            transform.localScale = thirdPerson?Vector3.Scale(oldScale,rightHandScale):oldScale*firstPersonScale;
             Physics.SyncTransforms();
             SetEquipped(true);
         }

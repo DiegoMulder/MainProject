@@ -358,6 +358,10 @@ MonoBehaviour:
   displayName: Walkie Talkie
   primaryUse: {fileID: 0}
   heldEulerAngles: {x: 0, y: 0, z: 0}
+  rightHandPosition: {x: 0, y: 0, z: 0}
+  rightHandEuler: {x: 0, y: 0, z: 0}
+  rightHandScale: {x: 1, y: 1, z: 1}
+  firstPersonScale: 0.55
 --- !u!114 &7199304500093247456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -412,6 +416,11 @@ MonoBehaviour:
   transmitStart: {fileID: 0}
   transmitEnd: {fileID: 0}
   radioStatic: {fileID: 0}
+  powerOnSounds:
+  - {fileID: 8300000, guid: cbc54a4cff839144bb2aebc5f2476d63, type: 3}
+  powerOffSounds:
+  - {fileID: 8300000, guid: eb8e66cba390c7446b1be5c8de0f5092, type: 3}
+  powerNoiseRadius: 4
 --- !u!114 &7811803704529050278
 MonoBehaviour:
   m_ObjectHideFlags: 0

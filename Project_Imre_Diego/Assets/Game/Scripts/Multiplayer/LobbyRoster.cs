@@ -17,6 +17,10 @@ namespace SurvivalFP
         public NetworkVariable<bool> Started=new(false);
         public DifficultyConfig difficultyConfig;
         public NetworkVariable<int> Difficulty=new(1);
+        public MapDefinition[] maps;
+        public NetworkVariable<int> Map=new(0);
+        public string MapName=>maps!=null&&Map.Value<maps.Length?maps[Map.Value].displayName:"Mansion";
+        public void SelectMap(int index){if(IsServer&&!Started.Value&&maps!=null&&index>=0&&index<maps.Length)Map.Value=index;}
         public string DifficultyName=>difficultyConfig?difficultyConfig.Get(Difficulty.Value).name:"Medium";
         public void SelectDifficulty(int index)
         {if(IsServer && !Started.Value && difficultyConfig && index>=0 && index<difficultyConfig.profiles.Length)Difficulty.Value=index;}

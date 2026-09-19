@@ -6,6 +6,7 @@ namespace SurvivalFP
     public sealed class PlayerInventory : MonoBehaviour
     {
         [SerializeField] Transform handAnchor;
+        public Transform rightHandAnchor;
         [SerializeField] PlayerCamera playerCamera;
         [SerializeField] float pickupDistance = 5f;
         [Header("Dropping")]
@@ -54,7 +55,7 @@ namespace SurvivalFP
         }
 
         public bool HasSpace => System.Array.IndexOf(slots, null) >= 0;
-        public Transform HandAnchor => handAnchor;
+        public Transform HandAnchor => GetComponent<NetworkPlayer>() is NetworkPlayer p && p.IsSpawned && !p.IsOwner && rightHandAnchor?rightHandAnchor:handAnchor;
         public void UsePrimary() { var authority = GetComponent<IPlayerAuthority>(); if (authority != null && authority.Active) authority.InventoryAction(2); else if (Current) Current.UsePrimary(); }
 
 
@@ -71,7 +72,7 @@ namespace SurvivalFP
             currentSlot = index;
             if (Current)
             {
-                Current.SetHeld(handAnchor);
+                Current.SetHeld(HandAnchor);
             }
         }
 
@@ -92,7 +93,7 @@ namespace SurvivalFP
             bool equip = !Current;
             slots[slot] = item;
             if (!item) return;
-            item.SetHeld(handAnchor);
+            item.SetHeld(HandAnchor);
             if (equip) currentSlot = slot;
             item.SetEquipped(currentSlot == slot);
         }
@@ -105,7 +106,7 @@ namespace SurvivalFP
             {
                 currentSlot = -1;
                 for (int i = 0; i < slots.Length; i++)
-                    if (slots[i]) { currentSlot = i; slots[i].SetHeld(handAnchor); break; }
+                    if (slots[i]) { currentSlot = i; slots[i].SetHeld(HandAnchor); break; }
             }
         }
         void DropCurrent(Transform view)
@@ -119,7 +120,7 @@ namespace SurvivalFP
             slots[currentSlot] = null;
             currentSlot = -1;
             for (int i = 0; i < slots.Length; i++)
-                if (slots[i]) { currentSlot = i; slots[i].SetHeld(handAnchor); break; }
+                if (slots[i]) { currentSlot = i; slots[i].SetHeld(HandAnchor); break; }
         }
     }
 }
