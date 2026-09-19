@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7100652379879594026
 Transform:
   m_ObjectHideFlags: 0
@@ -159,6 +159,7 @@ GameObject:
   - component: {fileID: 5197364265237668468}
   - component: {fileID: 7755158370437404988}
   - component: {fileID: 5424273498486042716}
+  - component: {fileID: 4124200906359927453}
   m_Layer: 0
   m_Name: Mansion Stalker
   m_TagString: Untagged
@@ -179,6 +180,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1460912369894446707}
   - {fileID: 7100652379879594026}
   - {fileID: 3744411775112380421}
   m_Father: {fileID: 0}
@@ -195,7 +197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1592337078
+  GlobalObjectIdHash: 3881316429
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -324,3 +326,106 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
+  animator: {fileID: 7694223965447825364}
+--- !u!114 &4124200906359927453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4913353664386796471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkAnimator
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkAnimatorExpanded: 0
+  AuthorityMode: 0
+  m_Animator: {fileID: 7694223965447825364}
+  TransitionStateInfoList:
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -453240694
+    DestinationState: 1850155996
+    TransitionDuration: 0
+    TriggerNameHash: -1491338921
+    TransitionIndex: 0
+  AnimatorParameterEntries:
+    ParameterEntries:
+    - name: Blend
+      NameHash: 1784438316
+      Synchronize: 1
+      ParameterType: 1
+    - name: Kill
+      NameHash: -1491338921
+      Synchronize: 1
+      ParameterType: 9
+  AnimatorParametersExpanded: 0
+--- !u!1001 &5569984598344740459
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 845027421044743368}
+    m_Modifications:
+    - target: {fileID: 5927137163568489122, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+      propertyPath: m_Name
+      value: Cannibal@Idle
+      objectReference: {fileID: 0}
+    - target: {fileID: 6416146727295023128, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6416146727295023128, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6416146727295023128, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6416146727295023128, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6416146727295023128, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6416146727295023128, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6416146727295023128, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6416146727295023128, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6416146727295023128, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6416146727295023128, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+--- !u!4 &1460912369894446707 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6416146727295023128, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+  m_PrefabInstance: {fileID: 5569984598344740459}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &7694223965447825364 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 2849600529329064383, guid: 3b4d47c4481d5e441a2388763b0b8025, type: 3}
+  m_PrefabInstance: {fileID: 5569984598344740459}
+  m_PrefabAsset: {fileID: 0}
