@@ -197,7 +197,7 @@ GameObject:
   - component: {fileID: 7199304500093247456}
   - component: {fileID: 2914421918991974605}
   - component: {fileID: 7811803704529050278}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Walkie Talkie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -281,14 +281,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2744143367
+  GlobalObjectIdHash: 2749313118
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 1
+  m_InScenePlaced: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1

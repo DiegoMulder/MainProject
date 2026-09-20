@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 6777661001949848659}
   - component: {fileID: 8338934286537262607}
   - component: {fileID: 8394300380271687384}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Flashlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -264,6 +264,10 @@ MonoBehaviour:
   displayName: Flashlight
   primaryUse: {fileID: 9140026694829191199}
   heldEulerAngles: {x: 0, y: 0, z: 0}
+  rightHandPosition: {x: 0, y: 0, z: 0}
+  rightHandEuler: {x: 0, y: 0, z: 0}
+  rightHandScale: {x: 1, y: 1, z: 1}
+  firstPersonScale: 0.55
 --- !u!54 &7224499154208212163
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -422,14 +426,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 423921571
+  GlobalObjectIdHash: 1493822433
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 1
+  m_InScenePlaced: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1

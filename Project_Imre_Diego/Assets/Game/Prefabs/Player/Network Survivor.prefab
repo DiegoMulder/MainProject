@@ -492,7 +492,7 @@ GameObject:
   - component: {fileID: 1698993392958605915}
   - component: {fileID: 6255894680365797756}
   - component: {fileID: 3230071029491776850}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Network Survivor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -533,7 +533,7 @@ CharacterController:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 192
   m_LayerOverridePriority: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
