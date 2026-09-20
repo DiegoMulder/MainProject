@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f63738053382cca41aab128d434ae26a, type: 3}
-  m_Name: Slaughterhouse
+  m_Name: MansionMapDefinition
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.MapDefinition
-  displayName: Slaughterhouse
-  content: {fileID: 11400000, guid: 9fc752d4bf37b544c88b32b00cda91f0, type: 2}
+  displayName: Mansion
+  content: {fileID: 11400000, guid: 4614d792eddabd54fa6fd9068f25d483, type: 2}
   ambientColor: {r: 0.25, g: 0.3, b: 0.35, a: 1}

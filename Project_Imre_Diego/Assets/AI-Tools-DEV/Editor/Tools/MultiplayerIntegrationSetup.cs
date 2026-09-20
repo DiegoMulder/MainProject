@@ -53,7 +53,7 @@ namespace SurvivalFP.EditorTools
                 anchor.position=head.position+p.transform.forward*.5f;anchor.rotation=Quaternion.LookRotation(-p.transform.forward,p.transform.up);
                 var sequence=Add<EnemyKillSequence>(p);sequence.animator=animator;sequence.killCameraPoint=anchor;p.GetComponent<EnemyController>().animator=animator;
             });
-            Prefab("Assets/Game/Prefabs/Game Management/Multiplayer Session.prefab",p=>p.GetComponent<NetworkManager>().NetworkConfig.ProtocolVersion=2);
+            Prefab("Assets/Game/Prefabs/Game Management/Multiplayer Session.prefab",p=>p.GetComponent<NetworkManager>().NetworkConfig.ProtocolVersion=3);
             AssetDatabase.SaveAssets();
         }
         public static void CreateMaps()
@@ -64,7 +64,7 @@ namespace SurvivalFP.EditorTools
             foreach(var category in new[]{"Rooms","Hallways","Stairs","Props","Doors"})
             {
                 Folder(destination+"/"+category);
-                foreach(var guid in AssetDatabase.FindAssets("t:Prefab",new[]{"Assets/Game/Prefabs/"+category}))
+                foreach(var guid in AssetDatabase.FindAssets("t:Prefab",new[]{"Assets/Game/Prefabs/Maps/Mansion/"+category}))
                 {string source=AssetDatabase.GUIDToAssetPath(guid),target=destination+"/"+category+"/Slaughterhouse "+Path.GetFileName(source);if(!AssetDatabase.LoadAssetAtPath<GameObject>(target))AssetDatabase.CopyAsset(source,target);remap[source]=target;}
             }
             var material=new Material(Shader.Find("Universal Render Pipeline/Lit"));material.name="Slaughterhouse tile";material.color=new Color(.44f,.53f,.49f);string matPath="Assets/Game/Materials/Slaughterhouse/Slaughterhouse tile.mat";if(!AssetDatabase.LoadAssetAtPath<Material>(matPath))AssetDatabase.CreateAsset(material,matPath);else UnityEngine.Object.DestroyImmediate(material);material=AssetDatabase.LoadAssetAtPath<Material>(matPath);
@@ -72,11 +72,11 @@ namespace SurvivalFP.EditorTools
                 foreach(var component in p.GetComponentsInChildren<Component>(true)){if(!component)continue;var so=new SerializedObject(component);var property=so.GetIterator();while(property.NextVisible(true)){if(property.propertyType!=SerializedPropertyType.ObjectReference||!property.objectReferenceValue)continue;var sourcePath=AssetDatabase.GetAssetPath(property.objectReferenceValue);if(remap.TryGetValue(sourcePath,out var target)){var mapped=AssetDatabase.LoadAssetAtPath<GameObject>(target);property.objectReferenceValue=property.objectReferenceValue is Component old?mapped.GetComponent(old.GetType()):mapped;}}so.ApplyModifiedPropertiesWithoutUndo();}
                 foreach(var renderer in p.GetComponentsInChildren<Renderer>(true))renderer.sharedMaterial=material;
             });
-            var original=AssetDatabase.LoadAssetAtPath<MansionSettings>("Assets/Game/Data/MansionSettings.asset");string configPath="Assets/Game/Data/Maps/Slaughterhouse Content.asset";if(!AssetDatabase.LoadAssetAtPath<MansionSettings>(configPath))AssetDatabase.CreateAsset(UnityEngine.Object.Instantiate(original),configPath);var content=AssetDatabase.LoadAssetAtPath<MansionSettings>(configPath);
+            var original=AssetDatabase.LoadAssetAtPath<MansionSettings>("Assets/Game/Data/Maps/Mansion/MansionContentSet.asset");string configPath="Assets/Game/Data/Maps/Slaughterhouse/SlaughterhouseContentSet.asset";if(!AssetDatabase.LoadAssetAtPath<MansionSettings>(configPath))AssetDatabase.CreateAsset(UnityEngine.Object.Instantiate(original),configPath);var content=AssetDatabase.LoadAssetAtPath<MansionSettings>(configPath);
             var serialized=new SerializedObject(content);var prop=serialized.GetIterator();while(prop.NextVisible(true)){if(prop.propertyType!=SerializedPropertyType.ObjectReference||!prop.objectReferenceValue)continue;string source=AssetDatabase.GetAssetPath(prop.objectReferenceValue);if(remap.TryGetValue(source,out var target)){var mapped=AssetDatabase.LoadAssetAtPath<GameObject>(target);prop.objectReferenceValue=prop.objectReferenceValue is Component old?mapped.GetComponent(old.GetType()):mapped;}}serialized.ApplyModifiedPropertiesWithoutUndo();content.wallMaterial=material;EditorUtility.SetDirty(content);
-            var maps=new MapDefinition[2];for(int i=0;i<2;i++){string name=i==0?"Mansion":"Slaughterhouse",path="Assets/Game/Data/Maps/"+name+".asset";maps[i]=AssetDatabase.LoadAssetAtPath<MapDefinition>(path);if(!maps[i]){maps[i]=ScriptableObject.CreateInstance<MapDefinition>();AssetDatabase.CreateAsset(maps[i],path);}maps[i].displayName=name;maps[i].content=i==0?original:content;EditorUtility.SetDirty(maps[i]);}
+            var maps=new MapDefinition[2];for(int i=0;i<2;i++){string name=i==0?"Mansion":"Slaughterhouse",path="Assets/Game/Data/Maps/"+name+"/"+name+"MapDefinition.asset";maps[i]=AssetDatabase.LoadAssetAtPath<MapDefinition>(path);if(!maps[i]){maps[i]=ScriptableObject.CreateInstance<MapDefinition>();AssetDatabase.CreateAsset(maps[i],path);}maps[i].displayName=name;maps[i].content=i==0?original:content;EditorUtility.SetDirty(maps[i]);}
             Prefab("Assets/Game/Prefabs/Game Management/Lobby.prefab",p=>p.GetComponent<LobbyRoster>().maps=maps);
-            Prefab("Assets/Game/Prefabs/Game Management/Mansion Round.prefab",p=>p.GetComponent<RoundManager>().maps=maps);
+            Prefab("Assets/Game/Prefabs/Game Management/Round Runtime.prefab",p=>p.GetComponent<RoundManager>().maps=maps);
             var registry=AssetDatabase.LoadAssetAtPath<NetworkPrefabsList>("Assets/Game/Data/NetworkPrefabs.asset");foreach(var path in remap.Values){var p=AssetDatabase.LoadAssetAtPath<GameObject>(path);if(p.GetComponent<NetworkObject>()&&!registry.PrefabList.Any(e=>e.Prefab==p))registry.Add(new NetworkPrefab{Prefab=p});}EditorUtility.SetDirty(registry);AssetDatabase.SaveAssets();
         }
     }

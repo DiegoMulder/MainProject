@@ -6,7 +6,7 @@ Open **Assets/Game/Scenes/MainMenu.unity**, press Play, enter your name, and hos
 
 MainMenu contains the menu/lobby screen, menu camera, lighting, and Session Bootstrap. The bootstrap creates **Prefabs/Game Management/Multiplayer Session.prefab** only when a session does not already exist. That prefab holds the NetworkManager, transport, GameSession and voice component. It persists across scene changes. To change its references, open that prefab; do not add another NetworkManager to Game.
 
-Game contains the loading camera, lighting and gameplay UI. Once all connected players finish loading, the host spawns Mansion Round. That component builds the rooms, props and navigation, spawns the players, their flashlights, objectives, medkits and enemy, and controls the exit and win/loss state. These gameplay objects belong to the round.
+Game contains the loading camera, lighting and gameplay UI. Once all connected players finish loading, the host spawns Round Runtime. That component builds the rooms, props and navigation, spawns the players, their flashlights, objectives, medkits and enemy, and controls the exit and win/loss state. These gameplay objects belong to the round.
 
 Lobby is a panel in MainMenu, not a third scene. Keep MainMenu and Game enabled in Build Profiles > Scene List, in that order. The offline controller test scene is optional for a shipping build. Launch MainMenu when testing multiplayer; opening Game directly skips the session bootstrap.
 

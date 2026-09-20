@@ -51,7 +51,7 @@ The server looks at which side of the closed door you stand on and sends both th
 
 When making a normal door variant:
 
-1. Duplicate **Game/Prefabs/Doors/Ordinary Door**.
+1. Duplicate **Game/Prefabs/Maps/Mansion/Doors/Ordinary Door**.
 2. Keep the root's local blue Z axis perpendicular to the closed doorway. This is the door's front/back direction.
 3. Keep the hinge at the left edge, with the leaf extending along local positive X from the hinge. For the supplied prefab, hinge X is -1.1 and panel centre X is +1.1 relative to it.
 4. The supplied panel is 2.2 metres wide inside a 2.4 metre opening. The small side gaps let its thickness clear the frame in either direction.

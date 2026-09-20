@@ -4,7 +4,7 @@
 
 ## Start with the updated version
 
-This update changes network behaviours and prefab registrations. Build with **Tools > Survival FP > Build Current Multiplayer Game**, then give every player the entire **Builds/Current** folder. Protocol Version is now **2**. Mixing an older build with this version is intentionally rejected.
+This update changes network behaviours and prefab registrations. Build with **Tools > Survival FP > Build Current Multiplayer Game**, then give every player the entire **Builds/Current** folder. Protocol Version is now **3**. Mixing an older build with this version is intentionally rejected.
 
 Your current difficulty values have been preserved. Map and difficulty are independent: choose the map and difficulty in the lobby before pressing Start Game. Only the host can change either setting.
 
@@ -34,6 +34,14 @@ Open the Animator window with Businessman_Controller selected. The base layer ha
 
 If you replace a clip, keep its parameter types and transition conditions. Test idle, walk, run, crouch, jump, landing, crawl and revive. Do not rename a parameter without updating the driver too.
 
+### Downed animation: what to check
+
+The server writes **NetworkPlayer.Life = Downed**. Each peer's PlayerAnimationDriver reads that life state and sets the local Animator's **IsDown** bool. **Down** is a speed blend: zero selects CrawlingIdle, increasing toward one selects Crawling. Owners use predicted motor speed; the server uses its motor simulation; other observers use the replicated horizontal velocity. Reviving changes Life back to Alive and clears IsDown. The Animator, controller, avatar and rig stay enabled and assigned throughout.
+
+To test this yourself, keep another teammate alive so the round does not end immediately. Have the host become downed while the client watches, then reverse the roles. Watch the actual body enter its low pose, stay low while still, crawl while moving, and return to standing after revival. Repeat after switching items. In the Animator window, check both the highlighted downed Blend Tree and the IsDown/Down values.
+
+The current matching-build checks evaluated CrawlingIdle and Crawling and verified shoulder-bone pose changes on both peers, including repeated revivals. The reported static T-pose was not reproduced during those checks; no confirmed disabled Animator, missing controller, invalid avatar or broken clip binding was found. Do not replace the existing animated clips with a static fallback. If it occurs again, record which build each player uses, which player is downed and the remote Animator's active state. Always distribute the entire newly built folder together; protocol 3 rejects the previous protocol-2 player.
+
 ### Talking and the face
 
 The **Mouth Layer** uses **Talking Face.mask**. Only transforms below the Head bone are enabled in that mask; the talking animation cannot move the hips, arms or legs. The driver fades this layer in while speech is detected and fades it back to zero after speech stops. A short 0.25-second release prevents tiny gaps between words from flickering the face.
@@ -59,32 +67,66 @@ For a new item:
 5. Register the new network prefab once in Game/Data/NetworkPrefabs.asset.
 6. Test with a second player. Equip it, walk, crouch, jump and switch slots. Inspect the right hand from the other player's view.
 
+### Why the host could appear offset
+
+Netcode applies a spawn transform after NetworkPickup's spawn callback. The item was already attached at that point, so the later server transform could overwrite the local grip. On the host, that server pose is the owner's first-person camera pose; another survivor uses the animated hand on the server. This made the error appear ownership-dependent. Capturing the original scale only when first equipped also allowed a received presentation scale to become the supposed original size.
+
+PickupItem now captures the authored scale in Awake, before network spawn synchronization. PlayerInventory explicitly selects first-person or third-person presentation. After animation and network updates, the held item applies its absolute local position, rotation and scale to that anchor. Repeated updates reset the same pose; they do not add offsets or create another pickup. Claim also no longer applies the same location twice on the server.
+
 Offsets use the hold point's local axes. Start with small position changes, such as 0.02 metres. The original world size is restored when the item drops.
 
 ## Map selection and content
 
 The map assets are:
 
-- **Game/Data/Maps/Mansion.asset**: map definition pointing to the existing Game/Data/MansionSettings.asset.
-- **Game/Data/Maps/Slaughterhouse.asset**: definition pointing to **Slaughterhouse Content.asset** in the same folder.
+- **Game/Data/Maps/Mansion/MansionMapDefinition.asset**: map definition pointing to the existing Game/Data/Maps/Mansion/MansionContentSet.asset.
+- **Game/Data/Maps/Slaughterhouse/SlaughterhouseMapDefinition.asset**: definition pointing to **SlaughterhouseContentSet.asset** in the same folder.
 - **Game/Prefabs/Maps/Slaughterhouse**: separate Rooms, Hallways, Stairs, Props and Doors assets, including its own exit and hiding closet.
 
-Mansion retains its existing Rooms, Hallways, Stairs, Props and Doors folders. No imported third-party character folders were moved. Slaughterhouse currently uses separate placeholder geometry and its own tile material, so you can replace it independently. Its room references and prop references do not point back to Mansion prefabs.
+Mansion's existing folders now live under **Game/Prefabs/Maps/Mansion**, matching Slaughterhouse. These were moved in Unity with their GUIDs preserved; they were not recreated. No imported third-party character folders were moved. Slaughterhouse currently uses separate placeholder geometry and its own tile material, so you can replace it independently. Its room references and prop references do not point back to Mansion prefabs.
 
 A **Map Definition** has a display name, content settings and an optional ambient colour. The content settings supply the room catalog, doors, exit, items, enemy prefab, floor settings and generation options. Furniture choices live in each map's room Prop Spawn Points. Hallways and stairs are RoomModules in the same weighted catalog; they do not need a second generator.
 
 The lobby's map index is server-written. RoundManager copies the selected map's content, then applies the shared difficulty profile. Clients receive the map index and the same generated layout before building their local geometry. Returning to the lobby destroys the previous world, but leaves the lobby's selected map available to change.
+
+### The two files per map are intentional
+
+Think of MapDefinition as the map's label and ContentSet as its box of building pieces. The definition has the display name, ambient colour and one ContentSet reference. Only the ContentSet lists rooms, doors, exit and generation settings. You never maintain the same room list in both files. Both maps use the same two asset types; ContentSet's existing C# type is named MansionSettings for compatibility, but it configures either map.
+
+The layout is now:
+
+```text
+Assets/Game/Data/Maps/
+  Mansion/
+    MansionMapDefinition.asset
+    MansionContentSet.asset
+  Slaughterhouse/
+    SlaughterhouseMapDefinition.asset
+    SlaughterhouseContentSet.asset
+
+Assets/Game/Prefabs/Maps/
+  Mansion/
+    Rooms/  Hallways/  Stairs/  Props/  Doors/
+  Slaughterhouse/
+    Rooms/  Hallways/  Stairs/  Props/  Doors/
+```
+
+Closets belong to each map's Props folder; the exit belongs to Doors. Shared scripts, player, enemy and pickups stay outside these folders.
+
+### What happened to Mansion Round?
+
+It is now **Game/Prefabs/Game Management/Round Runtime.prefab**, the same asset with the same network identity. It contains NetworkObject, RoundManager and the shared procedural world builder. It has no Mansion-only rooms, lights or scene children, so a duplicate Slaughterhouse round is unnecessary. The selected MapDefinition provides the content and ambient colour. Lobby selection -> Game scene -> shared Round Runtime -> selected content -> generated world. Return to Lobby cleans that world before the next selection.
 
 ### Create a third map
 
 1. Create **Game/Prefabs/Maps/YourMap** with the categories you need.
 2. Duplicate Slaughterhouse or Mansion's room, hallway, staircase, furniture, door, exit and closet prefabs into your folder. Use Unity's Project window so every new asset gets its own identity.
 3. Open each copied room. Replace every Prop Spawn Point variant with your copied furniture/closet assets. Copying a room alone does not automatically remap its furniture references.
-4. Duplicate a content settings asset into **Game/Data/Maps**. Give it a clear name.
+4. Create **Game/Data/Maps/YourMap**. Duplicate a ContentSet there and name it **YourMapContentSet**.
 5. Replace its entire Rooms catalog with your map's modules. Assign your own door and exit. Keep shared player/item/enemy prefabs where intended. Check the floor count and staircase compatibility.
-6. Right-click in the Project window and choose **Create > Survival FP > Map Definition**. Set its name and assign your content settings.
+6. Right-click in the Project window and choose **Create > Survival FP > Map Definition**. Save it beside the content as **YourMapMapDefinition**. Set its display name and assign YourMapContentSet.
 7. Open **Game/Prefabs/Game Management/Lobby** and append the definition to its **Maps** array.
-8. Open **Mansion Round** in the same folder and append it to its **Maps** array in exactly the same order. The index must mean the same map on both components.
+8. Open **Round Runtime** in the same folder and append it to its **Maps** array in exactly the same order. The index must mean the same map on both components.
 9. Register new networked doors, exits and closets once in **NetworkPrefabs.asset**. Plain room meshes do not need network registration because peers reconstruct them from the shared layout.
 10. Build, join with a second client, choose your map and play. Return to the lobby and switch back to verify cleanup.
 
@@ -112,7 +154,7 @@ Kill and Stagger suppress perception, noise responses and new attacks for that e
 
 ### Delay the final defeat screen
 
-Open **Game/Prefabs/Game Management/Mansion Round**. **Final Kill Game Over Delay** defaults to five seconds. It starts after the final kill animation completes, not when the grab begins. RoundManager tracks active kill sequences and existing team-failure rules. The end screen cannot appear while a teammate is still Alive or a kill presentation is still active.
+Open **Game/Prefabs/Game Management/Round Runtime**. **Final Kill Game Over Delay** defaults to five seconds. It starts after the final kill animation completes, not when the grab begins. RoundManager tracks active kill sequences and existing team-failure rules. The end screen cannot appear while a teammate is still Alive or a kill presentation is still active.
 
 The ordinary end-screen, Back to Lobby and Main Menu controls remain part of the existing GameUI/session flow.
 
@@ -121,6 +163,12 @@ The ordinary end-screen, Back to Lobby and Main Menu controls remain part of the
 **Game/Scripts/Enemy/EnemyTargetRules.cs** contains the central CanTarget check. Vision, maintained target memory and new kill attempts use it. It requires an Alive, connected, spawned player who is not already grabbed. A Downed player crawling in front of an enemy remains ineligible. Completing a kill also clears the enemy's remembered player/closet references.
 
 A downed player's radio may still emit an audible GameplayNoise at a location, as before. Investigating that sound does not make the downed person a valid chase or kill target.
+
+## Open-mic radio use
+
+Pick up a walkie, select its slot, and left-click to switch it ON. Speak normally: there is no V key or separate transmit action. You can select another inventory slot while the powered radio keeps working. OFF stops both transmission and reception. Nearby players continue hearing clean proximity speech; distant powered radios use the filtered path without a duplicate copy.
+
+The session's **Proximity Voice** component uses the existing Vivox speech detector and **Speech Threshold**. **Speech Release Delay** (0.2 seconds) bridges small gaps between words. Only active speech refreshes the server's transmission state; stopping sends one stop event. If reports stop unexpectedly, the server expires transmission after 0.5 seconds. AI hearing events have their own slower **Noise Interval**. Power cues and their small noise radius are unchanged.
 
 ## Radio sound and received voice processing
 

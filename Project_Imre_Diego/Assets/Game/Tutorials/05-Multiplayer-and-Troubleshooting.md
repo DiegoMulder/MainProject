@@ -8,7 +8,7 @@ MainMenu contains the menu and pre-game lobby panel. Game contains the actual ga
 
 The server owns shared gameplay. Clients receive the layout and reconstruct static geometry, while network-spawned objects synchronize interactive state. You do not need to create a separate scene for each generated mansion floor.
 
-MainMenu has a Session Bootstrap referencing Prefabs/Game Management/Multiplayer Session.prefab. That prefab contains NetworkManager, GameSession and ProximityVoice. Each scene has its own camera and GameUI. GameSession references the lobby and round prefabs. Mansion Round references MansionSettings. NetworkManager references NetworkPrefabs.asset through its network prefab lists.
+MainMenu has a Session Bootstrap referencing Prefabs/Game Management/Multiplayer Session.prefab. That prefab contains NetworkManager, GameSession and ProximityVoice. Each scene has its own camera and GameUI. GameSession references the lobby and round prefabs. Round Runtime reads the selected MapDefinition and its ContentSet. NetworkManager references NetworkPrefabs.asset through its network prefab lists.
 
 When an Inspector change seems ignored, follow this reference chain and confirm the live scene uses the asset you edited. Making a second settings asset does not automatically switch the round to it.
 
@@ -100,7 +100,7 @@ Advanced developer utilities live in Assets/AI-Tools-DEV/Editor/Validation (incl
 | --- | --- |
 | Changes vanish when stopping Play | Edit the saved prefab/scene outside Play Mode, not a generated instance |
 | Prefab exists but never appears | Add room to Rooms, furniture to Variants, or item to an actual spawner; registration alone does not spawn |
-| Changed settings have no effect | Follow MainMenu > Session Bootstrap > Multiplayer Session prefab > Mansion Round > settings |
+| Changed settings have no effect | Follow MainMenu > Session Bootstrap > Multiplayer Session prefab > Round Runtime > Maps > selected MapDefinition > content |
 | New network item only appears on host | Registry entry, matching builds, NetworkObject.Spawn from server, required components |
 | Item appears twice | Both peers may be locally instantiating it; spawn network items once on the server |
 | Item falls through floor | Floor/item collider, spawn clearance, scale, convex dynamic mesh collider |

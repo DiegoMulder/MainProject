@@ -27,14 +27,13 @@ namespace SurvivalFP
         [Header("Cursor")]
         [SerializeField] bool lockCursorOnEnable = true;
         InputActionAsset runtimeActions;
-        InputAction radio, move, look, sprint, crouch, jump, release, capture, pickup, drop, slot1, slot2, slot3, scroll, primaryUse, flashlight;
+        InputAction move, look, sprint, crouch, jump, release, capture, pickup, drop, slot1, slot2, slot3, scroll, primaryUse, flashlight;
         public bool InputBlocked { get; set; }
         public bool ManagePauseExternally { get; set; }
         int ignoreLookFrames;
         PlayerFlashlightShortcut flashlightShortcut;
         public bool Captured => Cursor.lockState == CursorLockMode.Locked;
         public InputActionAsset Actions => runtimeActions;
-        public bool RadioHeld=>radio!=null && !InputBlocked && Captured && radio.IsPressed();
 
         void Awake()
         {
@@ -64,7 +63,6 @@ namespace SurvivalFP
             scroll = Ensure(map, "ItemScroll", "<Mouse>/scroll/y", InputActionType.Value);
             primaryUse = Ensure(map, "PrimaryUse", "<Mouse>/leftButton");
             flashlight = Ensure(map, "Flashlight", "<Keyboard>/f");
-            radio = Ensure(map, "RadioTransmit", "<Keyboard>/v");
         }
         static InputAction Ensure(InputActionMap map, string name, string binding, InputActionType type = InputActionType.Button)
         { var a = map.FindAction(name); if (a == null) a = map.AddAction(name, type, binding); return a; }

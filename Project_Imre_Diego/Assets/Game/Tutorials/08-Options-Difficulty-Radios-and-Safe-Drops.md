@@ -43,16 +43,16 @@ Select **Assets/Game/Data/Difficulty.asset**. Its Profiles list has editable nam
 
 | Profile | Target rooms | Required objectives |
 | --- | ---: | ---: |
-| Easy | 24 | 20 |
-| Medium | 60 | 100 |
-| Hard | 85 | 140 |
-| Extreme | 120 | 200 |
+| Easy | 50 | 10 |
+| Medium | 60 | 15 |
+| Hard | 80 | 20 |
+| Extreme | 150 | 35 |
 
-These are starting balance values. Change them in the Inspector without editing scripts. Medium preserves the previous 60-room / 100-objective target. Keep enough item surfaces for objectives, medkits and radios combined. Increasing room count also increases generation and NavMesh work, so test the largest value on your target hardware.
+These are starting balance values. Change them in the Inspector without editing scripts. These values apply to either map. Enemy counts are also in the profile: currently 1 for Easy/Medium/Hard and 2 for Extreme. Keep enough item surfaces for objectives, medkits and radios combined. Increasing room count also increases generation and NavMesh work, so test the largest value on your target hardware.
 
 Only the host's lobby arrows can change difficulty. Clients see the synchronized selection. Once Start Game begins, the selection is locked. The server makes a private copy of MansionSettings, applies the chosen profile, and sends the resulting layout and round configuration to clients. It does not modify the saved MansionSettings asset. Returning to the lobby unlocks selection for the next round.
 
-The Difficulty asset is referenced by both **Game/Data/MansionSettings.asset** and **Game/Prefabs/Game Management/Lobby.prefab**. Keep those references pointed at the same asset. All players should use the same game build.
+The Difficulty asset is referenced by both **Game/Data/Maps/Mansion/MansionContentSet.asset** and **Game/Prefabs/Game Management/Lobby.prefab**. Keep those references pointed at the same asset. All players should use the same game build.
 
 **Add another difficulty value:** add a field to DifficultyProfile and the corresponding generation setting to MansionSettings, then copy it in DifficultyConfig.Apply. The server reads its copied round settings. For a value needed for client presentation, add it to the replicated round configuration as well. Do not scatter checks for names such as Extreme throughout unrelated gameplay scripts. Radio batteries and difficulty-dependent radio behavior have not been added.
 
@@ -78,7 +78,7 @@ After constructing the world, the server checks the door swing against actual co
 
 To make a connector exit-compatible:
 
-1. Use a real opening wide and tall enough for **Game/Prefabs/Doors/Exit Door.prefab**.
+1. Use a real opening wide and tall enough for **Game/Prefabs/Maps/Mansion/Doors/Exit Door.prefab**.
 2. Set its RoomConnector exit eligibility.
 3. Keep space inside the room for the entire door swing and a standing player's approach.
 4. Keep the RoomModule bounds accurate so neighboring rooms cannot occupy that area.
@@ -93,10 +93,10 @@ The ready-made prefab is **Assets/Game/Prefabs/Items/Walkie Talkie.prefab**. Man
 1. Pick one up with E. It takes one of the normal three inventory slots.
 2. Select its slot.
 3. Left-click to toggle power ON/OFF.
-4. While it is ON and anywhere in your inventory, hold **V** to transmit. Release V to return to ordinary proximity transmission.
+4. While it is ON and anywhere in your inventory, speak normally. Voice activity starts radio transmission automatically; silence stops it. No transmit key is needed.
 5. Other living players with powered radios can hear radio speech at a distance. Nearby players still use proximity audio, without a second radio copy.
 
-An OFF radio sends and receives no radio speech. A downed player can keep using V if already carrying a powered radio, but cannot regain normal inventory use through this exception. Dead/escaped spectators cannot use living-player radio communication. Dropping the radio removes its permission to transmit from that player.
+An OFF radio sends and receives no radio speech. A downed player can keep speaking through an already powered radio, but cannot regain normal inventory use through this exception. Dead/escaped spectators cannot use living-player radio communication. Dropping the radio removes its permission to transmit from that player.
 
 ### Make a radio variant
 
@@ -110,11 +110,11 @@ Duplicate the Walkie Talkie prefab. Change its model and keep PickupItem, Rigidb
 - Noise Interval: minimum spacing between speech hearing events; default 0.65 seconds.
 - Power On/Off, Transmit Start/End and Radio Static: optional AudioClips. Empty references are safe. Radio static is available to call from custom effects and is not looped by default.
 
-PlayerRadio validates ownership, a powered item, round state and life state on the server. ProximityVoice uses Vivox's existing speech detection rather than capturing another microphone. Speaking while holding V emits a throttled RadioVoice GameplayNoise at the speaker and, when enabled, RadioReceiver noise at active distant receivers. EnemyController uses its normal hearing-radius rules, including these noises from downed players. The radio's local volume does not secretly change AI risk.
+PlayerRadio validates ownership, a powered item, round state and life state on the server. ProximityVoice uses Vivox's existing speech detection rather than capturing another microphone. Speaking while a radio is ON emits a throttled RadioVoice GameplayNoise at the speaker and, when enabled, RadioReceiver noise at active distant receivers. EnemyController uses its normal hearing-radius rules, including these noises from downed players. The radio's local volume does not secretly change AI risk.
 
-The input action **Player/RadioTransmit** is in **Game/Input/InputSystem_Actions.inputactions** and defaults to V. Change its binding there to choose another key. The screen's V hint is plain UI text; update that hint too when changing the default binding.
+There is no RadioTransmit input action. Adjust **Speech Threshold** and **Speech Release Delay** on the session prefab's Proximity Voice component to tune detection. Default release delay is 0.2 seconds; active speech reports and AI hearing events are throttled. Silence does not repeatedly send radio-state events.
 
-ProximityVoice joins the session's positional channel and a separate radio channel. During PTT it transmits to both, while each listener selects proximity or radio for that speaker. It uses the server-approved PlayerRadio state to suppress invalid radio reception. Testing real voice requires a configured Vivox project, working microphones and at least two connected clients; local direct-IP tests can verify state and AI noise but do not connect Vivox.
+ProximityVoice joins the session's positional channel and a separate radio channel. While a radio is powered ON it routes microphone audio to both, while each listener selects proximity or radio for that speaker. It uses the server-approved PlayerRadio state to suppress invalid radio reception. Testing real voice requires a configured Vivox project, working microphones and at least two connected clients; local direct-IP tests can verify state and AI noise but do not connect Vivox.
 
 
 For the current camera-directed drop settings, two-way ordinary doors, editable enemy counts and matching-build instructions, continue with [tutorial 09](09-Builds-Drops-Doors-and-Multiple-Enemies.md).

@@ -22,7 +22,7 @@ namespace SurvivalFP.Editor
             GameplayNoiseSystem.Emitted+=Noise;
             if(!Unity.Netcode.NetworkManager.Singleton.IsListening)GameSession.Instance.Host();
             yield return new WaitForSeconds(.4f);
-            var authored=AssetDatabase.LoadAssetAtPath<MansionSettings>("Assets/Game/Data/MansionSettings.asset");
+            var authored=AssetDatabase.LoadAssetAtPath<MansionSettings>("Assets/Game/Data/Maps/Mansion/MansionContentSet.asset");
             bool random=authored.randomSeed;int seed=authored.seed;
             for(int run=0;run<6;run++)
             {
@@ -97,9 +97,9 @@ namespace SurvivalFP.Editor
             var radio=p.GetComponent<PlayerRadio>();int voiceEvents=0;
             void Heard(GameplayNoise n){if(n.Category==NoiseCategory.RadioVoice)voiceEvents++;}
             GameplayNoiseSystem.Emitted+=Heard;
-            for(int i=0;i<20;i++){radio.Report(true,true);yield return new WaitForSeconds(.05f);}
+            for(int i=0;i<20;i++){radio.Report(true);yield return new WaitForSeconds(.05f);}
             Check(radio.Transmitting.Value && voiceEvents>0 && voiceEvents<=3,"server radio permission and throttled transmit noise");
-            device.Powered.Value=false;yield return new WaitForSeconds(.2f);radio.Report(true,true);yield return null;
+            device.Powered.Value=false;yield return new WaitForSeconds(.2f);radio.Report(true);yield return null;
             Check(!radio.Transmitting.Value,"powered-off radio rejects transmission");
             GameplayNoiseSystem.Emitted-=Heard;
         }

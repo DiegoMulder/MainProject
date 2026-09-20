@@ -1,0 +1,2 @@
+PASS Mansion: 14 reachable environment prefab assets; no cross-map references; all resolve.
+PASS Slaughterhouse: 14 reachable environment prefab assets; no cross-map references; all resolve.

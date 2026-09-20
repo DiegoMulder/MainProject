@@ -47,7 +47,7 @@ Online errors are covered in [multiplayer setup](05-Multiplayer-and-Troubleshoot
 
 ## The central settings asset
 
-Select **Assets/Game/Data/MansionSettings.asset**. The existing authored configuration has **60 target rooms, 2 floors, 4-metre floor spacing, 100 objectives, and 8 medkits**. Medium difficulty keeps these room/objective targets; Easy, Hard and Extreme override them through Game/Data/Difficulty.asset. See the options/difficulty/radio tutorial for current settings.
+Select **Assets/Game/Data/Maps/Mansion/MansionContentSet.asset**. The existing authored configuration has **60 base target rooms, 4 floors, 4-metre floor spacing, 100 base objectives, and 8 medkits**. Lobby difficulty overrides room/objective/enemy counts; Medium currently uses 60 rooms, 15 objectives and 1 enemy; Easy, Hard and Extreme override them through Game/Data/Difficulty.asset. See the options/difficulty/radio tutorial for current settings.
 
 | Setting | Meaning |
 | --- | --- |

@@ -41,7 +41,7 @@ The offline player is **Assets/AI-Tools-DEV/Prefabs/SurvivalPlayer.prefab**. Mul
 | 1 / 2 / 3 or mouse wheel | Select an inventory slot |
 | Q | Drop selected item |
 | F | Toggle a flashlight carried in any slot |
-| Hold V | Transmit through a powered Walkie Talkie in your inventory |
+| Speak with a powered Walkie Talkie | Open-mic radio transmission; no talk key required |
 | Escape | Mansion pause menu; release cursor in the offline course |
 | Tab while spectating | Change spectator target |
 
@@ -57,11 +57,12 @@ All paths below start at Assets.
 | Game/Scripts | Gameplay code, grouped into Player, Enemy, Items, Interaction, Multiplayer, Procedural Generation, Audio, Objectives, Presentation and UI |
 | Game/Prefabs/Player and Game/Prefabs/Enemy | Playable survivor and mansion stalker |
 | Game/Prefabs/Items | Flashlights, medkits, objective seals and new pickups |
-| Game/Prefabs/Rooms, Hallways and Stairs | Modules used by the mansion generator |
-| Game/Prefabs/Props | Furniture and interactive closets |
-| Game/Prefabs/Doors | Ordinary doors and the exit |
+| Game/Prefabs/Maps/Mansion and Slaughterhouse | Each map has Rooms, Hallways, Stairs, Props and Doors |
+| Game/Prefabs/Maps/Mansion/Props | Furniture and interactive closets |
+| Game/Prefabs/Maps/Mansion/Doors | Ordinary doors and the exit |
 | Game/Prefabs/Game Management | Session, lobby and round prefabs |
-| Game/Data | MansionSettings, visual settings and network-prefab registries |
+| Game/Data/Maps/Mansion and Slaughterhouse | Each map's MapDefinition and ContentSet |
+| Game/Data | Shared difficulty, visual settings and network-prefab registries |
 | Game/Audio | Sound clips and license information |
 | Game/Materials, Shaders and Input | Shared visual assets and input actions |
 | Game/Resources/Flashlight | Runtime fallback beam and switch sound, loaded by name |
@@ -73,7 +74,7 @@ All paths below start at Assets.
 
 **Permanent organization rule:** anything created solely for AI/MCP/Codex testing, debugging, inspection or development automation belongs under **Assets/AI-Tools-DEV**. Anything required by the playable game belongs under **Assets/Game**. Use the existing categories; create a new folder only when it helps group related files. Keep folders shallow. Leave Unity/package-owned content in its existing location.
 
-To add a pickup, start in **Game/Prefabs/Items** and follow the pickup tutorial. To add a room, hallway or staircase, duplicate a matching prefab in its category, then add it to **Game/Data/MansionSettings.asset**. Moving a prefab into a folder alone does not register it with generation or networking.
+To add a pickup, start in **Game/Prefabs/Items** and follow the pickup tutorial. To add a room, hallway or staircase, duplicate a matching prefab in its category, then add it to **Game/Data/Maps/Mansion/MansionContentSet.asset**. Moving a prefab into a folder alone does not register it with generation or networking.
 
 ## Do I need the development files?
 

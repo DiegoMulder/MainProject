@@ -10,14 +10,14 @@ Ordinary static rooms and furniture are reconstructed from the shared layout. Th
 
 ## Recipe: make a library room
 
-1. Stop Play Mode. Open Assets/Game/Prefabs/Rooms in Project.
+1. Stop Play Mode. Open Assets/Game/Prefabs/Maps/Mansion/Rooms in Project.
 2. Select Standard Room.prefab, press Ctrl+D, and rename the copy Library Room.
 3. Double-click the copy to enter Prefab Mode.
 4. Select its root at the top of the Hierarchy. Keep Room Module's Size and Connectors unchanged for this first version.
 5. Change wall/floor materials or add decorative meshes as children. Keep doorways and the centre route clear.
 6. Give solid obstacles suitable colliders. A painting against an existing wall need not become a large obstacle across the floor.
 7. Save and leave Prefab Mode.
-8. Select MansionSettings.asset, expand Rooms, and add an entry at the end.
+8. Select MansionContentSet.asset, expand Rooms, and add an entry at the end.
 9. Drag Library Room.prefab into that entry's Prefab field and set Weight to 2.
 10. Host and start a round. Try several seeds if the room does not appear immediately.
 

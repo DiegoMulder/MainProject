@@ -10,7 +10,7 @@ namespace SurvivalFP.Editor
         public static void Run()
         {
             var results=new List<string>();void Check(bool pass,string name)=>results.Add((pass?"PASS: ":"FAIL: ")+name);
-            var stairs=Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/Stairs/Staircase.prefab"),new Vector3(1000,0,1000),Quaternion.identity);
+            var stairs=Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/Maps/Mansion/Stairs/Staircase.prefab"),new Vector3(1000,0,1000),Quaternion.identity);
             var player=Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/AI-Tools-DEV/Prefabs/SurvivalPlayer.prefab"));player.GetComponent<PlayerController>().enabled=false;
             var motor=player.GetComponent<PlayerMovement>();const float dt=1f/60;
             void Set(Vector3 local){motor.Teleport(stairs.transform.position+local);Physics.SyncTransforms();for(int i=0;i<20;i++)motor.Tick(default,dt);}
@@ -42,7 +42,7 @@ namespace SurvivalFP.Editor
                 motor.Teleport(new Vector3(1022.35f,.02f,1000));Physics.SyncTransforms();motor.Tick(default,dt);
                 Check(!motor.IsGrounded,"Flat footprint stops supporting beyond its outer edge");
                 Object.DestroyImmediate(ledge);
-                var table=Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/Props/Table.prefab"),new Vector3(1000,0,994),Quaternion.identity);
+                var table=Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/Maps/Mansion/Props/Table.prefab"),new Vector3(1000,0,994),Quaternion.identity);
                 Check(table.transform.Find("Tabletop").position.y<.9f,"Ordinary table is no longer elevated for hiding");
                 Check(!table.GetComponentInChildren<ClosetHideout>(),"Ordinary table has no intentional hiding interaction");Object.DestroyImmediate(table);
             }

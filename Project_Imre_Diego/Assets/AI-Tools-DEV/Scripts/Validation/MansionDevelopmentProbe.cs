@@ -13,7 +13,7 @@ namespace SurvivalFP
     {
         [Serializable] public class Command { public int id; public string action; public string target; public int slot; }
         [Serializable] public class AnimationSnapshot
-        {public ulong owner;public float blend,crouch,down,talkingWeight,killCameraError=-1;public bool jump,talking,isDown,isCrouching,bodyHidden,grabbed;public string itemParent;public int state;public Vector3 cameraPos;}
+        {public ulong owner;public float blend,crouch,down,talkingWeight,killCameraError=-1;public bool jump,talking,isDown,isCrouching,bodyHidden,grabbed;public string itemParent,clips;public bool animatorReady;public int state;public Vector3 cameraPos,itemPosition,itemScale,rigPosition;public Quaternion itemRotation,armRotation;}
         [Serializable] public class Snapshot
         {
             public string phase,layout,life,prompt,error,lobbyCode,status,spectating;
@@ -72,12 +72,14 @@ namespace SurvivalFP
                     {
                         switch(command.action)
                         {
+                            case "down":if(player.IsServer)player.Down();break;
+                            case "revive":if(player.IsServer)player.Revive();break;
                             case "voicepause":GameSession.Instance.GetComponent<ProximityVoice>().enabled=false;break;
                             case "map":LobbyRoster.Instance.SelectMap(command.slot);break;
                             case "talk":player.GetComponent<PlayerAnimationDriver>().ReportTalking(command.slot!=0);break;
                             case "start":GameSession.Instance.StartMatch();break;
                             case "difficulty":LobbyRoster.Instance.SelectDifficulty(command.slot);break;
-                            case "radio":player.GetComponent<PlayerRadio>().Report(command.slot!=0,command.slot==2);break;
+                            case "radio":player.GetComponent<PlayerRadio>().Report(command.slot==2);break;
                             case "speech":player.ReportSpeech();break;
                             case "interact":
                                 if(NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(ulong.Parse(command.target),out var target))
@@ -117,7 +119,7 @@ namespace SurvivalFP
             snapshot.enemies=EnemyController.Enemies.Count;snapshot.configHash=NetworkManager.Singleton?NetworkManager.Singleton.NetworkConfig.GetConfig(false).ToString():"";
             var lobby=LobbyRoster.Instance;var names=new System.Collections.Generic.List<string>();if(lobby)foreach(var member in lobby.Members)names.Add(member.name.ToString());snapshot.names=names.ToArray();
             snapshot.map=lobby?lobby.Map.Value:-1;snapshot.roomNames=round?round.World.Rooms.Select(r=>r.name).ToArray():Array.Empty<string>();snapshot.enemyStates=EnemyController.Enemies.Select(e=>e.State.Value.ToString()).ToArray();
-            snapshot.animations=NetworkPlayer.Players.Where(p=>p&&p.IsSpawned&&p.GetComponent<PlayerAnimationDriver>()).Select(p=>{var a=p.GetComponent<PlayerAnimationDriver>().animator;return new AnimationSnapshot{owner=p.OwnerClientId,blend=a.GetFloat("Blend"),crouch=a.GetFloat("Crouch"),down=a.GetFloat("Down"),talkingWeight=a.GetLayerWeight(1),jump=a.GetBool("Jump"),talking=a.GetBool("IsTalking"),isDown=a.GetBool("IsDown"),isCrouching=a.GetBool("IsCrouching"),grabbed=p.IsGrabbed,itemParent=p.Inventory.Current&&p.Inventory.Current.transform.parent?p.Inventory.Current.transform.parent.name:"",state=a.GetCurrentAnimatorStateInfo(0).fullPathHash,cameraPos=p.View.position,killCameraError=CameraError(p),bodyHidden=p.visualBody.GetComponentsInChildren<Renderer>().Where(r=>!r.GetComponentInParent<PickupItem>()).All(r=>r.shadowCastingMode==UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly)};}).ToArray();
+            snapshot.animations=NetworkPlayer.Players.Where(p=>p&&p.IsSpawned&&p.GetComponent<PlayerAnimationDriver>()).Select(p=>{var a=p.GetComponent<PlayerAnimationDriver>().animator;return new AnimationSnapshot{owner=p.OwnerClientId,blend=a.GetFloat("Blend"),crouch=a.GetFloat("Crouch"),down=a.GetFloat("Down"),talkingWeight=a.GetLayerWeight(1),jump=a.GetBool("Jump"),talking=a.GetBool("IsTalking"),isDown=a.GetBool("IsDown"),isCrouching=a.GetBool("IsCrouching"),grabbed=p.IsGrabbed,itemParent=p.Inventory.Current&&p.Inventory.Current.transform.parent?p.Inventory.Current.transform.parent.name:"",state=a.GetCurrentAnimatorStateInfo(0).fullPathHash,cameraPos=p.View.position,animatorReady=a.enabled&&a.runtimeAnimatorController&&a.avatar&&a.avatar.isValid,clips=string.Join(",",a.GetCurrentAnimatorClipInfo(0).Select(c=>c.clip.name+":"+c.weight)),rigPosition=a.transform.Find("Rig").localPosition,armRotation=a.GetComponentsInChildren<Transform>().First(t=>t.name=="Upper_Arm_L").localRotation,itemPosition=p.Inventory.Current?p.Inventory.Current.transform.localPosition:Vector3.zero,itemRotation=p.Inventory.Current?p.Inventory.Current.transform.localRotation:Quaternion.identity,itemScale=p.Inventory.Current?p.Inventory.Current.transform.localScale:Vector3.zero,killCameraError=CameraError(p),bodyHidden=p.visualBody.GetComponentsInChildren<Renderer>().Where(r=>!r.GetComponentInParent<PickupItem>()).All(r=>r.shadowCastingMode==UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly)};}).ToArray();
             snapshot.difficulty=lobby?lobby.Difficulty.Value:-1;snapshot.requiredObjectives=round?round.RequiredObjectives.Value:0;
             snapshot.voiceStatus=GameSession.Instance?GameSession.Instance.GetComponent<ProximityVoice>().Status:"";
             snapshot.matchStarted=lobby && lobby.Started.Value;snapshot.lobbyCode=GameSession.Instance?GameSession.Instance.JoinCode:"";snapshot.status=GameSession.Instance?GameSession.Instance.Status:"";

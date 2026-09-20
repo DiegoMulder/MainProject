@@ -80,7 +80,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkManager
   NetworkManagerExpanded: 0
   NetworkConfig:
-    ProtocolVersion: 2
+    ProtocolVersion: 3
     NetworkTransport: {fileID: 1179045282985335126}
     PlayerPrefab: {fileID: 0}
     Prefabs:
@@ -145,3 +145,4 @@ MonoBehaviour:
   radioHighPass: 350
   radioLowPass: 3000
   radioDistortion: 0.18
+  speechReleaseDelay: 0.2

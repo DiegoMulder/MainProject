@@ -1,0 +1,19 @@
+PASS GUID and network identities preserved: Assets/Game/Data/Maps/Mansion/MansionContentSet.asset
+PASS GUID and network identities preserved: Assets/Game/Data/Maps/Mansion/MansionMapDefinition.asset
+PASS GUID and network identities preserved: Assets/Game/Data/Maps/Slaughterhouse/SlaughterhouseMapDefinition.asset
+PASS GUID and network identities preserved: Assets/Game/Data/Maps/Slaughterhouse/SlaughterhouseContentSet.asset
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Game Management/Round Runtime.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Rooms/Large Room.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Rooms/Small Room.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Rooms/Standard Room.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Hallways/Corner Hall.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Hallways/Straight Hall.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Hallways/T Junction.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Stairs/Staircase.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Props/Cabinet.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Props/Closet.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Props/Plant.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Props/Shelf.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Props/Table.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Doors/Exit Door.prefab
+PASS GUID and network identities preserved: Assets/Game/Prefabs/Maps/Mansion/Doors/Ordinary Door.prefab

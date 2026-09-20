@@ -116,7 +116,7 @@ For random ordinary loot with fixed totals, extend RoundManager's server-side se
 
 ## Recipe 4: add more medkits or a new medkit appearance
 
-For **more medkits**, select MansionSettings.asset and increase Medkit Count. Ensure enough reachable item surfaces exist for Objective Count plus Medkit Count. Set Medkit Count to 0 to disable their automatic placement.
+For **more medkits**, select MansionContentSet.asset and increase Medkit Count. Ensure enough reachable item surfaces exist for Objective Count plus Medkit Count. Set Medkit Count to 0 to disable their automatic placement.
 
 For **a different appearance**:
 
@@ -132,7 +132,7 @@ Downing preserves inventory. Full death/disconnect recovers required objectives 
 
 ## Recipe 5: add more objectives or objective names
 
-1. Select MansionSettings.asset.
+1. Select MansionContentSet.asset.
 2. Set Objective Count to the total required, for example 6.
 3. Expand Objective Types. Enter names such as Red Seal and Blue Seal.
 4. Keep enough eligible item surfaces, plus extra capacity for medkits.

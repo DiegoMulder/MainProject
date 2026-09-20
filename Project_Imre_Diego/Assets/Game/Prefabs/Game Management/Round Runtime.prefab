@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1185676460169443179}
   - component: {fileID: 3162700995148655315}
   m_Layer: 0
-  m_Name: Mansion Round
+  m_Name: Round Runtime
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

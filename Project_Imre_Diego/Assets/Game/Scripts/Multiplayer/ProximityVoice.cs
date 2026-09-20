@@ -21,7 +21,8 @@ namespace SurvivalFP
         public int InputVolume=>0;
         public int OutputVolume=>Mathf.RoundToInt(20*Mathf.Log10(Mathf.Max(.0032f,LocalSettings.Master*LocalSettings.Voice)));
         bool initialized,busy,joined,failed,closing,radioTransmission;
-        string channel,radioChannel;float nextUpdate;
+        string channel,radioChannel;float nextUpdate,lastSpeech=float.NegativeInfinity;
+        [Min(0)] public float speechReleaseDelay=.2f;
         void OnEnable()=>LocalSettings.Changed+=ApplyVolumes;
         void OnDisable()=>LocalSettings.Changed-=ApplyVolumes;
         void OnDestroy(){if(initialized)VivoxService.Instance.ParticipantAddedToChannel-=ParticipantAdded;}
@@ -66,7 +67,8 @@ namespace SurvivalFP
                 var voice=VivoxService.Instance;var radio=player.GetComponent<PlayerRadio>();
                 radio?.RegisterVoice(voice.SignedInPlayerId);
                 bool transmit=radio && radio.WantsTransmit;
-                // Both channels while holding PTT; listeners choose exactly one path.
+                // Route the live mic to both channels while powered on; VAD gates radio playback/noise.
+                // Keeping the route open avoids cutting the beginning of each spoken phrase.
                 if(transmit!=radioTransmission)
                 {
                     busy=true;
@@ -82,7 +84,9 @@ namespace SurvivalFP
                     var self=localParticipants.FirstOrDefault(p=>p.IsSelf);
                     speaking=!Muted && self!=null && self.SpeechDetected && self.AudioEnergy>=speechThreshold;
                 }
-                radio?.Report(transmit,speaking);
+                if(speaking)lastSpeech=Time.unscaledTime;
+                speaking=!Muted&&!player.Paused&&!player.IsGrabbed&&(speaking||Time.unscaledTime-lastSpeech<speechReleaseDelay);
+                radio?.Report(speaking);
                 player.GetComponent<PlayerAnimationDriver>()?.ReportTalking(speaking);
                 if(speaking && !transmit)player.ReportSpeech();
                 foreach(var pair in voice.ActiveChannels)
@@ -101,7 +105,7 @@ namespace SurvivalFP
                         else if(!mute && participant.IsMuted)participant.UnmutePlayerLocally();
                     }
                 }
-                Status=transmit?"Radio transmitting - release V for proximity":"Proximity + radio connected";
+                Status=transmit?(speaking?"Radio transmitting":"Radio on - open mic"):"Proximity voice - radio off";
             }
             catch(Exception ex){Status="Voice: "+ex.Message;failed=true;await LeaveChannel();}
         }

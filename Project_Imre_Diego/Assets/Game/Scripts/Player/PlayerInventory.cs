@@ -72,7 +72,7 @@ namespace SurvivalFP
             currentSlot = index;
             if (Current)
             {
-                Current.SetHeld(HandAnchor);
+                Current.SetHeld(HandAnchor,HandAnchor==rightHandAnchor);
             }
         }
 
@@ -93,7 +93,7 @@ namespace SurvivalFP
             bool equip = !Current;
             slots[slot] = item;
             if (!item) return;
-            item.SetHeld(HandAnchor);
+            item.SetHeld(HandAnchor,HandAnchor==rightHandAnchor);
             if (equip) currentSlot = slot;
             item.SetEquipped(currentSlot == slot);
         }
@@ -106,7 +106,7 @@ namespace SurvivalFP
             {
                 currentSlot = -1;
                 for (int i = 0; i < slots.Length; i++)
-                    if (slots[i]) { currentSlot = i; slots[i].SetHeld(HandAnchor); break; }
+                    if (slots[i]) { currentSlot = i; slots[i].SetHeld(HandAnchor,HandAnchor==rightHandAnchor); break; }
             }
         }
         void DropCurrent(Transform view)
@@ -120,7 +120,7 @@ namespace SurvivalFP
             slots[currentSlot] = null;
             currentSlot = -1;
             for (int i = 0; i < slots.Length; i++)
-                if (slots[i]) { currentSlot = i; slots[i].SetHeld(HandAnchor); break; }
+                if (slots[i]) { currentSlot = i; slots[i].SetHeld(HandAnchor,HandAnchor==rightHandAnchor); break; }
         }
     }
 }

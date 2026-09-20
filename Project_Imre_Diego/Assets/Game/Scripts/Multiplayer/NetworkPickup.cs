@@ -77,7 +77,7 @@ namespace SurvivalFP
             if (!IsServer || !player.Alive || Location.Value.Held || !player.Inventory.HasSpace) return false;
             int slot = Array.IndexOf(player.Inventory.Slots,null);
             Location.Value = new ItemLocation { carrier = player.OwnerClientId, slot = slot };
-            ApplyLocation(); player.Selection.Value = player.Inventory.CurrentSlot; return true;
+            player.Selection.Value = player.Inventory.CurrentSlot; return true;
         }
         public void Release(Vector3 position, Quaternion rotation, Vector3 velocity)
         {

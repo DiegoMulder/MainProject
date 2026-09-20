@@ -21,7 +21,7 @@ namespace SurvivalFP.Editor
         public static void Build()
         {
             if(EditorApplication.isPlaying) throw new InvalidOperationException("Exit Play Mode first.");
-            if(File.Exists(Root+"/Data/MansionSettings.asset")) throw new InvalidOperationException("Mansion content already exists. Edit its prefabs/settings rather than overwriting them.");
+            if(File.Exists(Root+"/Data/Maps/Mansion/MansionContentSet.asset") || File.Exists(Root+"/Data/MansionSettings.asset")) throw new InvalidOperationException("Mansion content already exists. Edit its prefabs/settings rather than overwriting them.");
             // Preserve the user's current course changes before opening the new menu scene.
             for(int i=0;i<UnityEngine.SceneManagement.SceneManager.sceneCount;i++)
             { var s=UnityEngine.SceneManagement.SceneManager.GetSceneAt(i); if(s.isDirty) EditorSceneManager.SaveScene(s); }
@@ -42,7 +42,7 @@ namespace SurvivalFP.Editor
             AssetDatabase.CreateAsset(settings,Root+"/Data/MansionSettings.asset");
             var roundGO=new GameObject("Mansion Round",typeof(NetworkObject),typeof(MansionWorld),typeof(RoundManager));
             roundGO.GetComponent<RoundManager>().settings=settings;
-            var round=Save(roundGO,"Prefabs/Game Management/Mansion Round").GetComponent<RoundManager>();
+            var round=Save(roundGO,"Prefabs/Game Management/Round Runtime").GetComponent<RoundManager>();
             var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
             var sessionGO=new GameObject("Multiplayer Session",typeof(UnityTransport),typeof(NetworkManager),typeof(GameSession));
             var manager=sessionGO.GetComponent<NetworkManager>();

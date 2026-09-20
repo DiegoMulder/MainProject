@@ -3,7 +3,7 @@ namespace SurvivalFP
 {
     public interface IPrimaryUse { void PrimaryUse(); }
     public enum PickupKind { Flashlight, Cube, Capsule, Generic }
-    [RequireComponent(typeof(Rigidbody))]
+    [DefaultExecutionOrder(550), RequireComponent(typeof(Rigidbody))]
     public sealed class PickupItem : MonoBehaviour, IInteractable
     {
         public PickupKind kind; public string displayName = "Item";
@@ -18,6 +18,7 @@ namespace SurvivalFP
         public Transform HolderView { get; private set; }
         Vector3 oldScale;
         bool originalTransformCaptured;
+        Transform heldAnchor;bool heldThirdPerson;
         Collider[] colliders;
         Renderer[] renderers;
         Rigidbody body;
@@ -26,6 +27,8 @@ namespace SurvivalFP
         public Vector3 DropCenterOffset(Quaternion rotation)=>rotation*dropCenter;
         void Awake()
         {
+            // Capture the authored scale before Netcode applies a server spawn transform.
+            oldScale=transform.lossyScale;originalTransformCaptured=true;
             colliders = GetComponentsInChildren<Collider>();
             renderers = GetComponentsInChildren<Renderer>(true);
             if(colliders.Length>0){var bounds=colliders[0].bounds;foreach(var c in colliders)if(!c.isTrigger)bounds.Encapsulate(c.bounds);dropRadius=Mathf.Max(.06f,bounds.extents.magnitude)+.035f;dropCenter=Quaternion.Inverse(transform.rotation)*(bounds.center-transform.position);}
@@ -49,7 +52,7 @@ namespace SurvivalFP
                     if (component is IPrimaryUse) { primaryUse = component; break; }
             if (primaryUse is IPrimaryUse use) use.PrimaryUse();
         }
-        public void SetHeld(Transform hand)
+        public void SetHeld(Transform hand, bool thirdPerson=false)
         {
             if (!hand) return;
             if (!originalTransformCaptured)
@@ -79,14 +82,20 @@ namespace SurvivalFP
                 body.detectCollisions = false;
             }
             foreach (var c in colliders) if (c) c.enabled = false;
-            transform.SetParent(hand, false);
-            transform.localPosition = Vector3.zero;
-            bool thirdPerson=hand.name=="Right Hand Item Hold";
-            transform.localPosition=thirdPerson?rightHandPosition:Vector3.zero;
-            transform.localRotation = Quaternion.Euler(thirdPerson?rightHandEuler:heldEulerAngles);
-            transform.localScale = thirdPerson?Vector3.Scale(oldScale,rightHandScale):oldScale*firstPersonScale;
+            heldAnchor=hand;heldThirdPerson=thirdPerson;
+            ApplyHeldPose();
             Physics.SyncTransforms();
             SetEquipped(true);
+        }
+        // Spawn synchronization and in-flight drop states can arrive after SetHeld.
+        // The held item's pose belongs to its local hand, never to the server camera.
+        void LateUpdate(){if(Held&&heldAnchor)ApplyHeldPose();}
+        void ApplyHeldPose()
+        {
+            if(transform.parent!=heldAnchor)transform.SetParent(heldAnchor,false);
+            transform.localPosition=heldThirdPerson?rightHandPosition:Vector3.zero;
+            transform.localRotation=Quaternion.Euler(heldThirdPerson?rightHandEuler:heldEulerAngles);
+            transform.localScale=heldThirdPerson?Vector3.Scale(oldScale,rightHandScale):oldScale*firstPersonScale;
         }
         public void SetEquipped(bool equipped)
         {
@@ -95,7 +104,7 @@ namespace SurvivalFP
         }
         public void Drop(Vector3 position, Quaternion rotation, Vector3? initialVelocity = null)
         {
-            Held = false;
+            Held = false;heldAnchor=null;
             HolderView = null;
             transform.SetParent(null, true);
             transform.position = position;

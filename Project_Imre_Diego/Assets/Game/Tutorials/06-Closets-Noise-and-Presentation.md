@@ -16,7 +16,7 @@ Tables now behave as ordinary furniture. Their tabletop/leg collision remains at
 
 ## Recipe: add a different wardrobe model
 
-1. Stop Play Mode and duplicate **Assets/Game/Prefabs/Props/Closet.prefab**.
+1. Stop Play Mode and duplicate **Assets/Game/Prefabs/Maps/Mansion/Props/Closet.prefab**.
 2. Rename it, for example, Carved Wardrobe, and open it in Prefab Mode.
 3. Keep its root at unit scale, with NetworkObject and ClosetHideout on the root.
 4. Replace visual children with your model. Keep solid colliders enclosing the hidden body and blocking ordinary sight through the closed door. A renderer by itself does not block enemy vision.

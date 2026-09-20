@@ -8,7 +8,7 @@ A **furniture prefab** is the table or shelf. A **PropSpawnPoint** marks a posit
 
 ## Recipe: create a furniture variant
 
-1. In Assets/Game/Prefabs/Props, duplicate Table.prefab. Rename it Dining Table.
+1. In Assets/Game/Prefabs/Maps/Mansion/Props, duplicate Table.prefab. Rename it Dining Table.
 2. Open it in Prefab Mode and change its material or visual details.
 3. Keep solid colliders for the tabletop and legs.
 4. Inspect ItemSpawnPoint children: they are item locations. Reposition them if the tabletop changes size.

@@ -9,13 +9,13 @@ namespace SurvivalFP
         public Animator animator;
         [Min(.01f)] public float damping=.12f;
         public NetworkVariable<bool> Jumping=new(false),Talking=new(false);
-        NetworkPlayer player;float lastSpeech,nextSpeech;bool localJump;
+        NetworkPlayer player;float lastSpeech,nextSpeech;bool localJump,reportedTalking;
         void Awake(){player=GetComponent<NetworkPlayer>();}
         public override void OnNetworkSpawn(){player.Motor.Jumped+=Jump;player.Motor.Landed+=Land;animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;}
         public override void OnNetworkDespawn(){player.Motor.Jumped-=Jump;player.Motor.Landed-=Land;}
         void Jump(){localJump=true;if(IsServer)Jumping.Value=true;}
         void Land(float speed){localJump=false;if(IsServer)Jumping.Value=false;}
-        public void ReportTalking(bool value){if(!IsOwner||Time.unscaledTime<nextSpeech)return;nextSpeech=Time.unscaledTime+.1f;TalkRpc(value);}
+        public void ReportTalking(bool value){if(!IsOwner||(!value&&!reportedTalking)||(value&&Time.unscaledTime<nextSpeech))return;reportedTalking=value;nextSpeech=Time.unscaledTime+.1f;TalkRpc(value);}
         [Rpc(SendTo.Server,InvokePermission=RpcInvokePermission.Owner)]
         void TalkRpc(bool value){if(!player.IsSpawned||player.IsGrabbed||(player.Life.Value!=PlayerLife.Alive&&player.Life.Value!=PlayerLife.Downed))return;if(value){lastSpeech=Time.unscaledTime;Talking.Value=true;}}
         void Update()

@@ -1,0 +1,16 @@
+1493822433 Assets/Game/Prefabs/Items/Flashlight.prefab | Unity.Netcode.Components.NetworkTransform,SurvivalFP.NetworkPickup
+27140422 Assets/Game/Prefabs/Player/Network Survivor.prefab | Unity.Netcode.Components.NetworkTransform,SurvivalFP.NetworkPlayer,SurvivalFP.PlayerPrediction,SurvivalFP.PlayerRadio,Unity.Netcode.Components.NetworkAnimator,SurvivalFP.PlayerAnimationDriver
+2745880890 Assets/Game/Prefabs/Maps/Slaughterhouse/Props/Slaughterhouse Closet.prefab | SurvivalFP.ClosetHideout
+2749313118 Assets/Game/Prefabs/Items/Walkie Talkie.prefab | Unity.Netcode.Components.NetworkTransform,SurvivalFP.NetworkPickup,SurvivalFP.WalkieTalkieUse
+3072402318 Assets/Game/Prefabs/Game Management/Round Runtime.prefab | SurvivalFP.RoundManager
+3152439550 Assets/Game/Prefabs/Maps/Slaughterhouse/Doors/Slaughterhouse Ordinary Door.prefab | SurvivalFP.DoorInteractable
+3346233033 Assets/Game/Prefabs/Game Management/Lobby.prefab | SurvivalFP.LobbyRoster
+3458770595 Assets/Game/Prefabs/Maps/Mansion/Props/Closet.prefab | SurvivalFP.ClosetHideout
+3712962500 Assets/Game/Prefabs/Items/Objective Seal.prefab | Unity.Netcode.Components.NetworkTransform,SurvivalFP.NetworkPickup,SurvivalFP.ObjectiveItem
+3811254174 Assets/Game/Prefabs/Maps/Slaughterhouse/Doors/Slaughterhouse Exit Door.prefab | SurvivalFP.ExitDoor
+3881316429 Assets/Game/Prefabs/Enemy/Mansion Stalker.prefab | Unity.Netcode.Components.NetworkTransform,SurvivalFP.EnemyController,Unity.Netcode.Components.NetworkAnimator,SurvivalFP.EnemyKillSequence
+4227359625 Assets/Game/Prefabs/Maps/Mansion/Doors/Exit Door.prefab | SurvivalFP.ExitDoor
+763202647 Assets/Game/Prefabs/Maps/Mansion/Doors/Ordinary Door.prefab | SurvivalFP.DoorInteractable
+803729085 Assets/Game/Prefabs/Items/Medkit.prefab | Unity.Netcode.Components.NetworkTransform,SurvivalFP.NetworkPickup
+Protocol version: 3
+Use the ENTIRE build folder on every computer. Rebuild after network prefab or behaviour changes.

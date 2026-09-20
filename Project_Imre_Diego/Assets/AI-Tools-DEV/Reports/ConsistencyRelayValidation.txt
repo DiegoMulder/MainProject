@@ -1,0 +1,142 @@
+PASS two Relay peers connect with protocol 3
+PASS network configuration hashes match after asset moves
+PASS map choice synchronized 0
+PASS matching generated layout 0
+PASS only selected map rooms 0
+PASS selected map exit 0
+PASS difficulty still configures map 0
+PASS host flashlight aligned on client, authored scale retained
+PASS client flashlight aligned on host, authored scale retained
+PASS both item/slot local poses remain stable cycle 0
+PASS both item/slot local poses remain stable cycle 1
+PASS both item/slot local poses remain stable cycle 2
+PASS both item/slot local poses remain stable cycle 3
+PASS both item/slot local poses remain stable cycle 4
+PASS both item/slot local poses remain stable cycle 5
+PASS client hand remains aligned while crouching
+PASS client hand remains aligned during jump
+PASS host hand remains aligned while crouching
+PASS host hand remains aligned during jump
+PASS talking does not disturb either hand attachment
+PASS drop/re-pick retains authored local grip and scale 0
+PASS drop/re-pick retains authored local grip and scale 1
+PASS down 0 cycle 0
+PASS Animator/controller/avatar remain valid on both peers
+PASS actual downed idle clip evaluates on both peers
+PASS real shoulder pose changes on both peers, not a parameter-only check
+PASS crawl speed blends on both peers
+PASS actual moving crawl clip evaluated
+PASS revive 0
+PASS revive restores normal animation on both peers
+PASS down/revive preserves attachment
+PASS down 1 cycle 0
+PASS Animator/controller/avatar remain valid on both peers
+PASS actual downed idle clip evaluates on both peers
+PASS real shoulder pose changes on both peers, not a parameter-only check
+PASS crawl speed blends on both peers
+PASS actual moving crawl clip evaluated
+PASS revive 1
+PASS revive restores normal animation on both peers
+PASS down/revive preserves attachment
+PASS down 0 cycle 1
+PASS Animator/controller/avatar remain valid on both peers
+PASS actual downed idle clip evaluates on both peers
+PASS real shoulder pose changes on both peers, not a parameter-only check
+PASS crawl speed blends on both peers
+PASS actual moving crawl clip evaluated
+PASS revive 0
+PASS revive restores normal animation on both peers
+PASS down/revive preserves attachment
+PASS down 1 cycle 1
+PASS Animator/controller/avatar remain valid on both peers
+PASS actual downed idle clip evaluates on both peers
+PASS real shoulder pose changes on both peers, not a parameter-only check
+PASS crawl speed blends on both peers
+PASS actual moving crawl clip evaluated
+PASS revive 1
+PASS revive restores normal animation on both peers
+PASS down/revive preserves attachment
+PASS OFF radio rejects speech and emits no radio noise
+PASS powered radio transmits from speech without V
+PASS powered distant receiver accepts active speech
+PASS speaker and receiver noise are emitted with throttling
+PASS silence stops transmission and radio noise
+PASS OFF receiver rejects playback and receiver noise
+PASS power OFF ends transmission
+PASS power clips and small gameplay noise retained
+PASS client has no runtime errors 0
+PASS lobby return cleans selected world 0
+PASS map choice synchronized 1
+PASS matching generated layout 1
+PASS only selected map rooms 1
+PASS selected map exit 1
+PASS difficulty still configures map 1
+PASS host flashlight aligned on client, authored scale retained
+PASS client flashlight aligned on host, authored scale retained
+PASS both item/slot local poses remain stable cycle 0
+PASS both item/slot local poses remain stable cycle 1
+PASS both item/slot local poses remain stable cycle 2
+PASS both item/slot local poses remain stable cycle 3
+PASS both item/slot local poses remain stable cycle 4
+PASS both item/slot local poses remain stable cycle 5
+PASS client hand remains aligned while crouching
+PASS client hand remains aligned during jump
+PASS host hand remains aligned while crouching
+PASS host hand remains aligned during jump
+PASS talking does not disturb either hand attachment
+PASS drop/re-pick retains authored local grip and scale 0
+PASS drop/re-pick retains authored local grip and scale 1
+PASS down 0 cycle 0
+PASS Animator/controller/avatar remain valid on both peers
+PASS actual downed idle clip evaluates on both peers
+PASS real shoulder pose changes on both peers, not a parameter-only check
+PASS crawl speed blends on both peers
+PASS actual moving crawl clip evaluated
+PASS revive 0
+PASS revive restores normal animation on both peers
+PASS down/revive preserves attachment
+PASS down 1 cycle 0
+PASS Animator/controller/avatar remain valid on both peers
+PASS actual downed idle clip evaluates on both peers
+PASS real shoulder pose changes on both peers, not a parameter-only check
+PASS crawl speed blends on both peers
+PASS actual moving crawl clip evaluated
+PASS revive 1
+PASS revive restores normal animation on both peers
+PASS down/revive preserves attachment
+PASS down 0 cycle 1
+PASS Animator/controller/avatar remain valid on both peers
+PASS actual downed idle clip evaluates on both peers
+PASS real shoulder pose changes on both peers, not a parameter-only check
+PASS crawl speed blends on both peers
+PASS actual moving crawl clip evaluated
+PASS revive 0
+PASS revive restores normal animation on both peers
+PASS down/revive preserves attachment
+PASS down 1 cycle 1
+PASS Animator/controller/avatar remain valid on both peers
+PASS actual downed idle clip evaluates on both peers
+PASS real shoulder pose changes on both peers, not a parameter-only check
+PASS crawl speed blends on both peers
+PASS actual moving crawl clip evaluated
+PASS revive 1
+PASS revive restores normal animation on both peers
+PASS down/revive preserves attachment
+PASS OFF radio rejects speech and emits no radio noise
+PASS powered radio transmits from speech without V
+PASS powered distant receiver accepts active speech
+PASS speaker and receiver noise are emitted with throttling
+PASS silence stops transmission and radio noise
+PASS OFF receiver rejects playback and receiver noise
+PASS power OFF ends transmission
+PASS power clips and small gameplay noise retained
+PASS client has no runtime errors 1
+PASS lobby return cleans selected world 1
+DONE 134 passed / 0 failed
+
+Setup: editor host + Windows Development standalone client, real Relay, protocol 3. Mansion/Easy then Slaughterhouse/Extreme in one lobby. Both return-to-lobby transitions completed after the round was ended.
+Console Error/Exception count at completion: 0. Client error snapshots: empty for both maps.
+Speech reports were injected through the same PlayerRadio.Report API used by VAD; no radio key is required. Live microphone intelligibility and perceived radio filter quality still require a two-person listening test.
+Downed state was checked using actual evaluated clip weights and shoulder-bone rotations, not just Animator parameters. Both host-as-observer and client-as-observer passed repeated down/idle/crawl/revive. Animator/controller/avatar references remained valid. The reported T-pose was not reproduced; no confirmed T-pose root cause is claimed.
+Build succeeded with zero errors and 493 warnings, including Unity package shader warnings. See ConsistencyBuild.txt. Distribute the entire Builds/Current folder to both peers.
+Asset move GUID/hash audit: 19 assets retained identity. Each map references 14 distinct environment prefabs without cross-map references.

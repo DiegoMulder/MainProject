@@ -126,7 +126,7 @@ namespace SurvivalFP
                     slots+=(player.Inventory.CurrentSlot==i?"► ":"")+$"[{i+1}] "+(item?item.displayName:"Empty")+(radio?(radio.Powered.Value?" [ON]":" [OFF]"):"")+"   ";
                 }
                 GUI.Label(new Rect(28,height-57,width-56,34),slots,text);
-                GUI.Label(new Rect(width-390,height-102,365,36),"E interact  •  Q drop  •  F light  •  V radio",text);
+                GUI.Label(new Rect(width-390,height-102,365,36),"E interact  •  Q drop  •  F light  •  LMB use",text);
             }
             if(!paused) return;
             float panelHeight=options?580:380;
@@ -171,7 +171,7 @@ namespace SurvivalFP
                 smoothing=GUILayout.Toggle(smoothing,"Smooth camera look",GUILayout.Height(28));
                 GUI.enabled=smoothing;
                 strength=Slider("Smoothing strength",strength,0,1,"P0");GUI.enabled=true;
-                GUILayout.Label("Zero strength gives raw look. Movement direction always responds immediately.\nRadio: hold V to transmit with a powered-on walkie talkie.",text);
+                GUILayout.Label("Zero strength gives raw look. Movement direction always responds immediately.\nRadio: switch your walkie talkie on for open-mic speech and reception.",text);
             }
             else
             {
