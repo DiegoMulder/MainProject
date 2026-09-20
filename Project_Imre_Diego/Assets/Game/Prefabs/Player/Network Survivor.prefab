@@ -492,8 +492,7 @@ GameObject:
   - component: {fileID: 1698993392958605915}
   - component: {fileID: 6255894680365797756}
   - component: {fileID: 3230071029491776850}
-  - component: {fileID: 4827192774338891008}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Network Survivor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -510,8 +509,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.1, z: -14}
-  m_LocalScale: {x: 0.90000004, y: 0.90000004, z: 0.90000004}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5250906124111813526}
   - {fileID: 9119353098051648462}
@@ -534,7 +533,7 @@ CharacterController:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 192
   m_LayerOverridePriority: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
@@ -559,12 +558,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerStamina
   maximum: 100
-  sprintDrain: 6.5
-  regeneration: 12.5
+  sprintDrain: 7.5
+  regeneration: 10
   regenerationDelay: 1.5
   sprintRestartThreshold: 15
   jumpConsumesStamina: 1
-  jumpCost: 7
+  jumpCost: 8
 --- !u!114 &6207008883958896752
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -806,11 +805,6 @@ MonoBehaviour:
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 18446744073709551615
   BleedOutAt:
-    UpdateTraits:
-      MinSecondsBetweenUpdates: 0
-      MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
-  BleedOutStartedAt:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
@@ -1229,48 +1223,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05aa0bae3d65ae2409c9728faa99bddd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerKillCamera
---- !u!114 &4827192774338891008
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7000563005437309295}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7887a77292d564945b64a8ea77f63915, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.DownedVignette
-  minimumIntensity: 0.15
-  maximumIntensity: 1
-  minimumOpacity: 0.12
-  maximumOpacity: 0.8
-  colour: {r: 0.55, g: 0.015, b: 0.025, a: 1}
-  progression:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  fadeTime: 0.25
 --- !u!1 &8239911441503884807
 GameObject:
   m_ObjectHideFlags: 0

@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 5095833613441459520}
   - component: {fileID: 413925086424060948}
   - component: {fileID: 5556951197309512490}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Medkit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -162,6 +162,10 @@ MonoBehaviour:
   displayName: Medkit
   primaryUse: {fileID: 0}
   heldEulerAngles: {x: 0, y: 0, z: 0}
+  rightHandPosition: {x: 0, y: 0, z: 0}
+  rightHandEuler: {x: 0, y: 0, z: 0}
+  rightHandScale: {x: 1, y: 1, z: 1}
+  firstPersonScale: 0.55
 --- !u!114 &230377644692356534
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,14 +178,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 170109283
+  GlobalObjectIdHash: 803729085
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 1
+  m_InScenePlaced: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
