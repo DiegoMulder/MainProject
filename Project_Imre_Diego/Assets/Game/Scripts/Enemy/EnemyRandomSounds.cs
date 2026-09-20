@@ -19,6 +19,7 @@ public class EnemyRandomSounds : MonoBehaviour
     [SerializeField] private AudioClip chainsawIdleSound;
     [SerializeField] private AudioClip chainsawSound;
     private bool chasing = false;
+    [SerializeField] private AudioSource chainsawKillSound;
 
     public void Footstep()
     {
@@ -87,4 +88,6 @@ public class EnemyRandomSounds : MonoBehaviour
             chainsawSource.Play();
         }
     }
+
+    public void ChainsawKill() => chainsawKillSound.Play();
 }
