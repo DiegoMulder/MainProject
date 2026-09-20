@@ -1,0 +1,200 @@
+Assets/Game/FBX/Doors/Door.fbx
+  Door pos=(0.00, 0.00, 0.00) rot=(270.02, 0.00, 0.00) scale=(100.00, 100.00, 100.00) meshBounds=Center: (-0.01, 0.00, 0.01), Extents: (0.01, 0.00, 0.01) verts=6856 mats=M_Mansion_AgedWalnut,M_Mansion_TarnishedBrass
+Assets/Game/FBX/Rooms/CornerHall.fbx
+  CornerHall pos=(0.00, 0.00, 0.00) rot=(270.02, 0.00, 0.00) scale=(100.00, 100.00, 100.00) meshBounds=Center: (0.00, 0.00, 0.02), Extents: (0.04, 0.04, 0.02) verts=6830 mats=M_Mansion_DarkFloorboards,M_Mansion_AgedIvory,M_Mansion_AgedWalnut
+Assets/Game/FBX/Rooms/LargeRoom.fbx
+  LargeRoom pos=(0.00, 0.00, 0.00) rot=(270.02, 0.00, 0.00) scale=(100.00, 100.00, 100.00) meshBounds=Center: (0.00, 0.00, 0.02), Extents: (0.07, 0.05, 0.02) verts=9572 mats=M_Mansion_DarkFloorboards,M_Mansion_AgedIvory,M_Mansion_AgedWalnut
+Assets/Game/FBX/Rooms/SmallRoom.fbx
+  SmallRoom pos=(0.00, 0.00, 0.00) rot=(270.02, 0.00, 0.00) scale=(100.00, 100.00, 100.00) meshBounds=Center: (0.00, 0.00, 0.02), Extents: (0.04, 0.04, 0.02) verts=6654 mats=M_Mansion_DarkFloorboards,M_Mansion_AgedIvory,M_Mansion_AgedWalnut
+Assets/Game/FBX/Rooms/Staircase.fbx
+  Staircase pos=(0.00, 0.00, 0.00) rot=(270.02, 0.00, 0.00) scale=(100.00, 100.00, 100.00) meshBounds=Center: (0.00, 0.00, 0.04), Extents: (0.05, 0.07, 0.04) verts=23205 mats=M_Mansion_DarkFloorboards,M_Mansion_AgedIvory,M_Mansion_AgedWalnut
+Assets/Game/FBX/Rooms/StandardRoom.fbx
+  StandardRoom pos=(0.00, 0.00, 0.00) rot=(270.02, 0.00, 0.00) scale=(100.00, 100.00, 100.00) meshBounds=Center: (0.00, 0.00, 0.02), Extents: (0.05, 0.05, 0.02) verts=8506 mats=M_Mansion_DarkFloorboards,M_Mansion_AgedIvory,M_Mansion_AgedWalnut
+Assets/Game/FBX/Rooms/StraightHall.fbx
+  StraightHall pos=(0.00, 0.00, 0.00) rot=(270.02, 0.00, 0.00) scale=(100.00, 100.00, 100.00) meshBounds=Center: (0.00, 0.00, 0.02), Extents: (0.03, 0.05, 0.02) verts=6078 mats=M_Mansion_DarkFloorboards,M_Mansion_AgedIvory,M_Mansion_AgedWalnut
+Assets/Game/FBX/Rooms/TJunction.fbx
+  TJunction pos=(0.00, 0.00, 0.00) rot=(270.02, 0.00, 0.00) scale=(100.00, 100.00, 100.00) meshBounds=Center: (0.00, 0.00, 0.02), Extents: (0.05, 0.05, 0.02) verts=8792 mats=M_Mansion_DarkFloorboards,M_Mansion_AgedIvory,M_Mansion_AgedWalnut
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Doors/Exit Door.prefab
+ Hinge pos=(-1.20, 0.00, -0.12) scale=(1.00, 1.00, 1.00) colliders=1 meshes=1
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Doors/Ordinary Door.prefab
+ Hinge pos=(-1.10, 0.00, 0.00) scale=(1.00, 1.00, 1.00) colliders=1 meshes=1
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Hallways/Corner Hall.prefab
+size=(8.00, 3.00, 8.00) connectors=Connector 0:(0.00, 0.00, 4.00)/(0.00, 0.00, 0.00);Connector 1:(4.00, 0.00, 0.00)/(0.00, 90.00, 0.00)
+ Floor pos=(0.00, -0.15, 0.00) scale=(8.00, 0.30, 8.00) colliders=1 meshes=1
+ Connector 0 pos=(0.00, 0.00, 4.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(-2.60, 1.50, 4.00) scale=(2.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(2.60, 1.50, 4.00) scale=(2.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(0.00, 2.80, 4.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Connector 1 pos=(4.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(4.00, 1.50, 2.60) scale=(2.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(4.00, 1.50, -2.60) scale=(2.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(4.00, 2.80, 0.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Wall pos=(0.00, 1.50, -4.00) scale=(8.00, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(-4.00, 1.50, 0.00) scale=(8.00, 3.00, 0.20) colliders=1 meshes=1
+ Furniture surface anchor pos=(2.90, 0.00, -2.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Optional prop anchor pos=(-2.90, 0.00, 2.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Hallways/Straight Hall.prefab
+size=(6.00, 3.00, 10.00) connectors=Connector 0:(0.00, 0.00, 5.00)/(0.00, 0.00, 0.00);Connector 2:(0.00, 0.00, -5.00)/(0.00, 180.00, 0.00)
+ Floor pos=(0.00, -0.15, 0.00) scale=(6.00, 0.30, 10.00) colliders=1 meshes=1
+ Connector 0 pos=(0.00, 0.00, 5.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(-2.10, 1.50, 5.00) scale=(1.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(2.10, 1.50, 5.00) scale=(1.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(0.00, 2.80, 5.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Wall pos=(3.00, 1.50, 0.00) scale=(10.00, 3.00, 0.20) colliders=1 meshes=1
+ Connector 2 pos=(0.00, 0.00, -5.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(2.10, 1.50, -5.00) scale=(1.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(-2.10, 1.50, -5.00) scale=(1.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(0.00, 2.80, -5.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Wall pos=(-3.00, 1.50, 0.00) scale=(10.00, 3.00, 0.20) colliders=1 meshes=1
+ Furniture surface anchor pos=(1.90, 0.00, -2.50) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Optional prop anchor pos=(-1.90, 0.00, 2.50) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Hallways/T Junction.prefab
+size=(10.00, 3.00, 10.00) connectors=Connector 0:(0.00, 0.00, 5.00)/(0.00, 0.00, 0.00);Connector 1:(5.00, 0.00, 0.00)/(0.00, 90.00, 0.00);Connector 3:(-5.00, 0.00, 0.00)/(0.00, 270.00, 0.00)
+ Floor pos=(0.00, -0.15, 0.00) scale=(10.00, 0.30, 10.00) colliders=1 meshes=1
+ Connector 0 pos=(0.00, 0.00, 5.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(-3.10, 1.50, 5.00) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(3.10, 1.50, 5.00) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(0.00, 2.80, 5.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Connector 1 pos=(5.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(5.00, 1.50, 3.10) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(5.00, 1.50, -3.10) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(5.00, 2.80, 0.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Wall pos=(0.00, 1.50, -5.00) scale=(10.00, 3.00, 0.20) colliders=1 meshes=1
+ Connector 3 pos=(-5.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(-5.00, 1.50, -3.10) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(-5.00, 1.50, 3.10) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(-5.00, 2.80, 0.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Furniture surface anchor pos=(3.90, 0.00, -2.50) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Optional prop anchor pos=(-3.90, 0.00, 2.50) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Props/Cabinet.prefab
+ Cabinet pos=(0.00, 0.60, 0.00) scale=(1.40, 1.20, 0.60) colliders=1 meshes=1
+ Item Surface pos=(-0.35, 1.40, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Item Surface pos=(0.35, 1.40, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Props/Closet.prefab
+ Back pos=(0.00, 1.20, -0.55) scale=(1.60, 2.40, 0.12) colliders=1 meshes=1
+ Side pos=(-0.80, 1.20, 0.00) scale=(0.12, 2.40, 1.20) colliders=1 meshes=1
+ Side pos=(0.80, 1.20, 0.00) scale=(0.12, 2.40, 1.20) colliders=1 meshes=1
+ Top pos=(0.00, 2.40, 0.00) scale=(1.72, 0.12, 1.20) colliders=1 meshes=1
+ Lower door pos=(0.00, 0.80, 0.55) scale=(1.60, 1.60, 0.10) colliders=1 meshes=1
+ Upper door pos=(0.00, 2.04, 0.55) scale=(1.60, 0.72, 0.10) colliders=1 meshes=1
+ Entry pos=(0.00, 0.03, 1.70) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Hidden feet pos=(0.00, 0.03, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Hidden camera pos=(0.00, 1.64, 0.42) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Exit pos=(0.00, 0.03, 1.50) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ AI approach pos=(1.20, 0.03, 1.70) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Alternate exit pos=(0.90, 0.03, 1.50) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Props/Plant.prefab
+ Pot pos=(0.00, 0.25, 0.00) scale=(0.50, 0.50, 0.50) colliders=1 meshes=1
+ Sphere pos=(0.00, 1.00, 0.00) scale=(0.80, 1.40, 0.80) colliders=1 meshes=1
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Props/Shelf.prefab
+ Surface pos=(0.00, 1.00, 0.00) scale=(1.80, 0.15, 0.70) colliders=1 meshes=1
+ Support pos=(-0.75, 0.50, 0.00) scale=(0.14, 1.00, 0.60) colliders=1 meshes=1
+ Support pos=(0.75, 0.50, 0.00) scale=(0.14, 1.00, 0.60) colliders=1 meshes=1
+ Back pos=(0.00, 1.00, -0.35) scale=(1.80, 2.00, 0.10) colliders=1 meshes=1
+ Upper shelf pos=(0.00, 1.80, 0.00) scale=(1.80, 0.10, 0.70) colliders=1 meshes=1
+ Item Surface pos=(-0.45, 1.28, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Item Surface pos=(0.45, 1.28, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Item Surface pos=(0.00, 1.28, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Props/Table.prefab
+ Tabletop pos=(0.00, 0.78, 0.00) scale=(2.40, 0.16, 1.60) colliders=1 meshes=1
+ Leg pos=(-1.05, 0.37, -0.65) scale=(0.14, 0.74, 0.14) colliders=1 meshes=1
+ Leg pos=(-1.05, 0.37, 0.65) scale=(0.14, 0.74, 0.14) colliders=1 meshes=1
+ Leg pos=(1.05, 0.37, -0.65) scale=(0.14, 0.74, 0.14) colliders=1 meshes=1
+ Leg pos=(1.05, 0.37, 0.65) scale=(0.14, 0.74, 0.14) colliders=1 meshes=1
+ Item Surface pos=(-0.65, 1.06, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Item Surface pos=(0.00, 1.06, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Item Surface pos=(0.65, 1.06, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Rooms/Large Room.prefab
+size=(14.00, 3.00, 10.00) connectors=Connector 0:(0.00, 0.00, 5.00)/(0.00, 0.00, 0.00);Connector 1:(7.00, 0.00, 0.00)/(0.00, 90.00, 0.00);Connector 2:(0.00, 0.00, -5.00)/(0.00, 180.00, 0.00);Connector 3:(-7.00, 0.00, 0.00)/(0.00, 270.00, 0.00)
+ Floor pos=(0.00, -0.15, 0.00) scale=(14.00, 0.30, 10.00) colliders=1 meshes=1
+ Connector 0 pos=(0.00, 0.00, 5.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(-4.10, 1.50, 5.00) scale=(5.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(4.10, 1.50, 5.00) scale=(5.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(0.00, 2.80, 5.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Connector 1 pos=(7.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(7.00, 1.50, 3.10) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(7.00, 1.50, -3.10) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(7.00, 2.80, 0.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Connector 2 pos=(0.00, 0.00, -5.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(4.10, 1.50, -5.00) scale=(5.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(-4.10, 1.50, -5.00) scale=(5.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(0.00, 2.80, -5.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Connector 3 pos=(-7.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(-7.00, 1.50, -3.10) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(-7.00, 1.50, 3.10) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(-7.00, 2.80, 0.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Furniture surface anchor pos=(5.90, 0.00, -2.50) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Optional prop anchor pos=(-5.90, 0.00, 2.50) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Closet anchor pos=(-5.90, 0.00, -3.80) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Rooms/Small Room.prefab
+size=(8.00, 3.00, 8.00) connectors=Connector 0:(0.00, 0.00, 4.00)/(0.00, 0.00, 0.00);Connector 2:(0.00, 0.00, -4.00)/(0.00, 180.00, 0.00)
+ Floor pos=(0.00, -0.15, 0.00) scale=(8.00, 0.30, 8.00) colliders=1 meshes=1
+ Connector 0 pos=(0.00, 0.00, 4.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(-2.60, 1.50, 4.00) scale=(2.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(2.60, 1.50, 4.00) scale=(2.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(0.00, 2.80, 4.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Wall pos=(4.00, 1.50, 0.00) scale=(8.00, 3.00, 0.20) colliders=1 meshes=1
+ Connector 2 pos=(0.00, 0.00, -4.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(2.60, 1.50, -4.00) scale=(2.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(-2.60, 1.50, -4.00) scale=(2.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(0.00, 2.80, -4.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Wall pos=(-4.00, 1.50, 0.00) scale=(8.00, 3.00, 0.20) colliders=1 meshes=1
+ Furniture surface anchor pos=(2.90, 0.00, -2.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Optional prop anchor pos=(-2.90, 0.00, 2.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Closet anchor pos=(-2.90, 0.00, -2.80) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Rooms/Standard Room.prefab
+size=(10.00, 3.00, 10.00) connectors=Connector 0:(0.00, 0.00, 5.00)/(0.00, 0.00, 0.00);Connector 1:(5.00, 0.00, 0.00)/(0.00, 90.00, 0.00);Connector 2:(0.00, 0.00, -5.00)/(0.00, 180.00, 0.00);Connector 3:(-5.00, 0.00, 0.00)/(0.00, 270.00, 0.00)
+ Floor pos=(0.00, -0.15, 0.00) scale=(10.00, 0.30, 10.00) colliders=1 meshes=1
+ Connector 0 pos=(0.00, 0.00, 5.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(-3.10, 1.50, 5.00) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(3.10, 1.50, 5.00) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(0.00, 2.80, 5.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Connector 1 pos=(5.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(5.00, 1.50, 3.10) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(5.00, 1.50, -3.10) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(5.00, 2.80, 0.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Connector 2 pos=(0.00, 0.00, -5.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(3.10, 1.50, -5.00) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(-3.10, 1.50, -5.00) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(0.00, 2.80, -5.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Connector 3 pos=(-5.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Wall pos=(-5.00, 1.50, -3.10) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Wall pos=(-5.00, 1.50, 3.10) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(-5.00, 2.80, 0.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Furniture surface anchor pos=(3.90, 0.00, -2.50) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Optional prop anchor pos=(-3.90, 0.00, 2.50) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Closet anchor pos=(-3.90, 0.00, -3.80) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+PREFAB Assets/Game/Prefabs/Maps/Mansion/Stairs/Staircase.prefab
+size=(10.00, 7.00, 14.00) connectors=Lower connector:(0.00, 0.00, -7.00)/(0.00, 180.00, 0.00);Upper connector:(0.00, 4.00, 7.00)/(0.00, 0.00, 0.00)
+ Lower floor pos=(0.00, -0.15, 0.00) scale=(10.00, 0.30, 14.00) colliders=1 meshes=1
+ Step 0 pos=(0.00, 0.10, -3.80) scale=(3.20, 0.20, 0.40) colliders=1 meshes=1
+ Step 1 pos=(0.00, 0.20, -3.40) scale=(3.20, 0.40, 0.40) colliders=1 meshes=1
+ Step 2 pos=(0.00, 0.30, -3.00) scale=(3.20, 0.60, 0.40) colliders=1 meshes=1
+ Step 3 pos=(0.00, 0.40, -2.60) scale=(3.20, 0.80, 0.40) colliders=1 meshes=1
+ Step 4 pos=(0.00, 0.50, -2.20) scale=(3.20, 1.00, 0.40) colliders=1 meshes=1
+ Step 5 pos=(0.00, 0.60, -1.80) scale=(3.20, 1.20, 0.40) colliders=1 meshes=1
+ Step 6 pos=(0.00, 0.70, -1.40) scale=(3.20, 1.40, 0.40) colliders=1 meshes=1
+ Step 7 pos=(0.00, 0.80, -1.00) scale=(3.20, 1.60, 0.40) colliders=1 meshes=1
+ Step 8 pos=(0.00, 0.90, -0.60) scale=(3.20, 1.80, 0.40) colliders=1 meshes=1
+ Step 9 pos=(0.00, 1.00, -0.20) scale=(3.20, 2.00, 0.40) colliders=1 meshes=1
+ Step 10 pos=(0.00, 1.10, 0.20) scale=(3.20, 2.20, 0.40) colliders=1 meshes=1
+ Step 11 pos=(0.00, 1.20, 0.60) scale=(3.20, 2.40, 0.40) colliders=1 meshes=1
+ Step 12 pos=(0.00, 1.30, 1.00) scale=(3.20, 2.60, 0.40) colliders=1 meshes=1
+ Step 13 pos=(0.00, 1.40, 1.40) scale=(3.20, 2.80, 0.40) colliders=1 meshes=1
+ Step 14 pos=(0.00, 1.50, 1.80) scale=(3.20, 3.00, 0.40) colliders=1 meshes=1
+ Step 15 pos=(0.00, 1.60, 2.20) scale=(3.20, 3.20, 0.40) colliders=1 meshes=1
+ Step 16 pos=(0.00, 1.70, 2.60) scale=(3.20, 3.40, 0.40) colliders=1 meshes=1
+ Step 17 pos=(0.00, 1.80, 3.00) scale=(3.20, 3.60, 0.40) colliders=1 meshes=1
+ Step 18 pos=(0.00, 1.90, 3.40) scale=(3.20, 3.80, 0.40) colliders=1 meshes=1
+ Step 19 pos=(0.00, 2.00, 3.80) scale=(3.20, 4.00, 0.40) colliders=1 meshes=1
+ Upper landing pos=(0.00, 3.85, 5.50) scale=(10.00, 0.30, 3.00) colliders=1 meshes=1
+ Side wall pos=(-5.00, 3.50, 0.00) scale=(0.20, 7.00, 14.00) colliders=1 meshes=1
+ Side wall pos=(5.00, 3.50, 0.00) scale=(0.20, 7.00, 14.00) colliders=1 meshes=1
+ End wall pos=(-3.10, 1.50, -7.00) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ End wall pos=(3.10, 1.50, -7.00) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(0.00, 2.80, -7.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ End wall pos=(-3.10, 5.50, 7.00) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ End wall pos=(3.10, 5.50, 7.00) scale=(3.80, 3.00, 0.20) colliders=1 meshes=1
+ Lintel pos=(0.00, 6.80, 7.00) scale=(2.40, 0.40, 0.20) colliders=1 meshes=1
+ Lower connector pos=(0.00, 0.00, -7.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0
+ Upper connector pos=(0.00, 4.00, 7.00) scale=(1.00, 1.00, 1.00) colliders=0 meshes=0

@@ -18,6 +18,7 @@ namespace SurvivalFP
         public static void Emit(Vector3 position,float radius,NoiseCategory category,GameObject source)
         {
             var player = source ? source.GetComponentInParent<NetworkPlayer>() : null;
+            if(player&&!EnemyTargetRules.CanTarget(player))return;
             if (player && player.HiddenCloset) radius *= player.HiddenCloset.noiseMultiplier;
             if (radius > 0) Emitted?.Invoke(new GameplayNoise(position,radius,category,source));
         }

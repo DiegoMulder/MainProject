@@ -1,0 +1,171 @@
+PASS two Relay peers on protocol 4
+PASS matching network configuration
+PASS client command voicepause
+PASS client command stop
+PASS client command measure
+PASS client command drive
+PASS client command stop
+PASS client predicts solid teammate collision without passing through
+PASS stationary teammate collision avoids large reconciliation
+PASS client command stop
+PASS client command turn
+PASS client command smoothing
+PASS client command measure
+PASS client command drive
+PASS client command stop
+MEASURE fps=120 smoothing=0 frames=151 rootZero=75 presentationZero=0 maxRenderStep=0,0360 correction=0,0000
+PASS continuous client presentation at 120 FPS, mouse smoothing 0
+PASS no large movement correction during straight walk
+PASS client command stop
+PASS client command turn
+PASS client command smoothing
+PASS client command measure
+PASS client command drive
+PASS client command stop
+MEASURE fps=120 smoothing=1 frames=151 rootZero=75 presentationZero=0 maxRenderStep=0,0372 correction=0,0000
+PASS continuous client presentation at 120 FPS, mouse smoothing 1
+PASS no large movement correction during straight walk
+PASS client command stop
+PASS client command turn
+PASS client command smoothing
+PASS client command measure
+PASS client command drive
+PASS client command stop
+MEASURE fps=60 smoothing=0 frames=75 rootZero=0 presentationZero=0 maxRenderStep=0,0704 correction=0,0000
+PASS continuous client presentation at 60 FPS, mouse smoothing 0
+PASS no large movement correction during straight walk
+PASS client command stop
+PASS client command turn
+PASS client command smoothing
+PASS client command measure
+PASS client command drive
+PASS client command stop
+MEASURE fps=60 smoothing=1 frames=75 rootZero=0 presentationZero=0 maxRenderStep=0,0701 correction=0,0000
+PASS continuous client presentation at 60 FPS, mouse smoothing 1
+PASS no large movement correction during straight walk
+PASS client command stop
+PASS client command turn
+PASS client command smoothing
+PASS client command measure
+PASS client command drive
+PASS client command stop
+MEASURE fps=30 smoothing=0 frames=38 rootZero=0 presentationZero=0 maxRenderStep=0,1401 correction=0,0000
+PASS continuous client presentation at 30 FPS, mouse smoothing 0
+PASS no large movement correction during straight walk
+PASS client command stop
+PASS client command turn
+PASS client command smoothing
+PASS client command measure
+PASS client command drive
+PASS client command stop
+MEASURE fps=30 smoothing=1 frames=37 rootZero=0 presentationZero=0 maxRenderStep=0,1400 correction=0,0000
+PASS continuous client presentation at 30 FPS, mouse smoothing 1
+PASS no large movement correction during straight walk
+PASS client command turn
+PASS client command measure
+PASS client command drive
+PASS client command drive
+PASS client command jump
+PASS client command drive
+PASS client command drive
+PASS client command jump
+PASS client command drive
+PASS client command drive
+PASS client command jump
+PASS client command drive
+PASS client command drive
+PASS client command jump
+PASS client command drive
+PASS client command drive
+PASS client command jump
+PASS client command drive
+PASS client command drive
+PASS client command jump
+PASS client command drive
+HOST sustainedSeconds=183,0 maximumFrameStep=0,100
+PASS client command stop
+PASS client command turn
+SUSTAINED seconds=182,7 frames=21916 correction=0,491 renderZero=0
+PASS sustained movement has no client errors
+PASS two world radios available
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS equipped ON client transmits to nearby host
+PASS nearby transmitter and receiver emit radio noise
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS OFF receiver rejects radio audio
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS OFF equipped transmitter rejects speech
+PASS unequipping immediately stops transmission
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS inventory-only radio cannot transmit
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS down immediately stops radio and item use
+PASS client command speech
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS client command radio
+PASS client command use
+PASS client command light
+PASS downed speech, radio and all player noise categories suppressed
+PASS downed primary action cannot toggle or transmit
+PASS downed body animates but is not targetable
+PASS only downed client has vignette
+PASS client command screenshot
+PASS vignette follows synchronized halfway timer
+PASS client command screenshot
+PASS vignette strengthens near bleed-out
+PASS client command screenshot
+PASS client revival succeeds
+PASS revive clears vignette and restores item eligibility
+PASS alive visible client acquired
+PASS lost sight retains target during two-second grace
+PASS reacquiring LOS refreshes pursuit
+PASS expired grace releases live target for last-known search
+PASS down during grace immediately clears target and hiding memory
+PASS environmental noise still attracts enemy while player is down
+PASS host down vignette stays local
+PASS downed host body stays visible to client
+PASS bleed-out retains dead network player for spectator
+PASS dead client body and animator hidden on host
+PASS dead client presentation cleared on client
+PASS dead client spectates living teammate
+PASS client has no runtime errors
+DONE 146 passed / 0 failed
+
+PASS alive client targeted before disconnect
+PASS disconnect clears enemy memory; no-alive round ends without chasing downed host
+PASS visual vignette inspection with PSX on and off; HUD readable
+
+Scope and limits:
+- Final build: protocol 4, Unity 6000.6.0f1, zero build errors/warnings.
+- Final Relay host/client acceptance completed with no failures or runtime errors.
+- 183-second simultaneous host/client walk/sprint/crouch/jump/turn exercise; no zero-motion presentation frames during moving samples.
+- Client stationary-teammate collision test passed. Moving-player contact still produced reconciliation, maximum 0.491 m in the sustained run; this is not a claim of zero network corrections.
+- Straight-walk camera timing verified at 30/60/120 FPS, mouse smoothing OFF/ON, zero measured correction in those samples.
+- Separate original controller regression: 71 passes. Stair/ledge geometry regression: 14 passes.
+- Vignette timing/state tested on both peers; visible mild/strong effect and PSX ON/OFF inspected in the editor. Hidden standalone screenshot captures were black and were not used as visual evidence.
+- Real microphone audio quality and perceived nearby overlap require a two-person listening test. Deterministic radio speech-state injection verified network eligibility and AI hearing.
+- No injected latency/loss test: installed UnityTransport documents its legacy debug simulator as unsupported; Network Simulator package is not installed. Relay connectivity was used.
+- Initial development-harness command-file sharing race fixed with retry; final run completed. Original FOV test fixed to honor the user's saved FOV rather than assume 75 degrees.

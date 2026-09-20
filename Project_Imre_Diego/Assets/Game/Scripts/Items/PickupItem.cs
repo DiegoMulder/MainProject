@@ -44,9 +44,10 @@ namespace SurvivalFP
         public string Prompt(PlayerInteraction player) => player.Inventory.HasSpace ? "E  Pick up " + displayName : "Inventory full";
         public bool CanInteract(PlayerInteraction player) => !Held && player.Inventory.HasSpace;
         public void Interact(PlayerInteraction player) => player.Inventory.TryAdd(this);
+        public bool CanUse {get{var player=GetComponentInParent<NetworkPlayer>();return Held&&(!player||player.CanUseItems);}}
         public void UsePrimary()
         {
-            if (!Held) return;
+            if (!CanUse) return;
             if (!primaryUse)
                 foreach (var component in GetComponents<MonoBehaviour>())
                     if (component is IPrimaryUse) { primaryUse = component; break; }

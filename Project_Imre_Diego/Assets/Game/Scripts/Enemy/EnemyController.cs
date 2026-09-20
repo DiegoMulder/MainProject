@@ -25,7 +25,8 @@ namespace SurvivalFP
 
         [Header("Perception and Search")]
         public float perceptionInterval = .15f;
-        public float lostSightDelay = 1.2f;
+        [UnityEngine.Serialization.FormerlySerializedAs("lostSightDelay"), Min(0)]
+        public float lostSightChaseDuration = 2f;
         public float investigationDuration = 5f;
         public float searchDuration = 9f;
         public float idleDuration = 2f;
@@ -71,6 +72,16 @@ namespace SurvivalFP
         private bool targetVisible;
         EnemyKillSequence killSequence;
         public void ClearPlayerMemory(){Target=null;knownPlayer=null;knownCloset=null;targetVisible=false;knowledgeUntil=0;LastKnownPosition=transform.position;}
+
+        public void InvalidatePlayer(NetworkPlayer player)
+        {
+            if(!IsServer)return;
+            if(killSequence)killSequence.CancelFor(player);
+            if(Target!=player&&knownPlayer!=player)return;
+            ClearPlayerMemory();
+            if(killSequence&&killSequence.Busy)return;
+            if(agent&&agent.enabled&&agent.isOnNavMesh){agent.ResetPath();Change(EnemyState.Roam,12);if(RoundManager.Instance&&rng!=null)Go(RoomDestination());}
+        }
 
         public override void OnNetworkSpawn()
         {
@@ -140,12 +151,7 @@ namespace SurvivalFP
                 ? noise.Source.GetComponentInParent<NetworkPlayer>()
                 : null;
 
-            if (source &&
-                !source.Alive &&
-                !(source.Life.Value == PlayerLife.Downed &&
-                (noise.Category == NoiseCategory.RadioVoice ||
-                 noise.Category == NoiseCategory.RadioReceiver)))
-                return;
+            if (source && !EnemyTargetRules.CanTarget(source))return;
 
             if (Vector3.Distance(transform.position, noise.Position) >
                 noise.Radius * perception.hearingMultiplier)
@@ -160,6 +166,7 @@ namespace SurvivalFP
                 source != knownPlayer)
                 return;
 
+            knownPlayer=null;Target=null;knowledgeUntil=0;
             knownCloset = source
                 ? source.HiddenCloset
                 : null;
@@ -310,15 +317,19 @@ namespace SurvivalFP
                             break;
                         }
 
+                        if(EnemyTargetRules.CanTarget(Target)&&Time.time-LastSeen<lostSightChaseDuration)
+                        {
+                            // Short pursuit memory is subordinate to current life-state eligibility.
+                            LastKnownPosition=Target.transform.position;Go(LastKnownPosition);break;
+                        }
                         Target = null;
-
                         Go(LastKnownPosition);
 
                         if (Arrived())
                         {
                             Change(
-                                EnemyState.Investigate,
-                                investigationDuration
+                                EnemyState.Search,
+                                searchDuration
                             );
                         }
 

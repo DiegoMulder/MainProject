@@ -51,6 +51,7 @@ namespace SurvivalFP
         float landingOffset, landingVelocity;
         Vector3 bobOffset;
         Vector2 latestLook;
+        PlayerPrediction prediction;
         public float Sensitivity { get => sensitivity; set => sensitivity = Mathf.Clamp(value, .01f, .5f); }
         public float LandingOffset => landingOffset;
         public bool SmoothingEnabled=>smoothMouse && mouseSmoothTime>0;
@@ -62,6 +63,7 @@ namespace SurvivalFP
         void Awake()
         {
             if (!movement) movement = GetComponentInParent<PlayerMovement>();
+            prediction=GetComponentInParent<PlayerPrediction>();
             if (!yawRoot && movement) yawRoot = movement.transform;
             if (!view) view = GetComponent<Camera>();
             eyeHeight = movement.Height - eyeInset;
@@ -114,6 +116,7 @@ namespace SurvivalFP
             // The eye must stay inside the capsule even while crouching into a low opening.
             eyeHeight = Mathf.Min(eyeHeight, movement.Height - 0.1f);
             transform.localPosition = Vector3.up * (eyeHeight + landingOffset) + bobOffset;
+            if(prediction)transform.localPosition+=transform.parent.InverseTransformVector(prediction.RenderOffset);
             float sideways = Vector3.Dot(movement.HorizontalVelocity, yawRoot.right) / 7f;
             float targetRoll = Mathf.Clamp(-sideways * strafeRoll - latestLook.x * lookSway, -1.5f, 1.5f) * motionScale;
             roll = Mathf.Lerp(roll, targetRoll, blend);

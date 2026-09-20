@@ -40,7 +40,7 @@ The server writes **NetworkPlayer.Life = Downed**. Each peer's PlayerAnimationDr
 
 To test this yourself, keep another teammate alive so the round does not end immediately. Have the host become downed while the client watches, then reverse the roles. Watch the actual body enter its low pose, stay low while still, crawl while moving, and return to standing after revival. Repeat after switching items. In the Animator window, check both the highlighted downed Blend Tree and the IsDown/Down values.
 
-The current matching-build checks evaluated CrawlingIdle and Crawling and verified shoulder-bone pose changes on both peers, including repeated revivals. The reported static T-pose was not reproduced during those checks; no confirmed disabled Animator, missing controller, invalid avatar or broken clip binding was found. Do not replace the existing animated clips with a static fallback. If it occurs again, record which build each player uses, which player is downed and the remote Animator's active state. Always distribute the entire newly built folder together; protocol 3 rejects the previous protocol-2 player.
+The current matching-build checks evaluated CrawlingIdle and Crawling and verified shoulder-bone pose changes on both peers, including repeated revivals. The reported static T-pose was not reproduced during those checks; no confirmed disabled Animator, missing controller, invalid avatar or broken clip binding was found. Do not replace the existing animated clips with a static fallback. If it occurs again, record which build each player uses, which player is downed and the remote Animator's active state. Always distribute the entire newly built folder together; protocol 4 rejects older incompatible players.
 
 ### Talking and the face
 
@@ -162,11 +162,11 @@ The ordinary end-screen, Back to Lobby and Main Menu controls remain part of the
 
 **Game/Scripts/Enemy/EnemyTargetRules.cs** contains the central CanTarget check. Vision, maintained target memory and new kill attempts use it. It requires an Alive, connected, spawned player who is not already grabbed. A Downed player crawling in front of an enemy remains ineligible. Completing a kill also clears the enemy's remembered player/closet references.
 
-A downed player's radio may still emit an audible GameplayNoise at a location, as before. Investigating that sound does not make the downed person a valid chase or kill target.
+Downed players produce no AI hearing events, including proximity speech, radio speech and receiver noise. Teammates can still hear their proximity voice. Down/death/disconnect immediately clears the enemy's target and player memory, including during the lost-sight grace period. Independent environmental events such as a dropped object impact or a door still make noise.
 
 ## Open-mic radio use
 
-Pick up a walkie, select its slot, and left-click to switch it ON. Speak normally: there is no V key or separate transmit action. You can select another inventory slot while the powered radio keeps working. OFF stops both transmission and reception. Nearby players continue hearing clean proximity speech; distant powered radios use the filtered path without a duplicate copy.
+Pick up a walkie, select its slot, and left-click to switch it ON. Speak normally: there is no V key or separate transmit action. Keep the powered radio equipped to transmit. Selecting another slot stops transmission immediately, although an Alive player can still receive through a powered radio carried in another slot. OFF stops both transmission and reception. Nearby listeners intentionally hear both clean proximity speech and filtered radio speech when their receiver is ON.
 
 The session's **Proximity Voice** component uses the existing Vivox speech detector and **Speech Threshold**. **Speech Release Delay** (0.2 seconds) bridges small gaps between words. Only active speech refreshes the server's transmission state; stopping sends one stop event. If reports stop unexpectedly, the server expires transmission after 0.5 seconds. AI hearing events have their own slower **Noise Interval**. Power cues and their small noise radius are unchanged.
 
@@ -178,7 +178,7 @@ On **Game/Prefabs/Game Management/Multiplayer Session**, find **Proximity Voice*
 - **Radio Low Pass** removes high frequencies; default 3000 Hz.
 - **Radio Distortion** adds mild grit; default 0.18.
 
-Only the radio participant's received audio uses this effect chain. A Vivox participant audio tap silences that participant in the normal radio mix and sends its audio through a Unity AudioSource with high-pass, low-pass and distortion filters. Proximity audio retains its existing clean positional path. Close listeners prefer proximity, so the two paths do not produce a duplicate voice.
+Only the radio participant's received audio uses this effect chain. A Vivox participant audio tap silences that participant in the normal radio mix and sends its audio through a Unity AudioSource with high-pass, low-pass and distortion filters. Proximity audio retains its existing clean positional path. Both paths remain audible to close listeners with an ON receiver; there is no proximity-distance suppression of radio audio.
 
 The radio AudioSource uses Voice volume, with Master applied by the listener. Power cues use the existing SFX volume bus and Master. Audio filtering does not determine AI hearing range.
 

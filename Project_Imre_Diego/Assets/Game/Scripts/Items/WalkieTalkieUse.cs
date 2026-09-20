@@ -19,7 +19,7 @@ namespace SurvivalFP
         void PowerChanged(bool old,bool on){if(IsServer){var clips=on?powerOnSounds:powerOffSounds;int index=clips!=null&&clips.Length>0?Random.Range(0,clips.Length):-1;PowerSoundRpc(on,index);var location=GetComponent<NetworkPickup>().Location.Value;var player=NetworkPlayer.Players.Find(p=>p.OwnerClientId==location.carrier);GameplayNoiseSystem.Emit(player?player.transform.position:transform.position,powerNoiseRadius,NoiseCategory.Door,player?player.gameObject:gameObject);}}
         [Rpc(SendTo.Everyone,InvokePermission=RpcInvokePermission.Server)]
         void PowerSoundRpc(bool on,int index){var clips=on?powerOnSounds:powerOffSounds;Play(index>=0&&clips!=null&&index<clips.Length?clips[index]:(on?powerOn:powerOff));}
-        public void PrimaryUse(){if(IsServer && GetComponent<PickupItem>().Held)Powered.Value=!Powered.Value;}
+        public void PrimaryUse(){if(IsServer && GetComponent<PickupItem>().CanUse)Powered.Value=!Powered.Value;}
         public void PlayTransmissionCue(bool start)=>Play(start?transmitStart:transmitEnd);
         public void PlayStatic(){if(radioStatic)Play(radioStatic);}
         void Play(AudioClip clip){if(clip && speaker)speaker.PlayOneShot(clip,.6f);}

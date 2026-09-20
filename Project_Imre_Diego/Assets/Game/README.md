@@ -17,6 +17,8 @@ These beginner tutorials explain the systems actually present in this URP projec
 
 11. [Character animation, right-hand items, map selection, enemy kills and radio audio](Tutorials/10-Character-Animation-Maps-Kills-and-Radio-Audio.md)
 
+12. [Life states, equipped radios, the red vignette and smooth movement](Tutorials/11-Life-States-Radio-and-Movement.md)
+
 The tutorials distinguish Inspector changes from optional programming examples. Code printed in a tutorial does not run until you create and attach the described script. Optional code examples remain examples; the closet, noise, heartbeat, and PSX systems described in tutorial 7 are implemented in the project.
 
 ## Where to play
@@ -41,7 +43,7 @@ The offline player is **Assets/AI-Tools-DEV/Prefabs/SurvivalPlayer.prefab**. Mul
 | 1 / 2 / 3 or mouse wheel | Select an inventory slot |
 | Q | Drop selected item |
 | F | Toggle a flashlight carried in any slot |
-| Speak with a powered Walkie Talkie | Open-mic radio transmission; no talk key required |
+| Speak while Alive with an equipped, powered Walkie Talkie | Open-mic radio transmission; no talk key required |
 | Escape | Mansion pause menu; release cursor in the offline course |
 | Tab while spectating | Change spectator target |
 

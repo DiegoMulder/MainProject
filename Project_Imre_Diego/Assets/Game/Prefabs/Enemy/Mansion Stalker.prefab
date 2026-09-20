@@ -317,7 +317,7 @@ MonoBehaviour:
   chaseSpeed: 5.2
   killDistance: 1.1
   perceptionInterval: 0.15
-  lostSightDelay: 1.2
+  lostSightChaseDuration: 2
   investigationDuration: 5
   searchDuration: 9
   idleDuration: 2
@@ -372,7 +372,7 @@ MonoBehaviour:
   animator: {fileID: 7694223965447825364}
   killCameraPoint: {fileID: 8766723845603639118}
   postKillStaggerDuration: 2
-  maximumGrabDistance: 2
+  maximumGrabDistance: 5
   Victim:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0

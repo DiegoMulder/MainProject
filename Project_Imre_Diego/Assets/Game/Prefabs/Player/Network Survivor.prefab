@@ -492,6 +492,7 @@ GameObject:
   - component: {fileID: 1698993392958605915}
   - component: {fileID: 6255894680365797756}
   - component: {fileID: 3230071029491776850}
+  - component: {fileID: 4827192774338891008}
   m_Layer: 0
   m_Name: Network Survivor
   m_TagString: Untagged
@@ -555,7 +556,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ded067b7553d7774b8d5113a81722627, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerStamina
   maximum: 100
   sprintDrain: 7.5
@@ -574,7 +575,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3014325b24a5d0f4f99a77897b732172, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerMovement
   capsule: {fileID: 7834420521637750917}
   stamina: {fileID: 4362017763236135586}
@@ -616,7 +617,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76e02c7a32a7c644e9f66f9c862a59c9, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerController
   inputActions: {fileID: -944628639613478452, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
   movement: {fileID: 6207008883958896752}
@@ -632,7 +633,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 296d00a2edb3d7649990bde4e7aebac7, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerAudio
   movement: {fileID: 6207008883958896752}
   footsteps: {fileID: 6457295577678657277}
@@ -664,7 +665,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0b264052175a5e94dab14a1c99c64ac6, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerInventory
   handAnchor: {fileID: 5625438275474778116}
   rightHandAnchor: {fileID: 1588134418378279400}
@@ -690,7 +691,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc7cc25d422e444cb390eeafaedc0246, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerFlashlightShortcut
 --- !u!114 &6780433787336680669
 MonoBehaviour:
@@ -702,7 +703,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
   GlobalObjectIdHash: 27140422
   InScenePlacedSourceGlobalObjectIdHash: 0
@@ -729,7 +730,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkTransform
   ShowTopMostFoldoutHeaderGroup: 1
   NetworkTransformExpanded: 0
@@ -775,7 +776,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 579f9bec1fb2c3e42934bfaa2f239bfe, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerInteraction
   distance: 5
   layers:
@@ -791,7 +792,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a4d3677d6e56e5543bef3601cffc6eea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.NetworkPlayer
   ShowTopMostFoldoutHeaderGroup: 1
   Life:
@@ -805,6 +806,11 @@ MonoBehaviour:
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 18446744073709551615
   BleedOutAt:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  BleedOutStartedAt:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
@@ -869,7 +875,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 51b836d1d7234704a81a79c4ec0aac62, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.MovementNoiseEmitter
   crouchRadius: 2
   walkRadius: 7
@@ -885,7 +891,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d27285aa378e8554d956517c4927a3a8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.SpectatorController
 --- !u!114 &5186781720661433610
 MonoBehaviour:
@@ -897,7 +903,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a09cb0942613f924eb2cf659c1a65472, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.DownedInteractable
   interactionBody: {fileID: 5507582725729834992}
 --- !u!114 &371034483048915378
@@ -910,7 +916,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 880aabcc610384e48a63acd406a2d4e6, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.HeartbeatFeedback
   heartbeatClip: {fileID: 8300000, guid: cfba1f8b0765967498bfb1511e0eb610, type: 3}
   maximumDistance: 40
@@ -977,7 +983,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72308755e74492f4d96bcae798a4c218, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerPrediction
   ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &2535529698226877296
@@ -990,7 +996,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e098e09ac6c22444dbf88f55be4717af, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerRadio
   ShowTopMostFoldoutHeaderGroup: 1
   Transmitting:
@@ -1148,7 +1154,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkAnimator
   ShowTopMostFoldoutHeaderGroup: 1
   NetworkAnimatorExpanded: 0
@@ -1196,7 +1202,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b73fae087c5cdcf4f9adb67514af5b85, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerAnimationDriver
   ShowTopMostFoldoutHeaderGroup: 1
   animator: {fileID: 7093932193381512731}
@@ -1221,8 +1227,50 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05aa0bae3d65ae2409c9728faa99bddd, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerKillCamera
+--- !u!114 &4827192774338891008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7000563005437309295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7887a77292d564945b64a8ea77f63915, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.DownedVignette
+  minimumIntensity: 0.15
+  maximumIntensity: 1
+  minimumOpacity: 0.12
+  maximumOpacity: 0.8
+  colour: {r: 0.55, g: 0.015, b: 0.025, a: 1}
+  progression:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  fadeTime: 0.25
 --- !u!1 &8239911441503884807
 GameObject:
   m_ObjectHideFlags: 0
@@ -1329,7 +1377,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6d1a216b296f11d4eb268a8a1e7d080c, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerCamera
   movement: {fileID: 6207008883958896752}
   yawRoot: {fileID: 2248072094443043611}
@@ -1371,7 +1419,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
@@ -1415,7 +1463,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d31c58c4bede6ec489a991849abc3218, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PsxCameraPresentation
   profile: {fileID: 11400000, guid: f46e9d1cb6e8b994b97e57431dfaeb63, type: 2}
 --- !u!1001 &747989901038797577

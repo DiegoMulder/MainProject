@@ -12,25 +12,33 @@ namespace SurvivalFP
         readonly List<Frame> history=new();
         NetworkPlayer player;float accumulator,credit,creditTime,lastReceived,nextSnapshot;
         int sequence,lastProcessed,epoch,lastAck;bool jump;
+        Vector3 previousPosition,currentPosition;bool presentationReady;
+        // Render between fixed prediction steps. Physics and authoritative corrections remain immediate.
+        public Vector3 RenderOffset=>IsSpawned&&IsOwner&&!IsServer&&player.CanMove&&presentationReady
+            ? Vector3.Lerp(previousPosition,currentPosition,Mathf.Clamp01(accumulator/Step))-transform.position:Vector3.zero;
+        void ResetPresentation(){previousPosition=currentPosition=transform.position;presentationReady=true;}
         public int Corrections {get;private set;}
         public float LastCorrection {get;private set;}
         void Awake()=>player=GetComponent<NetworkPlayer>();
         public override void OnNetworkSpawn()
         {
             credit=.15f;creditTime=lastReceived=Time.unscaledTime;
+            ResetPresentation();
             if(IsServer)player.Motor.Teleported+=ForceState;
         }
         public override void OnNetworkDespawn(){if(player && player.Motor)player.Motor.Teleported-=ForceState;history.Clear();}
         public void Predict(PlayerCommand command,float yaw,float pitch,float dt)
         {
             if(!IsOwner || IsServer || !player.CanMove)return;
+            if(!presentationReady)ResetPresentation();
             jump|=command.JumpPressed;accumulator=Mathf.Min(accumulator+dt,.1f);
             bool stepped=false;
             while(accumulator>=Step)
             {
                 accumulator-=Step;var input=new MovementInput {sequence=++sequence,epoch=epoch,move=command.Move,
                     yaw=yaw,pitch=pitch,sprint=command.Sprint,crouch=command.Crouch,jump=jump};jump=false;
-                player.Motor.Tick(input.Command,Step);
+                previousPosition=transform.position;
+                player.Motor.Tick(input.Command,Step);currentPosition=transform.position;
                 history.Add(new Frame {input=input,state=player.Motor.Capture()});stepped=true;
                 if(history.Count>256)history.RemoveAt(0);
             }
@@ -76,7 +84,7 @@ namespace SurvivalFP
             if(force || revision!=epoch)
             {
                 epoch=revision;lastAck=acknowledged;history.Clear();accumulator=0;jump=false;
-                player.Motor.Restore(state);return;
+                player.Motor.Restore(state);ResetPresentation();return;
             }
             lastAck=acknowledged;
             int index=history.FindIndex(f=>f.input.sequence==acknowledged);
@@ -98,6 +106,7 @@ namespace SurvivalFP
                 }
             }
             finally{player.Motor.Replaying=false;transform.rotation=look;}
+            var correction=transform.position-before;previousPosition+=correction;currentPosition=transform.position;
             LastCorrection=Vector3.Distance(before,transform.position);if(LastCorrection>.035f)Corrections++;
         }
     }

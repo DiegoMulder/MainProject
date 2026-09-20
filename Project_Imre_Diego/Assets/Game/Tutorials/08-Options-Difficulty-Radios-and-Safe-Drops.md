@@ -68,7 +68,7 @@ If no candidate is safe, the item stays in your inventory. Move away from the ob
 
 Open **Game/Prefabs/Player/Network Survivor.prefab**. On NetworkPlayer, **Visual Body** must reference the parent containing the third-person model's renderers. Put additional body meshes under this same parent. Keep held items outside it.
 
-The owning player's body renderers use Shadows Only while alive or downed. Remote clients render the same body normally, including its downed pose. Nothing disables the model globally over the network. The ownership rule is reapplied for added body renderers. Spectators use a short collision-aware view behind the target, so the target's body can remain visible. The spectator camera uses the local saved FOV.
+The owning player's body renderers use Shadows Only while alive or downed. Remote clients render the same body normally, including its downed pose. On full death, body and held visuals are hidden on every peer and the body Animator stops. The network player remains for spectating and session ownership. The ownership rule is reapplied for added body renderers. Spectators use a short collision-aware view behind the target, so the target's body can remain visible. The spectator camera uses the local saved FOV.
 
 ## Exit placement and room authoring
 
@@ -93,10 +93,10 @@ The ready-made prefab is **Assets/Game/Prefabs/Items/Walkie Talkie.prefab**. Man
 1. Pick one up with E. It takes one of the normal three inventory slots.
 2. Select its slot.
 3. Left-click to toggle power ON/OFF.
-4. While it is ON and anywhere in your inventory, speak normally. Voice activity starts radio transmission automatically; silence stops it. No transmit key is needed.
-5. Other living players with powered radios can hear radio speech at a distance. Nearby players still use proximity audio, without a second radio copy.
+4. While Alive, keep the ON radio equipped and speak normally. Voice activity starts radio transmission automatically; silence stops it. No transmit key is needed.
+5. Other Alive players carrying powered radios hear radio speech at any distance. Nearby listeners intentionally hear proximity and radio together.
 
-An OFF radio sends and receives no radio speech. A downed player can keep speaking through an already powered radio, but cannot regain normal inventory use through this exception. Dead/escaped spectators cannot use living-player radio communication. Dropping the radio removes its permission to transmit from that player.
+An OFF radio sends and receives no radio speech. A downed player cannot transmit, receive radio speech, toggle power, use items or use the flashlight shortcut. Their proximity voice remains audible to teammates but produces no AI hearing event. Dead/escaped spectators cannot use living-player radio communication. Dropping the radio removes its permission to transmit from that player.
 
 ### Make a radio variant
 
@@ -110,11 +110,11 @@ Duplicate the Walkie Talkie prefab. Change its model and keep PickupItem, Rigidb
 - Noise Interval: minimum spacing between speech hearing events; default 0.65 seconds.
 - Power On/Off, Transmit Start/End and Radio Static: optional AudioClips. Empty references are safe. Radio static is available to call from custom effects and is not looped by default.
 
-PlayerRadio validates ownership, a powered item, round state and life state on the server. ProximityVoice uses Vivox's existing speech detection rather than capturing another microphone. Speaking while a radio is ON emits a throttled RadioVoice GameplayNoise at the speaker and, when enabled, RadioReceiver noise at active distant receivers. EnemyController uses its normal hearing-radius rules, including these noises from downed players. The radio's local volume does not secretly change AI risk.
+PlayerRadio validates ownership, a powered item, round state and life state on the server. ProximityVoice uses Vivox's existing speech detection rather than capturing another microphone. Speaking while Alive with an equipped ON radio emits a throttled RadioVoice GameplayNoise at the speaker and, when enabled, RadioReceiver noise at eligible receivers, including nearby ones. Downed/dead players are rejected by the shared AI eligibility rule before any player-sourced hearing event is emitted. The radio's local volume does not secretly change AI risk.
 
 There is no RadioTransmit input action. Adjust **Speech Threshold** and **Speech Release Delay** on the session prefab's Proximity Voice component to tune detection. Default release delay is 0.2 seconds; active speech reports and AI hearing events are throttled. Silence does not repeatedly send radio-state events.
 
-ProximityVoice joins the session's positional channel and a separate radio channel. While a radio is powered ON it routes microphone audio to both, while each listener selects proximity or radio for that speaker. It uses the server-approved PlayerRadio state to suppress invalid radio reception. Testing real voice requires a configured Vivox project, working microphones and at least two connected clients; local direct-IP tests can verify state and AI noise but do not connect Vivox.
+ProximityVoice joins the session's positional channel and a separate radio channel. While an Alive player speaks with an equipped ON radio it routes microphone audio to both. Listeners hear both paths when close enough for proximity and eligible for radio reception. It uses the server-approved PlayerRadio state to suppress invalid radio reception. Testing real voice requires a configured Vivox project, working microphones and at least two connected clients; local direct-IP tests can verify state and AI noise but do not connect Vivox.
 
 
 For the current camera-directed drop settings, two-way ordinary doors, editable enemy counts and matching-build instructions, continue with [tutorial 09](09-Builds-Drops-Doors-and-Multiple-Enemies.md).

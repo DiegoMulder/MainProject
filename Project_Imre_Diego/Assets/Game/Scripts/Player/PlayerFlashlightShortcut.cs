@@ -28,7 +28,8 @@ namespace SurvivalFP
         // PlayerController reads F; this component routes it only to an owned item.
         public void Tick(bool pressed)
         {
-            if (!pressed) return;
+            var player=GetComponent<NetworkPlayer>();
+            if (!pressed || (player&&player.IsSpawned&&!player.CanUseItems)) return;
             var flashlight = Flashlight;
             if (flashlight) flashlight.PrimaryUse();
         }

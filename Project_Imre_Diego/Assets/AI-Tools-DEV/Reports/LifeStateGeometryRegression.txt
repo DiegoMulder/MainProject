@@ -1,0 +1,14 @@
+PASS: Original motor climbs the generated staircase
+PASS: Stair ascent stays grounded on at least 90% of ticks
+PASS: Original motor descends the generated staircase
+PASS: Stair descent stays grounded on at least 90% of ticks
+PASS: Partial capsule support at a ledge counts as grounded
+PASS: Supported ledge permits a normal jump
+PASS: Unsupported player is not grounded by distant probes
+PASS: Three seconds of partial edge support at 0 degrees
+PASS: Three seconds of partial edge support at 22,5 degrees
+PASS: Three seconds of partial edge support at 45 degrees
+PASS: Three seconds of partial edge support at 67,5 degrees
+PASS: Flat footprint stops supporting beyond its outer edge
+PASS: Ordinary table is no longer elevated for hiding
+PASS: Ordinary table has no intentional hiding interaction

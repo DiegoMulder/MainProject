@@ -15,7 +15,8 @@ namespace SurvivalFP
         public NetworkVariable<PlayerLife> Life = new(PlayerLife.Alive);
         public NetworkVariable<ulong> GrabbedBy=new(ulong.MaxValue);
         public bool IsGrabbed=>GrabbedBy.Value!=ulong.MaxValue;
-        public NetworkVariable<double> BleedOutAt = new(0);
+        public NetworkVariable<double> BleedOutAt = new(0), BleedOutStartedAt = new(0);
+        public float BleedOutProgress=>Life.Value==PlayerLife.Downed?Mathf.Clamp01(1-BleedOutRemaining/Mathf.Max(.001f,(float)(BleedOutAt.Value-BleedOutStartedAt.Value))):0;
         public NetworkVariable<ulong> HiddenClosetId=new(ClosetHideout.Empty);
         public bool IsHidden=>HiddenClosetId.Value!=ClosetHideout.Empty;
         public ClosetHideout HiddenCloset=>ClosetHideout.All.Find(c=>c && c.IsSpawned && c.NetworkObjectId==HiddenClosetId.Value);
@@ -73,7 +74,9 @@ namespace SurvivalFP
             Controller.enabled = IsOwner; CameraMotion.enabled = IsOwner;
             View.GetComponent<Camera>().enabled = IsOwner;
             View.GetComponent<AudioListener>().enabled = IsOwner;
-            GetComponent<CharacterController>().enabled = IsServer || IsOwner;
+            // Remote capsules must participate in local collision prediction too.
+            // Only the owner/server ticks a motor; remote transforms remain network-driven.
+            GetComponent<CharacterController>().enabled = true;
             if(IsOwner && !IsServer)GetComponent<NetworkTransform>().enabled=false;
             GetComponent<PlayerAudio>().enabled = IsOwner;
             ApplyBodyVisibility();
@@ -86,6 +89,7 @@ namespace SurvivalFP
             if(IsServer && HiddenCloset)HiddenCloset.Forget(this);
             HiddenClosetId.OnValueChanged-=OnHiding;
             if (IsServer && RoundManager.Instance && !(GameSession.Instance && GameSession.Instance.Transitioning)) RoundManager.Instance.ReleaseItems(this);
+            if(IsServer)foreach(var enemy in EnemyController.Enemies.ToArray())if(enemy)enemy.InvalidatePlayer(this);
             Players.Remove(this); Life.OnValueChanged -= OnLife; Selection.OnValueChanged -= OnSelection;
             if (IsOwner) Controller.SetCursor(false);
             if (IsServer && RoundManager.Instance && !(GameSession.Instance && GameSession.Instance.Transitioning)) RoundManager.Instance.EvaluateRound();
@@ -95,11 +99,12 @@ namespace SurvivalFP
         {
             bool alive = value == PlayerLife.Alive;
             bool downed=value==PlayerLife.Downed;pending=default;
+            if(IsServer&&!alive)foreach(var enemy in EnemyController.Enemies.ToArray())if(enemy)enemy.InvalidatePlayer(this);
             Motor.SetDowned(downed,downedCrawlSpeed);
             if(visualBody && !GetComponent<PlayerAnimationDriver>()){visualBody.localPosition=downed?new Vector3(0,.3f,0):bodyPosition;
                 visualBody.localRotation=downed?Quaternion.Euler(90,0,0)*bodyRotation:bodyRotation;}
             Controller.InputBlocked = (!alive && !downed) || paused;
-            GetComponent<CharacterController>().enabled = (IsServer || IsOwner) && (alive || downed);
+            GetComponent<CharacterController>().enabled = alive || downed;
             foreach (var c in GetComponentsInChildren<Collider>()) if (!(c is CharacterController) && !c.GetComponentInParent<PickupItem>()) c.enabled = alive;
             var revive = GetComponent<DownedInteractable>();
             if(revive) revive.SetDowned(value==PlayerLife.Downed);
@@ -121,12 +126,15 @@ namespace SurvivalFP
             if(IsHidden && !hidingPresented){savedViewPosition=View.localPosition;savedViewRotation=View.localRotation;}
             if(!IsHidden && hidingPresented){View.localPosition=savedViewPosition;View.localRotation=savedViewRotation;}
             hidingPresented=IsHidden;
-            GetComponent<CharacterController>().enabled=(IsServer || IsOwner) && (Alive || Life.Value==PlayerLife.Downed) && !IsHidden;
+            GetComponent<CharacterController>().enabled=(Alive || Life.Value==PlayerLife.Downed) && !IsHidden;
             if(IsOwner){CameraMotion.enabled=(Alive || Life.Value==PlayerLife.Downed) && !IsHidden;GetComponent<PlayerAudio>().enabled=Alive && !IsHidden;}
-            foreach(var renderer in GetComponentsInChildren<Renderer>(true))renderer.forceRenderingOff=IsHidden;
+            ApplyBodyVisibility();
         }
         public void ApplyBodyVisibility()
         {
+            bool visible=Life.Value==PlayerLife.Alive||Life.Value==PlayerLife.Downed;
+            var driver=GetComponent<PlayerAnimationDriver>();if(driver&&driver.animator)driver.animator.enabled=visible;
+            foreach(var renderer in GetComponentsInChildren<Renderer>(true))renderer.forceRenderingOff=!visible||IsHidden;
             if(!visualBody)return;
             foreach(var renderer in visualBody.GetComponentsInChildren<Renderer>(true))
                 if(!renderer.GetComponentInParent<PickupItem>())renderer.shadowCastingMode=IsOwner && (Alive || Life.Value==PlayerLife.Downed)?ShadowCastingMode.ShadowsOnly:ShadowCastingMode.On;
@@ -204,12 +212,13 @@ namespace SurvivalFP
             if (!hit || hit.GetComponentInParent<NetworkObject>() != target || !(hit is IInteractable interactable) || !interactable.CanInteract(Interaction)) return;
             interactable.Interact(Interaction);
         }
+        public bool CanUseItems=>CanAct()&&!IsHidden;
         bool CanAct() => Alive && !IsGrabbed && RoundManager.Instance && RoundManager.Instance.Phase.Value == RoundPhase.Playing;
-        public void InventoryAction(int action, int slot = -1) { if (IsOwner && Alive && !paused && !IsHidden) InventoryRpc(action,slot); }
+        public void InventoryAction(int action, int slot = -1) { if (IsOwner && CanUseItems && !paused) InventoryRpc(action,slot); }
         [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Owner)]
         void InventoryRpc(int action, int slot)
         {
-            if (!CanAct() || IsHidden) return;
+            if (!CanUseItems) return;
             if (action == 0) { Inventory.ApplySelection(slot); Selection.Value = Inventory.CurrentSlot; return; }
             if (Time.time - lastAction < .08f) return; lastAction = Time.time;
             if (action == 1 && Inventory.Current)
@@ -226,18 +235,19 @@ namespace SurvivalFP
         {
             if(!IsServer || !Alive) return;
             if(HiddenCloset && !HiddenCloset.TryExit(this))return;
-            BleedOutAt.Value=NetworkManager.ServerTime.Time+bleedOutDuration;
+            BleedOutStartedAt.Value=NetworkManager.ServerTime.Time;
+            BleedOutAt.Value=BleedOutStartedAt.Value+bleedOutDuration;
             pending=default; Life.Value=PlayerLife.Downed; RoundManager.Instance.EvaluateRound();
         }
         public void ReportSpeech()
         {
-            if(!IsOwner || Time.unscaledTime<nextVoiceReport)return;
+            if(!IsOwner || !Alive || Time.unscaledTime<nextVoiceReport)return;
             nextVoiceReport=Time.unscaledTime+voiceNoiseInterval;SpeechRpc();
         }
         [Rpc(SendTo.Server,InvokePermission=RpcInvokePermission.Owner)]
         void SpeechRpc()
         {
-            if(!IsSpawned || (Life.Value!=PlayerLife.Alive && Life.Value!=PlayerLife.Downed) || Time.time<nextVoiceNoise || !RoundManager.Instance || RoundManager.Instance.Phase.Value!=RoundPhase.Playing)return;
+            if(!EnemyTargetRules.CanTarget(this) || Time.time<nextVoiceNoise || !RoundManager.Instance || RoundManager.Instance.Phase.Value!=RoundPhase.Playing)return;
             nextVoiceNoise=Time.time+Mathf.Max(.2f,voiceNoiseInterval);
             GameplayNoiseSystem.Emit(transform.position,voiceNoiseRadius,NoiseCategory.Voice,gameObject);
         }

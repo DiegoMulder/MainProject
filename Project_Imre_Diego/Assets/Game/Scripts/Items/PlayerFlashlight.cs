@@ -30,7 +30,7 @@ namespace SurvivalFP
 
         public void PrimaryUse()
         {
-            if (item && item.Held) Toggle();
+            if (item && item.CanUse) Toggle();
         }
 
         public void Configure(Light lightSource, AudioSource audioSource, AudioClip switchClip)
@@ -42,6 +42,7 @@ namespace SurvivalFP
 
         public void Toggle()
         {
+            if(item&&item.Held&&!item.CanUse)return;
             if (!beam || cooldown > 0f) return;
             var network = GetComponent<NetworkPickup>();
             if (network && network.IsSpawned && !network.IsServer) return;

@@ -1,0 +1,9 @@
+Assets/Game/Prefabs/Maps/Mansion/Rooms/Large Room.prefab: fbx=True enabled=1 total=1 colliders=13
+Assets/Game/Prefabs/Maps/Mansion/Rooms/Small Room.prefab: fbx=True enabled=1 total=1 colliders=9
+Assets/Game/Prefabs/Maps/Mansion/Rooms/Standard Room.prefab: fbx=True enabled=1 total=1 colliders=13
+Assets/Game/Prefabs/Maps/Mansion/Hallways/Corner Hall.prefab: fbx=True enabled=1 total=1 colliders=9
+Assets/Game/Prefabs/Maps/Mansion/Hallways/Straight Hall.prefab: fbx=True enabled=1 total=1 colliders=9
+Assets/Game/Prefabs/Maps/Mansion/Hallways/T Junction.prefab: fbx=True enabled=1 total=1 colliders=11
+Assets/Game/Prefabs/Maps/Mansion/Stairs/Staircase.prefab: fbx=True enabled=1 total=1 colliders=30
+Assets/Game/Prefabs/Maps/Mansion/Doors/Exit Door.prefab: fbx=True enabled=1 total=1 colliders=1
+Assets/Game/Prefabs/Maps/Mansion/Doors/Ordinary Door.prefab: fbx=True enabled=1 total=1 colliders=1

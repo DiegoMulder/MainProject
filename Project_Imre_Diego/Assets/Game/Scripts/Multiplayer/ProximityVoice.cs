@@ -88,7 +88,7 @@ namespace SurvivalFP
                 speaking=!Muted&&!player.Paused&&!player.IsGrabbed&&(speaking||Time.unscaledTime-lastSpeech<speechReleaseDelay);
                 radio?.Report(speaking);
                 player.GetComponent<PlayerAnimationDriver>()?.ReportTalking(speaking);
-                if(speaking && !transmit)player.ReportSpeech();
+                if(speaking)player.ReportSpeech();
                 foreach(var pair in voice.ActiveChannels)
                 {
                     if(pair.Key!=channel && pair.Key!=radioChannel)continue;
@@ -100,7 +100,7 @@ namespace SurvivalFP
                         bool hearRadio=PlayerRadio.ReceiveRadio(player,sender);
                         bool alive=sender && (sender.Alive||sender.Life.Value==PlayerLife.Downed);
                         if(pair.Key==radioChannel){var output=participant.ParticipantTapAudioSource;if(output){output.mute=!hearRadio;output.volume=LocalSettings.Voice;}continue;}
-                        bool mute=!alive||hearRadio;
+                        bool mute=!alive;
                         if(mute && !participant.IsMuted)participant.MutePlayerLocally();
                         else if(!mute && participant.IsMuted)participant.UnmutePlayerLocally();
                     }

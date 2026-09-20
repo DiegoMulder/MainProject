@@ -102,7 +102,7 @@ namespace SurvivalFP.Editor
             // A temporary structural wall verifies occlusion independently of room placement.
             var blocker=GameObject.CreatePrimitive(PrimitiveType.Cube);blocker.transform.position=Vector3.Lerp(enemy.transform.position,client.transform.position,.5f)+Vector3.up*1.5f;blocker.transform.localScale=new Vector3(4,3,.3f);blocker.transform.rotation=Quaternion.LookRotation(client.transform.position-enemy.transform.position);Physics.SyncTransforms();
             Check(!enemy.GetComponent<EnemyPerception>().HasLineOfSight(client),"Structural geometry blocks enemy vision");Destroy(blocker);
-            enemy.lostSightDelay=.15f;enemy.investigationDuration=.2f;enemy.searchDuration=2;
+            enemy.lostSightChaseDuration=.15f;enemy.investigationDuration=.2f;enemy.searchDuration=2;
             client.Motor.Teleport(new Vector3(0,.1f,-1));yield return new WaitForSecondsRealtime(.6f);
             Check(enemy.State.Value==EnemyState.Search || enemy.State.Value==EnemyState.Investigate,"Losing sight triggers last-known-position investigation/search");
             enemy.killDistance=1.1f;client.Motor.Teleport(enemy.transform.position+enemy.transform.forward*.7f);Physics.SyncTransforms();

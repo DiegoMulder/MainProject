@@ -206,12 +206,12 @@ namespace SurvivalFP.Editor
             Check(motor.State == MovementState.Sprinting && Mathf.Abs(motor.ActualSpeed - 7f) < 0.1f, "Forward sprint reaches 7 m/s");
             float afterSprint = stamina.Maximum - sprintDrain * 120 * Dt;
             Check(Mathf.Abs(stamina.Current - afterSprint) < 0.3f, "Sprint drain matches the configured rate", stamina.Current.ToString("F2"));
-            Check(camera.GetComponent<Camera>().fieldOfView > 80.9f, "Sprint FOV smoothly reaches 81 degrees");
+            Check(Mathf.Abs(camera.GetComponent<Camera>().fieldOfView-(camera.BaseFov+6f))<.1f, "Sprint FOV smoothly reaches configured base plus 6 degrees");
             Step(default, 45);
             Check(Mathf.Abs(stamina.Current - (afterSprint + regeneration * Mathf.Max(0f, 45 * Dt - regenerationDelay))) < 0.3f, "Regeneration delay respected");
             Step(default, 105);
             Check(Mathf.Abs(stamina.Current - Mathf.Min(stamina.Maximum, afterSprint + regeneration * Mathf.Max(0f, 150 * Dt - regenerationDelay))) < 0.4f, "Stamina regenerates at the configured rate after delay", stamina.Current.ToString("F2"));
-            Check(Mathf.Abs(camera.GetComponent<Camera>().fieldOfView - 75f) < 0.05f && camera.BobOffset.magnitude < 0.002f, "FOV and head bob settle at rest");
+            Check(Mathf.Abs(camera.GetComponent<Camera>().fieldOfView - camera.BaseFov) < 0.05f && camera.BobOffset.magnitude < 0.002f, "FOV and head bob settle at the player's configured resting FOV", $"FOV={camera.GetComponent<Camera>().fieldOfView:F3} base={camera.BaseFov:F3} bob={camera.BobOffset.magnitude:F5}");
             ResetAt(spawn);
             Step(new PlayerCommand { Move = new Vector2(0.3f, 1f), Sprint = true }, 30);
             Check(motor.State == MovementState.Sprinting, "Slight diagonal forward sprint allowed");

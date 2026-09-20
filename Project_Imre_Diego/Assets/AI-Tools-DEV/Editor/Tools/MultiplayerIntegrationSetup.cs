@@ -53,7 +53,7 @@ namespace SurvivalFP.EditorTools
                 anchor.position=head.position+p.transform.forward*.5f;anchor.rotation=Quaternion.LookRotation(-p.transform.forward,p.transform.up);
                 var sequence=Add<EnemyKillSequence>(p);sequence.animator=animator;sequence.killCameraPoint=anchor;p.GetComponent<EnemyController>().animator=animator;
             });
-            Prefab("Assets/Game/Prefabs/Game Management/Multiplayer Session.prefab",p=>p.GetComponent<NetworkManager>().NetworkConfig.ProtocolVersion=3);
+            Prefab("Assets/Game/Prefabs/Game Management/Multiplayer Session.prefab",p=>p.GetComponent<NetworkManager>().NetworkConfig.ProtocolVersion=4);
             AssetDatabase.SaveAssets();
         }
         public static void CreateMaps()

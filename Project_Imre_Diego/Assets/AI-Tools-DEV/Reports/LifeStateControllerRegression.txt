@@ -1,0 +1,76 @@
+SURVIVAL FP PLAY MODE VALIDATION
+Unity 6000.6.0f1
+2026-09-20T11:43:04.7689362Z
+71 passed / 0 failed
+
+PASS: PlayerController Awake completed with valid required references
+PASS: Exactly one active camera
+PASS: Exactly one audio listener
+PASS: PlayerAudio component assigned
+PASS: Three-slot item inventory assigned
+PASS: Temporary flashlight, cube and capsule pickups present
+PASS: Flashlight fallback prefab has a serialized Light
+PASS: World flashlight pickup owns a PlayerFlashlight component
+PASS: PlayerMovement serialized references assigned
+PASS: PlayerStamina serialized references assigned
+PASS: PlayerController serialized references assigned
+PASS: PlayerCamera serialized references assigned
+PASS: PlayerFlashlight serialized references assigned
+PASS: PlayerAudio serialized references assigned
+PASS: PlayerHUD serialized references assigned
+PASS: Full controller input pipeline moves while flashlight remains item-controlled
+PASS: Escape releases the cursor through controller input
+PASS: Input System WASD composite normalizes diagonals
+PASS: Input binding resolves Sprint
+PASS: Input binding resolves Crouch
+PASS: Input binding resolves Jump
+PASS: Input binding resolves Flashlight
+PASS: Flat ground resolves Idle
+PASS: Walk reaches configured speed | 4,200
+PASS: Responsive stop without ice sliding | distance=0,241m
+PASS: Diagonal speed never exceeds forward speed | 4,005
+PASS: Backwards speed and sprint exclusion | 3,000
+PASS: Independent strafe speed | 3,800
+PASS: Forward sprint reaches 7 m/s
+PASS: Sprint drain matches the configured rate | 85,00
+PASS: Sprint FOV smoothly reaches configured base plus 6 degrees
+PASS: Regeneration delay respected
+PASS: Stamina regenerates at the configured rate after delay | 95,00
+PASS: FOV and head bob settle at the player's configured resting FOV | FOV=90,075 base=90,075 bob=0,00000
+PASS: Slight diagonal forward sprint allowed
+PASS: Exhaustion automatically ends sprint | 0,00
+PASS: Insufficient stamina prevents a paid jump
+PASS: Sprint unlocks after meaningful stamina recovery
+PASS: Smooth crouch and sprint exclusion
+PASS: Cannot stand inside 1.25 m tunnel
+PASS: Crouched eye remains below ceiling
+PASS: Stands up after leaving tunnel
+PASS: Walking jump enters Airborne
+PASS: Jump height matches 1.2 m | apex=1,263m
+PASS: Landing event and bounded camera spring | impact=7,21 dip=-0,033
+PASS: Sprinting jump preserves momentum
+PASS: Coyote jump succeeds just after platform edge
+PASS: Jump buffered before touchdown launches on landing
+PASS: Walkable ramp reaches raised platform | height=3,052 position=(-10.00, 3.04, 29.49)
+PASS: Stationary player does not drift on supported ground
+PASS: Stationary player holds position on the 22 degree ramp | drift=0,0000m
+PASS: 60 degree slope slides downhill | height=1,341 maxSpeed=6,50
+PASS: Flashlight toggles on with a smooth fade
+PASS: Flashlight cooldown ignores rapid second toggle
+PASS: Flashlight reaches configured intensity
+PASS: Flashlight fades out while GameObject stays active
+PASS: Player audio event system is present
+PASS: World pickup starts with active physics
+PASS: Left click alone never picks up a ground item
+PASS: E only picks up an item under the direct camera ray
+PASS: E pickup finds the flashlight in front of the player
+PASS: Held item disables physics and interpolation
+PASS: Repeated hand assignment keeps the item transform stable
+PASS: Flashlight approaches a nearby surface gradually instead of snapping
+PASS: Flashlight smoothly crosses a near-to-far depth discontinuity
+PASS: Beam aiming preserves the held model pose
+PASS: Equipped flashlight responds to primary use
+PASS: F toggles a flashlight in a non-equipped inventory slot
+PASS: Dropping an item restores Rigidbody physics | velocity=2,30m/s
+PASS: Mouse look clamps pitch and rotates the player in yaw
+PASS: No controller runtime errors during Play Mode

@@ -20,17 +20,17 @@ MonoBehaviour:
   floorHeight: 4
   rooms:
   - prefab: {fileID: 8547968971871318803, guid: 4a50d20375a69e843a2a2013b615a1bd, type: 3}
-    weight: 4
+    weight: 8
   - prefab: {fileID: 1235860294726741158, guid: 83aa0fe876603be46a84ceee6f0ea94d, type: 3}
-    weight: 2
+    weight: 4
   - prefab: {fileID: 5412529674689638593, guid: b75330979139d4340966398d4cd00e02, type: 3}
-    weight: 2
+    weight: 4
   - prefab: {fileID: 3341104801030148413, guid: 53eaa9e068e3cd24b846a0c9c038baa3, type: 3}
-    weight: 2
+    weight: 4
   - prefab: {fileID: 4338228573065895548, guid: 91123fae865e6484682482c0b73aa6a8, type: 3}
-    weight: 2
+    weight: 4
   - prefab: {fileID: 1999203408694385191, guid: 104e3d0ad3aed774ea43fa8b2ea0cb3b, type: 3}
-    weight: 2
+    weight: 4
   - prefab: {fileID: 763049360262626702, guid: fe319ea4e29e89845828019bd06fa469, type: 3}
     weight: 1
   player: {fileID: 4151642273500931873, guid: 994bbcbad47b99e4abd5a066f71dac1a, type: 3}

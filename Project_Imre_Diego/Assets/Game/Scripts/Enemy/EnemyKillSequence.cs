@@ -12,7 +12,7 @@ namespace SurvivalFP
         [Min(.1f)] public float maximumGrabDistance=2;
         public NetworkVariable<ulong> Victim=new(ulong.MaxValue);
         public bool Busy=>enemy&&(enemy.State.Value==EnemyState.Kill||enemy.State.Value==EnemyState.Stagger);
-        EnemyController enemy;NavMeshAgent agent;double staggerUntil;bool entered;
+        EnemyController enemy;NavMeshAgent agent;double staggerUntil;bool entered,resolving;
         void Awake(){enemy=GetComponent<EnemyController>();agent=GetComponent<NavMeshAgent>();}
         public override void OnNetworkSpawn(){Victim.OnValueChanged+=Changed;if(Victim.Value!=ulong.MaxValue)PlayKill();}
         public override void OnNetworkDespawn(){Victim.OnValueChanged-=Changed;if(IsServer&&Victim.Value!=ulong.MaxValue)Release(false);}
@@ -41,12 +41,15 @@ namespace SurvivalFP
             else if(enemy.State.Value==EnemyState.Stagger&&NetworkManager.ServerTime.Time>=staggerUntil)
             {agent.updateRotation=true;agent.isStopped=false;enemy.State.Value=EnemyState.Idle;}
         }
+        public void CancelFor(NetworkPlayer player){if(IsServer&&!resolving&&player&&Victim.Value==player.NetworkObjectId)Release(false);}
         void Release(bool completed)
         {
+            resolving=true;
             var victim=FindVictim();
             if(victim){victim.GrabbedBy.Value=ulong.MaxValue;if(completed)victim.Down();}
             Victim.Value=ulong.MaxValue;enemy.ClearPlayerMemory();enemy.State.Value=EnemyState.Stagger;staggerUntil=NetworkManager.ServerTime.Time+postKillStaggerDuration;
             if(RoundManager.Instance)RoundManager.Instance.EndKill(completed);
+            resolving=false;
         }
     }
 }
