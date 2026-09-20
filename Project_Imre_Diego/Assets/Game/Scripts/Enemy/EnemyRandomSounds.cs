@@ -20,6 +20,8 @@ public class EnemyRandomSounds : MonoBehaviour
     [SerializeField] private AudioClip chainsawSound;
     private bool chasing = false;
     [SerializeField] private AudioSource chainsawKillSound;
+    private bool bloodToggle = false;
+    [SerializeField] private GameObject bloodParticle;
 
     public void Footstep()
     {
@@ -90,4 +92,11 @@ public class EnemyRandomSounds : MonoBehaviour
     }
 
     public void ChainsawKill() => chainsawKillSound.Play();
+
+    public void BloodToggle()
+    {
+        bloodToggle = !bloodToggle;
+
+        bloodParticle.SetActive(bloodToggle);
+    }
 }
