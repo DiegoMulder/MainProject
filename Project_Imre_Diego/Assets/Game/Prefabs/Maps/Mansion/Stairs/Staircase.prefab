@@ -2961,7 +2961,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.RoomConnector
   connectorType: Mansion
-  width: 2.4
+  width: 2.2
   allowDoor: 1
   exitEligible: 1
 --- !u!1 &7938977326904636627
@@ -3233,7 +3233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.RoomConnector
   connectorType: Mansion
-  width: 2.4
+  width: 2.2
   allowDoor: 1
   exitEligible: 1
 --- !u!1 &8269663316082907309
@@ -3582,15 +3582,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: b6481681f2d73354883a7dfa90947d79, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6481681f2d73354883a7dfa90947d79, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6481681f2d73354883a7dfa90947d79, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6481681f2d73354883a7dfa90947d79, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3606,23 +3606,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6481681f2d73354883a7dfa90947d79, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6481681f2d73354883a7dfa90947d79, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6481681f2d73354883a7dfa90947d79, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.7069834
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6481681f2d73354883a7dfa90947d79, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.7072302
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6481681f2d73354883a7dfa90947d79, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: -89.98
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6481681f2d73354883a7dfa90947d79, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -3630,7 +3630,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6481681f2d73354883a7dfa90947d79, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: -180
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b6481681f2d73354883a7dfa90947d79, type: 3}
       propertyPath: m_Name

@@ -19,6 +19,8 @@ These beginner tutorials explain the systems actually present in this URP projec
 
 12. [Life states, equipped radios, the red vignette and smooth movement](Tutorials/11-Life-States-Radio-and-Movement.md)
 
+13. [Using the supplied Mansion FBX models and adding rooms](Tutorials/12-Mansion-FBX-Integration.md)
+
 The tutorials distinguish Inspector changes from optional programming examples. Code printed in a tutorial does not run until you create and attach the described script. Optional code examples remain examples; the closet, noise, heartbeat, and PSX systems described in tutorial 7 are implemented in the project.
 
 ## Where to play

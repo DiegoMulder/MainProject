@@ -1,0 +1,15 @@
+model=Assets/Game/Prefabs/Maps/Mansion/Rooms/Standard Room.prefab source=Assets/Game/FBX/Rooms/StandardRoom.fbx bounds=(10.00, 3.00, 10.00) legacyEnabled=0 result=PASS
+model=Assets/Game/Prefabs/Maps/Mansion/Rooms/Small Room.prefab source=Assets/Game/FBX/Rooms/SmallRoom.fbx bounds=(8.00, 3.00, 8.00) legacyEnabled=0 result=PASS
+model=Assets/Game/Prefabs/Maps/Mansion/Rooms/Large Room.prefab source=Assets/Game/FBX/Rooms/LargeRoom.fbx bounds=(14.00, 3.00, 10.00) legacyEnabled=0 result=PASS
+model=Assets/Game/Prefabs/Maps/Mansion/Hallways/Straight Hall.prefab source=Assets/Game/FBX/Rooms/StraightHall.fbx bounds=(6.00, 3.00, 10.00) legacyEnabled=0 result=PASS
+model=Assets/Game/Prefabs/Maps/Mansion/Hallways/Corner Hall.prefab source=Assets/Game/FBX/Rooms/CornerHall.fbx bounds=(8.00, 3.00, 8.00) legacyEnabled=0 result=PASS
+model=Assets/Game/Prefabs/Maps/Mansion/Hallways/T Junction.prefab source=Assets/Game/FBX/Rooms/TJunction.fbx bounds=(10.00, 3.00, 10.00) legacyEnabled=0 result=PASS
+model=Assets/Game/Prefabs/Maps/Mansion/Stairs/Staircase.prefab source=Assets/Game/FBX/Rooms/Staircase.fbx bounds=(10.00, 7.00, 14.00) legacyEnabled=0 result=PASS
+model=Assets/Game/Prefabs/Maps/Mansion/Doors/Ordinary Door.prefab source=Assets/Game/FBX/Doors/Door.fbx bounds=(1.80, 2.38, 0.23) legacyEnabled=0 result=PASS
+model=Assets/Game/Prefabs/Maps/Mansion/Doors/Exit Door.prefab source=Assets/Game/FBX/Doors/Door.fbx bounds=(1.80, 2.38, 0.23) legacyEnabled=0 result=PASS
+grid=seed=67 rooms=60 connections=59 invalid=0 result=PASS
+grid=seed=31415 rooms=60 connections=59 invalid=0 result=PASS
+grid=seed=27182 rooms=60 connections=59 invalid=0 result=PASS
+grid=seed=8675309 rooms=60 connections=59 invalid=0 result=PASS
+grid=seed=123456789 rooms=60 connections=59 invalid=0 result=PASS
+overall=PASS failures=0

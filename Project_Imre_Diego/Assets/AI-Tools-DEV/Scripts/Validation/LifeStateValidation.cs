@@ -73,7 +73,7 @@ namespace SurvivalFP.Editor
             Check(string.IsNullOrEmpty(sustained.error),"sustained movement has no client errors");
             Place(host,start+Vector3.left);Place(client,start+Vector3.right);yield return new WaitForSeconds(.5f);
             var torch=client.Inventory.Current;
-            var radios=FindObjectsByType<WalkieTalkieUse>(FindObjectsSortMode.None).Where(d=>!d.GetComponent<NetworkPickup>().Location.Value.Held).Take(2).ToArray();
+            var radios=FindObjectsByType<WalkieTalkieUse>().Where(d=>!d.GetComponent<NetworkPickup>().Location.Value.Held).Take(2).ToArray();
             Check(radios.Length==2,"two world radios available");if(radios.Length!=2)yield break;
             radios[0].GetComponent<NetworkPickup>().Claim(host);radios[1].GetComponent<NetworkPickup>().Claim(client);
             Equip(host,radios[0].GetComponent<PickupItem>());Equip(client,radios[1].GetComponent<PickupItem>());radios[0].PrimaryUse();radios[1].PrimaryUse();yield return new WaitForSeconds(.5f);

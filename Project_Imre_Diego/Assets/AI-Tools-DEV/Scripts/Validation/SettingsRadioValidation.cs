@@ -43,7 +43,7 @@ namespace SurvivalFP.Editor
                     LobbyRoster.Instance.SelectDifficulty(1);
                     Check(LobbyRoster.Instance.Difficulty.Value==difficulty && round.Difficulty.Value==difficulty,"difficulty frozen during round "+run);
                     Check(ExitPlacement.ValidatePhysical(round.settings.exit,round.World.Connector(round.ExitRoom.Value,round.ExitConnector.Value).transform,round.World.SpawnPosition,out var reason),"exit physical clearance and reachability "+run+" "+reason);
-                    Check(FindObjectsByType<WalkieTalkieUse>(FindObjectsSortMode.None).Length==authored.radioCount,"radio spawn count "+run);
+                    Check(FindObjectsByType<WalkieTalkieUse>().Length==authored.radioCount,"radio spawn count "+run);
                     if(run==0)yield return PlayerChecks(round);
                 }
                 round.Phase.Value=RoundPhase.Lost;GameSession.Instance.BackToLobby();
@@ -90,7 +90,7 @@ namespace SurvivalFP.Editor
                 if(wall)Destroy(wall);
             }
             Check(impacts>0,"dropped items still emit collision GameplayNoise");
-            var device=FindObjectsByType<WalkieTalkieUse>(FindObjectsSortMode.None).First();
+            var device=FindObjectsByType<WalkieTalkieUse>().First();
             device.GetComponent<NetworkPickup>().Claim(p);p.Inventory.ApplySelection(Array.IndexOf(p.Inventory.Slots,device.GetComponent<PickupItem>()));
             p.Inventory.UsePrimary();yield return null;
             Check(device.Powered.Value,"modular radio primary use powers on");

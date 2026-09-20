@@ -46,7 +46,7 @@ namespace SurvivalFP.Editor
                 Check(snapshot!=null && snapshot.rooms==round.Layout.Count && snapshot.requiredObjectives==round.RequiredObjectives.Value,"matching client layout size and objective requirement "+difficulty);
                 Check(snapshot!=null && snapshot.localBodyHidden && snapshot.bodyVisibility.Contains(host.OwnerClientId+":On"),"client hides own body and sees host body");
                 Check(client.visualBody.GetComponent<Renderer>().shadowCastingMode==UnityEngine.Rendering.ShadowCastingMode.On,"host sees client body");
-                var devices=FindObjectsByType<WalkieTalkieUse>(FindObjectsSortMode.None);
+                var devices=FindObjectsByType<WalkieTalkieUse>();
                 devices[0].GetComponent<NetworkPickup>().Claim(host);devices[1].GetComponent<NetworkPickup>().Claim(client);
                 devices[0].Powered.Value=devices[1].Powered.Value=true;
                 yield return Until(()=>Snapshot()?.radioOn==true);

@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.RoomConnector
   connectorType: Mansion
-  width: 2.4
+  width: 2.2
   allowDoor: 1
   exitEligible: 1
 --- !u!1 &1528271862348501478
@@ -954,7 +954,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.RoomConnector
   connectorType: Mansion
-  width: 2.4
+  width: 2.2
   allowDoor: 1
   exitEligible: 1
 --- !u!1 &4636035528417520724
@@ -1276,7 +1276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.RoomConnector
   connectorType: Mansion
-  width: 2.4
+  width: 2.2
   allowDoor: 1
   exitEligible: 1
 --- !u!1 &6711319125848490845
@@ -1656,7 +1656,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.RoomConnector
   connectorType: Mansion
-  width: 2.4
+  width: 2.2
   allowDoor: 1
   exitEligible: 1
 --- !u!1 &8721240131066160894
@@ -1925,15 +1925,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 84660c62f0ba9414db81e21b7758a483, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 84660c62f0ba9414db81e21b7758a483, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 84660c62f0ba9414db81e21b7758a483, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 84660c62f0ba9414db81e21b7758a483, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1949,11 +1949,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 84660c62f0ba9414db81e21b7758a483, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: -0.70723015
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 84660c62f0ba9414db81e21b7758a483, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.7069834
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 84660c62f0ba9414db81e21b7758a483, type: 3}
       propertyPath: m_LocalRotation.y

@@ -47,7 +47,7 @@ namespace SurvivalFP.Editor
             var enemy=EnemyController.Enemies.First();enemy.enabled=false;enemy.GetComponent<NavMeshAgent>().isStopped=true;
             Check(round.NetworkObjectId!=roundId && round.Seed.Value!=seed && Client().scene=="Game","Second round uses Game scene and a fresh procedural seed");
             Check(NetworkPlayer.Players.All(p=>p.Alive && !p.IsHidden && p.Inventory.Slots.Count(i=>i)==1 && p.Inventory.Slots.Any(i=>i && i.kind==PickupKind.Flashlight)) && round.Exit.Deposited.Value==0 && EnemyController.Enemies.Count==1,"Second round resets life, hiding, inventory, default flashlights, exit and enemy");
-            Check(FindObjectsByType<NetworkManager>(FindObjectsSortMode.None).Length==1 && FindObjectsByType<ProximityVoice>(FindObjectsSortMode.None).Length==1,"Scene changes keep one networking and voice manager");
+            Check(FindObjectsByType<NetworkManager>().Length==1 && FindObjectsByType<ProximityVoice>().Length==1,"Scene changes keep one networking and voice manager");
             host.Motor.Teleport(round.World.SpawnPosition+Vector3.right*3);
             client.Motor.Teleport(round.World.SpawnPosition+Vector3.back*2);
             Send("resume");yield return new WaitForSecondsRealtime(.4f);Send("predict");yield return new WaitForSecondsRealtime(.4f);
@@ -92,7 +92,7 @@ namespace SurvivalFP.Editor
             Send("menu");yield return Until(()=>NetworkPlayer.Players.Count==1,10);yield return new WaitForSecondsRealtime(.7f);
             Check(Client().scene=="MainMenu" && NetworkManager.Singleton.IsServer && NetworkPlayer.Players.Count==1,"Individual client Main Menu leaves cleanly while host remains connected");
             session.ReturnToMenu();yield return Until(()=>SceneManager.GetActiveScene().name=="MainMenu" && !NetworkManager.Singleton.IsListening,15);
-            Check(!RoundManager.Instance && !LobbyRoster.Instance && FindObjectsByType<NetworkManager>(FindObjectsSortMode.None).Length==1,"Host Main Menu shutdown removes round/lobby and creates one fresh session");
+            Check(!RoundManager.Instance && !LobbyRoster.Instance && FindObjectsByType<NetworkManager>().Length==1,"Host Main Menu shutdown removes round/lobby and creates one fresh session");
             done=true;Check(true,"Second feedback validation complete");
         }
     }
