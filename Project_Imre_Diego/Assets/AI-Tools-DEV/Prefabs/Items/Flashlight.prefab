@@ -133,6 +133,10 @@ MonoBehaviour:
   displayName: Flashlight
   primaryUse: {fileID: 1140000000000000001}
   heldEulerAngles: {x: 0, y: 0, z: 0}
+  rightHandPosition: {x: 0, y: 0, z: 0}
+  rightHandEuler: {x: 0, y: 0, z: 0}
+  rightHandScale: {x: 1, y: 1, z: 1}
+  firstPersonScale: 0.55
 --- !u!54 &977000000000000001
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -276,6 +280,9 @@ MonoBehaviour:
   toggleCooldown: 0.2
   fadeSpeed: 14
   onIntensity: 97.65625
+  toggleNoiseRadius: 3
+  aimResponse: 12
+  minimumAimDistance: 2
 --- !u!1001 &7047950411222102518
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -347,6 +354,10 @@ PrefabInstance:
     - target: {fileID: 10800000, guid: 6e7e93f2a2db4e75b1d40d7b8682f6c1, type: 3}
       propertyPath: m_InnerSpotAngle
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 10800000, guid: 6e7e93f2a2db4e75b1d40d7b8682f6c1, type: 3}
+      propertyPath: m_Shadows.m_Type
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 10800000, guid: 6e7e93f2a2db4e75b1d40d7b8682f6c1, type: 3}
       propertyPath: m_BoundingSphereOverride.w

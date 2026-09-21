@@ -84,7 +84,6 @@ namespace SurvivalFP
             beam.spotAngle = 62f;
             beam.innerSpotAngle = 32f;
             beam.color = new Color(1f, .94f, .82f);
-            beam.shadows = LightShadows.Soft;
             if (!toggleAudio) toggleAudio = GetComponent<AudioSource>();
             toggleAudio.playOnAwake = false;
             toggleAudio.spatialBlend = GetComponent<NetworkPickup>() ? 1f : 0f;
