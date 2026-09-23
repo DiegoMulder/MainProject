@@ -43,7 +43,7 @@ MonoBehaviour:
   medkitCount: 8
   door: {fileID: 5786953601169760269, guid: 676fc50b002ed754d999cf9f606f3426, type: 3}
   exit: {fileID: 8742598040443380567, guid: df6f2e525a300404c99d9532e0eb1de6, type: 3}
-  enemy: {fileID: 5424273498486042716, guid: 16cf8ea201531fc4eb4bbcf117e93c9c, type: 3}
+  enemy: {fileID: 5424273498486042716, guid: 93c3c68c4c298de42a766d03bbcd68cc, type: 3}
   enemyCount: 1
   objectiveCount: 100
   objectiveTypes:
