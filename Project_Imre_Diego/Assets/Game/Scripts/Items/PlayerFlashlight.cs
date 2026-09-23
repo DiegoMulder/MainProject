@@ -11,6 +11,9 @@ namespace SurvivalFP
         [SerializeField] Light beam;
         [SerializeField] AudioSource toggleAudio;
         [SerializeField] AudioClip toggleSound;
+        [SerializeField] Renderer flashlightRenderer;
+        [SerializeField] Material flashlight_Mat_On;
+        [SerializeField] Material flashlight_Mat_Off;
         [Header("Toggle and fade")]
         [SerializeField] bool startOn;
         [SerializeField, Min(0f)] float toggleCooldown = 0.2f;
@@ -93,6 +96,7 @@ namespace SurvivalFP
             IsOn = startOn;
             beam.intensity = startOn ? onIntensity : 0f;
             beam.enabled = startOn;
+            UpdateFlashlightMaterial();
         }
 
         // The item owns its light lifecycle. PlayerController only forwards inventory input.
@@ -134,11 +138,38 @@ namespace SurvivalFP
         public void Tick(bool togglePressed, float dt)
         {
             if (!beam) return;
+
             cooldown = Mathf.Max(0f, cooldown - dt);
-            if (togglePressed) Toggle();
-            if (IsOn) beam.enabled = true;
-            beam.intensity = Mathf.Lerp(beam.intensity, IsOn ? onIntensity : 0f, 1f - Mathf.Exp(-fadeSpeed * dt));
-            if (!IsOn && beam.intensity < 0.05f) { beam.intensity = 0f; beam.enabled = false; }
+
+            if (togglePressed)
+                Toggle();
+
+            if (IsOn)
+                beam.enabled = true;
+
+            beam.intensity = Mathf.Lerp(
+                beam.intensity,
+                IsOn ? onIntensity : 0f,
+                1f - Mathf.Exp(-fadeSpeed * dt)
+            );
+
+            if (!IsOn && beam.intensity < 0.05f)
+            {
+                beam.intensity = 0f;
+                beam.enabled = false;
+            }
+
+            UpdateFlashlightMaterial();
+        }
+
+        private void UpdateFlashlightMaterial()
+        {
+            if (!flashlightRenderer)
+                return;
+
+            flashlightRenderer.sharedMaterial = IsOn
+                ? flashlight_Mat_On
+                : flashlight_Mat_Off;
         }
     }
 }
