@@ -81,8 +81,11 @@ sealed class ReadmeEditor : Editor
         var readme = (Readme)target;
 
         VisualElement root = new();
-        root.styleSheets.Add(readme.commonStyle);
-        root.styleSheets.Add(EditorGUIUtility.isProSkin ? readme.darkStyle : readme.lightStyle);
+        if (readme.commonStyle)
+            root.styleSheets.Add(readme.commonStyle);
+        var themeStyle = EditorGUIUtility.isProSkin ? readme.darkStyle : readme.lightStyle;
+        if (themeStyle)
+            root.styleSheets.Add(themeStyle);
 
         VisualElement ChainWithClass(VisualElement created, string className)
         {

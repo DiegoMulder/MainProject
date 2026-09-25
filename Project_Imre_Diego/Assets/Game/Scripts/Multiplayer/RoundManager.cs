@@ -27,16 +27,17 @@ namespace SurvivalFP
         public NetworkVariable<int> Difficulty=new(1),TargetRooms=new(0),RequiredObjectives=new(0);
         public NetworkVariable<int> Seed=new(0),ExitRoom=new(0),ExitConnector=new(0);
         public NetworkVariable<bool> Ready=new(false);
-        public NetworkVariable<int> ExpectedRooms=new(0),ExpectedProps=new(0);
+        public NetworkVariable<int> ExpectedRooms=new(0),ExpectedProps=new(0),ExpectedStructures=new(0);
         public NetworkVariable<RoundPhase> Phase=new(RoundPhase.Generating);
         public NetworkVariable<FixedString512Bytes> Failure=new(default);
         public NetworkList<RoomPlacement> Layout;
         public NetworkList<ConnectionPlacement> Connections;
         public NetworkList<PropPlacement> Props;
+        public NetworkList<StructurePlacement> Structures;
         public MansionWorld World {get;private set;}
         public ExitDoor Exit {get;private set;}
         readonly Dictionary<string,int> outstanding=new();
-        void Awake() { Layout=new(); Connections=new(); Props=new(); World=GetComponent<MansionWorld>(); }
+        void Awake() { Layout=new(); Connections=new(); Props=new(); Structures=new(); World=GetComponent<MansionWorld>(); }
         public override void OnNetworkSpawn()
         {
             Instance=this; Ready.OnValueChanged+=OnReady;
@@ -51,7 +52,7 @@ namespace SurvivalFP
             // Ready can deserialize before the NetworkLists in the same update.
             // Wait until the complete manifest has arrived, then construct exactly once.
             yield return null;
-            while(IsSpawned && Ready.Value && (ExpectedRooms.Value<4 || Layout.Count!=ExpectedRooms.Value || Connections.Count!=ExpectedRooms.Value-1 || Props.Count!=ExpectedProps.Value))yield return null;
+            while(IsSpawned && Ready.Value && (ExpectedRooms.Value<4 || Layout.Count!=ExpectedRooms.Value || Connections.Count!=ExpectedRooms.Value-1 || Props.Count!=ExpectedProps.Value || Structures.Count!=ExpectedStructures.Value))yield return null;
             if(IsSpawned && Ready.Value && !World.Built){SelectContent();World.Build(this,false);}
         }
         IEnumerator Setup()
@@ -59,12 +60,25 @@ namespace SurvivalFP
             yield return null;
             try
             {
-                Seed.Value=settings.randomSeed?unchecked((int)DateTime.UtcNow.Ticks):settings.seed;
-                var plan=new MansionLayoutPlanner(); plan.Generate(settings,Seed.Value);
-                ExpectedRooms.Value=plan.Rooms.Count;ExpectedProps.Value=plan.Props.Count;
+                int candidate=settings.randomSeed?unchecked((int)DateTime.UtcNow.Ticks):settings.seed;
+                var plan=new MansionLayoutPlanner();
+                // A few valid grid seeds can exhaust the floor/exit placement attempts.
+                // Retry only random rounds; an explicitly chosen seed stays reproducible.
+                for(int attempt=0;attempt<8;attempt++)
+                {
+                    try { plan.Generate(settings,candidate); Seed.Value=candidate; break; }
+                    catch(InvalidOperationException ex) when(settings.randomSeed && attempt<7 &&
+                        (ex.Message.StartsWith("Placement attempts exhausted") ||
+                         ex.Message.StartsWith("Generation could not place") ||
+                         ex.Message.StartsWith("No eligible exit") ||
+                         ex.Message.StartsWith("No exit has enough")))
+                    { candidate=unchecked(candidate+1); }
+                }
+                ExpectedRooms.Value=plan.Rooms.Count;ExpectedProps.Value=plan.Props.Count;ExpectedStructures.Value=plan.Structures.Count;
                 foreach(var room in plan.Rooms) Layout.Add(room);
                 foreach(var connection in plan.Connections) Connections.Add(connection);
                 foreach(var prop in plan.Props) Props.Add(prop);
+                foreach(var structure in plan.Structures) Structures.Add(structure);
                 ExitRoom.Value=plan.ExitRoom; ExitConnector.Value=plan.ExitConnector;
                 World.Build(this,true);
                 foreach(var connection in Connections)

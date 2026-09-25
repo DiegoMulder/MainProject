@@ -85,7 +85,7 @@ The map assets are:
 
 Mansion's existing folders now live under **Game/Prefabs/Maps/Mansion**, matching Slaughterhouse. These were moved in Unity with their GUIDs preserved; they were not recreated. No imported third-party character folders were moved. Slaughterhouse currently uses separate placeholder geometry and its own tile material, so you can replace it independently. Its room references and prop references do not point back to Mansion prefabs.
 
-A **Map Definition** has a display name, content settings and an optional ambient colour. The content settings supply the room catalog, doors, exit, items, enemy prefab, floor settings and generation options. Furniture choices live in each map's room Prop Spawn Points. Hallways and stairs are RoomModules in the same weighted catalog; they do not need a second generator.
+A **Map Definition** has a display name, content settings and an optional ambient colour. The content settings supply the room catalog, doors, exit, items, enemy prefab, floor settings and generation options. Mansion furniture choices live in each room's Randomized Structures child groups; closets and maps that have not been converted can still use Prop Spawn Points. Hallways and stairs are RoomModules in the same weighted catalog; they do not need a second generator.
 
 The lobby's map index is server-written. RoundManager copies the selected map's content, then applies the shared difficulty profile. Clients receive the map index and the same generated layout before building their local geometry. Returning to the lobby destroys the previous world, but leaves the lobby's selected map available to change.
 
@@ -121,7 +121,7 @@ It is now **Game/Prefabs/Game Management/Round Runtime.prefab**, the same asset 
 
 1. Create **Game/Prefabs/Maps/YourMap** with the categories you need.
 2. Duplicate Slaughterhouse or Mansion's room, hallway, staircase, furniture, door, exit and closet prefabs into your folder. Use Unity's Project window so every new asset gets its own identity.
-3. Open each copied room. Replace every Prop Spawn Point variant with your copied furniture/closet assets. Copying a room alone does not automatically remap its furniture references.
+3. Open each copied room. Replace the furniture prefabs inside its Randomized Structures child groups with your new furniture and check that each list entry still points to a child of the copied room. Also replace any remaining Prop Spawn Point variants, especially networked closets. Copying a room alone does not automatically remap its furniture references.
 4. Create **Game/Data/Maps/YourMap**. Duplicate a ContentSet there and name it **YourMapContentSet**.
 5. Replace its entire Rooms catalog with your map's modules. Assign your own door and exit. Keep shared player/item/enemy prefabs where intended. Check the floor count and staircase compatibility.
 6. Right-click in the Project window and choose **Create > Survival FP > Map Definition**. Save it beside the content as **YourMapMapDefinition**. Set its display name and assign YourMapContentSet.

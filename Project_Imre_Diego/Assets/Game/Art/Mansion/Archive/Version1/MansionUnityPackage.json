@@ -1,0 +1,13 @@
+{
+  "package": "Mansion final FBX",
+  "target": "Unity 6000.6 URP; Built-in Standard fallback",
+  "model_units": "metres",
+  "room_root": "bottom centre",
+  "door_root": "left hinge axis",
+  "texture_size": 1024,
+  "texture_density_px_per_m": 512,
+  "doorways_m": [
+    1.8,
+    2.4
+  ]
+}

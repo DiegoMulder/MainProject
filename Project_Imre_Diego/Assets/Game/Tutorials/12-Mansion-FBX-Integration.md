@@ -1,61 +1,48 @@
 # Mansion models and adding new rooms
 
-The supplied Mansion FBX files provide the visible room and door models in the playable prefabs. The playable prefab still controls room size, connectors, collision, spawn points, doors and navigation; the FBX is kept on the visual child so it can be replaced without changing gameplay.
+[All tutorials](../README.md) · [Furniture and item surfaces](02-Furniture-and-Hiding.md)
 
-## Where the files are
+The Mansion still uses the grid-based room generator. A **gameplay prefab** is the complete room that the generator places. An **FBX** is only its visible model. Keep these separate so changing art does not move doorways or break walking surfaces.
 
-The original source models are in `Assets/Game/FBX`:
+## Find the files
 
-| Folder | Contents |
-| --- | --- |
-| `Rooms` | CornerHall, LargeRoom, SmallRoom, Staircase, StandardRoom, StraightHall and TJunction |
-| `Doors` | Door, authored around its left hinge |
-| `Materials` and `Textures` | Shared URP material and texture files |
+- `Assets/Game/Art/Mansion/Current` contains the active V2 FBX models and their `Textures` folder. Their materials use URP.
+- `Assets/Game/Art/Mansion/Archive/Version1` contains the old source package for comparison and rollback. No active gameplay prefab, scene, or other map asset uses it. The old `Closet.fbx` had already been removed before this change; the current closet uses the V2 model.
+- `Assets/Game/Prefabs/Maps/Mansion` contains the actual playable room, hallway, staircase, door, and prop prefabs.
 
-The source FBX files are art assets. The generator does not spawn them directly. It spawns the authored prefabs in `Assets/Game/Prefabs/Maps/Mansion`, which contain the matching FBX visual. Keep the `RoomModule`, connectors, spawn anchors, simple colliders and gameplay scripts unchanged when replacing or adding a model.
+The active set includes V2 Standard, Small, and Large rooms; Straight, Corner, and T hallways; the Staircase; Door; and Closet. `WallLantern.fbx` is a source model only. Its meshes are already part of each room FBX, so do not add separate lantern meshes.
 
-The supplied package does not include a closet model. `Props/Closet.prefab` therefore keeps its existing gameplay visual. Keep its hide points, occupancy trigger and collision when replacing that visual later.
+The supplied V2 set does not contain standalone Table, Shelf, Cabinet, or Plant FBXs. Some of those details are baked into the room meshes; the separate optional furniture groups still use the project's gameplay furniture prefabs. They are placed in clear areas so they do not sit on top of the baked-in details.
 
-## Which model is used where
+## Replace a room model
 
-| Gameplay prefab | Visible model |
-| --- | --- |
-| `Rooms/Standard Room.prefab` | `Rooms/StandardRoom.fbx` |
-| `Rooms/Small Room.prefab` | `Rooms/SmallRoom.fbx` |
-| `Rooms/Large Room.prefab` | `Rooms/LargeRoom.fbx` |
-| `Hallways/Straight Hall.prefab` | `Rooms/StraightHall.fbx` |
-| `Hallways/Corner Hall.prefab` | `Rooms/CornerHall.fbx` |
-| `Hallways/T Junction.prefab` | `Rooms/TJunction.fbx` |
-| `Stairs/Staircase.prefab` | `Rooms/Staircase.fbx` |
-| `Doors/Ordinary Door.prefab` and `Doors/Exit Door.prefab` | `Doors/Door.fbx` |
+1. Add the new FBX and any textures to `Art/Mansion/Current`. Wait for Unity to import them. Select the FBX and check that its materials look right and use URP shaders.
+2. Open the existing playable room prefab. Select its highest object and note its `Room Module` size and connectors. **Do not move or scale this root.**
+3. Expand `_Visuals` and replace only the `Current V2 Visual` child. Keep the room's floor and wall colliders, connectors, item markers, and scripts.
+4. Adjust the **visual child's** local position, rotation, and scale. The current V2 FBXs use about X rotation `270.02` and scale `100` because of their source axes and units. Copy a working sibling prefab's values as a starting point.
+5. Look from above and from each doorway in Scene view. The model's floor should cover the gameplay floor. Its openings must meet the connector positions. If the model's pivot is off-center, offset only the visual child.
+6. Save, host a Mansion round from Main Menu, and walk through doors and stairs. Check pickups, enemy movement, and several generated layouts.
+7. After the new model works, check its old version has no active references. Move the old source asset into `Archive/Version1` through Unity's Project window, which preserves its `.meta` GUID.
 
-## Add another room, step by step
+The current Corner Hall and T Junction visuals have child-only scale and position adjustments to fit the existing 8×8 and 10×10 grid footprints. The Staircase visual faces 180 degrees relative to its import so the upper landing meets the upper connector. Preserve those settings when changing only materials.
 
-1. Duplicate the closest existing prefab in `Rooms`, `Hallways` or `Stairs`. Rename the copy clearly, for example `Library Room.prefab`.
-2. Open the copy and leave its root at the same origin and rotation as the original. Do not move the root to make the art fit.
-3. Keep the `RoomModule`, `RoomConnector` children, player/enemy spawn points, item anchors and colliders. These are the measurements used by generation and gameplay.
-4. Under `_Visuals`, add the new FBX as a child named `FBX Visual`. Keep its local position at zero. For a door, put it under `Hinge/FBX Visual`. If the model has a visible offset, correct that on the visual child only.
-5. Check the model in the Scene view. Its floor should sit at the prefab floor, its doorway should meet the connector, and its height should match the other rooms. The supplied imports use a 100 scale because their mesh data is authored in centimetres, plus an X rotation of about 270 degrees (`270.02` as imported) to convert the FBX axes into Unity's upright orientation. Copy these values from the imported FBX root when adding another supplied model; do not rotate the gameplay prefab root.
-6. Disable an old placeholder renderer only after the new renderer is visible. Keep its collider if it still represents a useful gameplay boundary. Use simple box or capsule colliders for walking surfaces and walls; decorative mesh detail does not need collision.
-7. Open `Game/Data/Maps/Mansion/MansionContentSet.asset` and add the new prefab to the correct list. Set a small weight first so it is easy to test. Do not add it to the Slaughterhouse content set.
-8. Start from `MainMenu`, host a round, and test several seeds. Walk through every doorway, walk up and down stairs, check that props and pickups land on their anchors, and confirm the enemy can navigate the room.
+## Add an extra room to generation
 
-If the room looks correct but players fall through it, the visual is fine and the gameplay collider is missing or misplaced. Fix the collider on the gameplay prefab, not by adding a complex collider to the FBX source.
+1. Duplicate the closest playable room prefab under `Rooms`, `Hallways`, or `Stairs`. Rename it, such as `Library Room`.
+2. Keep the root, `Room Module`, connectors, collision, and item markers. If the footprint changes, update the module size, floor/wall colliders, and connector positions together. Otherwise rooms may overlap or leave gaps.
+3. Replace its visual child as described above. Keep the visible floor at Y=0. Move the visual child to fix an FBX pivot; never move the gameplay root to do that.
+4. Add furniture groups and item markers using [the furniture tutorial](02-Furniture-and-Hiding.md). Keep doorways and stair landings clear.
+5. Open `Assets/Game/Data/Maps/Mansion/MansionContentSet.asset` and add the new room prefab to its room list with a small weight. Do not add it to Slaughterhouse.
+6. Host several rounds and confirm the new room appears, connections meet, the exit is reachable, and items rest on real surfaces.
 
-## Add or replace a door model
+## Doors, closets, and lantern lights
 
-Open `Ordinary Door.prefab` or `Exit Door.prefab`. The moving panel is under `Hinge`, and the FBX belongs under `Hinge/FBX Visual`. Keep the Hinge transform where it is. This supplied mesh needs the same X-axis conversion as the rooms and a 180-degree local Y turn so the door extends from the preserved hinge into the doorway. Keep `DoorInteractable`, the door collider and the networking components on the existing prefab. Test opening, closing, the exit lock, the open-away-from-player direction and the door sound with two players.
+Door prefabs keep their `Hinge`, door panel collider, scripts, and networking. Their V2 mesh is only a child under `Hinge`. If changing the visual, keep the existing hinge and collider. The V2 door visual uses X rotation `270.02`, Y rotation `180`, and scale `100`.
 
-## Materials and safe edits
+The Closet prefab keeps its hide interaction, entry/exit points, AI approach, and collision. Its V2 model is only the visible child. Closets remain separate networked hiding props and use their original closet spawn anchors.
 
-Use the shared materials in `Assets/Game/FBX/Materials` or the existing URP materials in `Game/Materials`. Avoid making a new material for every room instance. Do not edit the FBX source asset to add collision, gameplay scripts or navigation data; those belong on the gameplay prefab. If a model needs a visual correction, use the child transform or a prefab-level material override.
+Every room's `LanternLights` child has Point Lights at the built-in lantern glass locations. Select a `LanternLight` child to edit warm color, intensity, range, or shadows in the Inspector. For a new room model, place a Point Light at each built-in bulb on the room side of the wall and check it from multiple angles. Keep range short and shadows off unless needed; a generated Mansion has many lanterns. Do not put lanterns into `Randomized Structures`.
 
-## Final checklist
+## Final check
 
-- The new prefab is referenced by `MansionContentSet`.
-- The root, connectors, anchors, RoomModule and colliders are still present.
-- The visual floor, doorway and ceiling line up with the gameplay bounds.
-- The FBX visual is enabled and any obsolete placeholder renderer is disabled.
-- Doors rotate around their existing Hinge and still synchronize in multiplayer.
-- A generated round has no overlap, missing camera or navigation errors.
-- The model is under the Mansion content folders and is not mixed into Slaughterhouse.
+The room root, connectors, colliders, and spawn markers should remain intact. The visible model must fit the gameplay bounds; doors must retain their colliders; closets must still hide players. Generate several seeds and check the Console for missing art, navigation, or multiplayer errors.

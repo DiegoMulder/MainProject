@@ -154,8 +154,15 @@ namespace SurvivalFP
         }
         void OnDestroy()
         {
+            if(manager && manager.IsListening)manager.Shutdown(true);
             if(manager){if(manager.SceneManager!=null)manager.SceneManager.OnLoadEventCompleted-=SceneLoaded;manager.OnServerStarted-=ServerStarted;manager.OnClientConnectedCallback-=Connected;manager.OnClientDisconnectCallback-=Disconnected;}
             if(Instance==this)Instance=null;
+        }
+        void OnApplicationQuit()
+        {
+            // Play-mode exit destroys objects immediately; stop the session first so
+            // spawned behaviours still have their NetworkManager during teardown.
+            if(manager && manager.IsListening)manager.Shutdown(true);
         }
     }
 }

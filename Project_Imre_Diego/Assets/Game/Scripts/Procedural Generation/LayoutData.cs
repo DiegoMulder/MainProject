@@ -23,4 +23,11 @@ namespace SurvivalFP
         public void NetworkSerialize<T>(BufferSerializer<T> s) where T : IReaderWriter { s.SerializeValue(ref room); s.SerializeValue(ref anchor); s.SerializeValue(ref variant); s.SerializeValue(ref halfTurn); }
         public bool Equals(PropPlacement o) => room == o.room && anchor == o.anchor && variant == o.variant && halfTurn == o.halfTurn;
     }
+    public struct StructurePlacement : INetworkSerializable, IEquatable<StructurePlacement>
+    {
+        public int room, entry;
+        public bool enabled;
+        public void NetworkSerialize<T>(BufferSerializer<T> s) where T : IReaderWriter { s.SerializeValue(ref room); s.SerializeValue(ref entry); s.SerializeValue(ref enabled); }
+        public bool Equals(StructurePlacement o) => room == o.room && entry == o.entry && enabled == o.enabled;
+    }
 }

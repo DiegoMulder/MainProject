@@ -2,73 +2,47 @@
 
 [All tutorials](../README.md) · [Pickups next](03-Pickups-and-Objectives.md)
 
-## Three different things
+The Mansion now handles **ordinary furniture** as child groups already placed inside each room prefab. The room root's `Room Module > Randomized Structures` list decides which groups appear. **Closets** remain on their separate hiding and network spawn system.
 
-A **furniture prefab** is the table or shelf. A **PropSpawnPoint** marks a position inside a room where furniture is chosen. An **ItemSpawnPoint** marks a position on furniture where an objective or medkit may appear. These components do separate jobs.
+An `Item Spawn Point` is a marker on a table, shelf, or another surface where an objective, medkit, or radio can appear. Put it **inside the furniture group** so it disappears with the furniture. That prevents floating pickups.
 
-## Recipe: create a furniture variant
+## Put optional furniture in a room
 
-1. In Assets/Game/Prefabs/Maps/Mansion/Props, duplicate Table.prefab. Rename it Dining Table.
-2. Open it in Prefab Mode and change its material or visual details.
-3. Keep solid colliders for the tabletop and legs.
-4. Inspect ItemSpawnPoint children: they are item locations. Reposition them if the tabletop changes size.
-5. Preserve ordinary tabletop/leg collision. Use Cabinet as a starting point for a solid cabinet; use Closet for an interactable hiding spot.
-6. Save.
+1. In Unity's Project window, open `Assets/Game/Prefabs/Maps/Mansion/Rooms` and double-click the room prefab you want to edit.
+2. In the Hierarchy, select the highest room object. It has the `Room Module` component.
+3. Right-click the room and create an empty child named, for example, `Table Setup`. Move and rotate this group to the exact place the table should stand. Leave its scale at `(1, 1, 1)`.
+4. Drag `Assets/Game/Prefabs/Maps/Mansion/Props/Table.prefab` **inside** the group. Set the furniture child's local position and rotation to zero. The parent group controls placement.
+5. Select the room root again. Expand `Room Module > Randomized Structures` and add an element. Drag `Table Setup` **from the Hierarchy** into `Target`. Do not drag the prefab asset from the Project window; the target must be an existing child of this room.
+6. Set `Spawn Chance` as a percentage: `0` means never, `100` means always, `60` means about six out of ten room copies. Save the room prefab.
+7. Host several rounds. Each entry rolls independently: a table at 60% and a plant at 25% can appear together, separately, or neither.
 
-Static furniture is not registered in NetworkPrefabs.asset. A room selects it through PropSpawnPoint variants. Closets are interactive network props: register those in NetworkPrefabs.asset as well.
+You can put several objects under one group, such as a table, books, and item markers. They all turn on or off together. Only children explicitly listed in `Randomized Structures` are affected. **Never list** floors, walls, connectors, doors, stairs, lanterns, triggers, or the room root.
 
-## Recipe: place your furniture in a room
+The host chooses each room's groups once per round and sends the choices to clients. Entering a room or joining later does not reroll it.
 
-1. Open the room prefab.
-2. Select an existing PropSpawnPoint, or create an empty child and add Prop Spawn Point.
-3. Move the marker to the desired furniture origin and rotate it appropriately. Keep scale (1, 1, 1).
-4. Set Chance to 1 for an appearance every time, 0.5 for a 50% appearance chance, or 0 for none.
-5. Expand Variants, add an entry, and drag Dining Table.prefab from Project into Prefab.
-6. Set Weight to 2. Optionally add Shelf with Weight 1 if either shape fits here.
-7. Leave Random Half Turn disabled if the furniture must face a particular wall. Enabling it allows a 180-degree variation.
-8. Select the room root. Add the new marker to Room Module > Prop Anchors.
-9. Save and generate several rounds.
+Some decorative furniture is baked into a V2 room FBX. Because that FBX is one combined mesh, those built-in pieces stay visible and cannot be switched individually by this list. The existing room child groups use separate furniture prefabs and are positioned away from the built-in details. To make a baked-in piece optional later, export it as its own model, remove it from the room FBX, and place the separate model inside a room child group.
 
-After the appearance-chance roll succeeds, the example chooses the table about two-thirds of the time and the shelf one-third. Both variants need compatible origins and enough physical room.
+## Make a new furniture prefab
 
-Category is an organisational label. Typing Kitchen does not automatically find kitchen furniture. Variants determines the actual choices. Use positive weights; remove an entry to exclude it.
+1. Duplicate a simple prefab in `Assets/Game/Prefabs/Maps/Mansion/Props`, such as `Table.prefab`, and rename the copy.
+2. Open it in Prefab Mode. Change its appearance and check the solid parts have sensible colliders.
+3. Move its `Item Spawn Point` children to real, clear surfaces. Remove markers that are inside the model.
+4. Save and place the new prefab inside a room child group using the steps above. Ordinary static furniture does not need an entry in `NetworkPrefabs.asset`.
 
-## Recipe: add more item surfaces
+For a hiding place, start from `Closet.prefab` instead. It has interaction, occupancy, hide points, and AI positions. Keep its network registration and the room's closet anchor.
 
-1. Open the furniture prefab.
-2. Create an empty child called Item Surface 01.
-3. Add Item Spawn Point.
-4. Place it above a solid surface. The item's origin appears here, so leave clearance for the portion of its collider below that origin.
-5. Set Approach Offset to reach clear nearby floor where someone could stand.
-6. Add more markers only where their items will not overlap. Allow for your largest objective/medkit collider.
-7. Save and confirm that a room actually selects this furniture.
-8. Start a round. Check that items rest on the surface, can be targeted with E, and are reachable.
+## Add more pickup locations
 
-Example: a tabletop ending at Y = 1.5 could use a marker at (0, 1.75, 0) for an item with less than 0.25 metres of collider below its origin. Approach Offset (0, -1.75, 1.2) points to floor 1.2 metres in front, assuming an unrotated marker with unit scale. The offset rotates/scales with its marker. Adjust for actual geometry; the component does not calculate clearance automatically.
+1. Open the furniture prefab or child group that contains the surface.
+2. Create an empty child named `Item Surface 01` and add `Item Spawn Point`.
+3. Put the marker just above the solid tabletop or shelf. Leave room for the lower part of the largest pickup collider.
+4. Set `Approach Offset` so it points to reachable clear floor where a player or enemy can stand.
+5. Add more markers only where items will not overlap. Save, host a round, and try picking up items with E.
 
-Navigation validates the approach, not simply the visible item position. An item can look fine on a shelf while its approach point inside the shelf is rejected.
+The game rejects item points whose approach is unreachable. It also avoids the starting room for required items. If a round reports too few surfaces, add more **guaranteed** groups with 100% chance and reachable markers. Low-chance decorations cannot reliably supply required pickups.
 
-## Why surface capacity matters
+## Keep closets and paths working
 
-Objectives and medkits share eligible markers and use separate positions. Markers in the starting room are excluded. Unreachable approaches are filtered out. Furniture that did not appear contributes no markers.
+The existing `Closet anchor` stays in the room's `Prop Anchors` list. It creates the networked closet with its own chance setting. Leave clear floor in front of its entry, exit, and AI approach. Keep ordinary furniture away from doorways and stair landings.
 
-The current 100 objectives plus 8 medkits need at least **108 eligible markers outside the starting room** after generation/filtering. Keep spare capacity. Authoring 108 possible markers across all your prefabs does not guarantee every generated map contains them.
-
-For reliable required-item placement, use Chance 1 on enough furniture anchors and give all their variants sufficient surfaces. Low appearance chances suit decorations but can make required-item capacity unreliable.
-
-ItemSpawnPoint currently supplies objectives and medkits. It does not automatically spawn arbitrary keys or tools. The next tutorial supplies an optional dedicated-marker script for those.
-
-## Tables are ordinary furniture
-
-Tables no longer register as hiding spots or have special AI concealment/memory behavior. The solid tabletop and legs are now ordinary furniture height, not elevated for crawling underneath. Crouching underneath is possible where normal collision permits it, and the tabletop prevents standing through it. There is no table hiding state and no cloth-trigger exception in enemy vision.
-
-For an actual hiding spot, use an interactable **Closet**. Enter it with E; walking into it does not activate hiding. See [closets, gameplay noise, heartbeat, and PSX visuals](06-Closets-Noise-and-Presentation.md) for the full setup recipe.
-
-## Final checks
-
-- Every furniture variant fits without blocking doors or landings.
-- All item approaches are on clear floor.
-- Items begin above the surface and away from edges.
-- Half-turn variation does not turn the usable side into a wall.
-- Guaranteed furniture provides enough required-item surfaces.
-- Closet anchors reserve space for entry, exit, and the enemy approach.
+Tables are ordinary furniture, not hiding spots. For actual hiding, enter an interactable closet with E. See [closets, gameplay noise, heartbeat, and PSX visuals](06-Closets-Noise-and-Presentation.md).

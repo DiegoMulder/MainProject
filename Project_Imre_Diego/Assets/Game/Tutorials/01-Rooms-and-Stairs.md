@@ -4,7 +4,7 @@
 
 ## How a room becomes part of the mansion
 
-A room prefab contains visible geometry, physical colliders, a RoomModule component, and doorway markers called RoomConnectors. The generator joins compatible markers and checks that the declared room bounds do not overlap another room. It chooses furniture at PropSpawnPoints.
+A room prefab contains visible geometry, physical colliders, a RoomModule component, and doorway markers called RoomConnectors. The generator joins compatible markers and checks that the declared room bounds do not overlap another room. Mansion furniture is now placed as child groups listed in RoomModule's Randomized Structures array; closets still use PropSpawnPoints. See [the furniture tutorial](02-Furniture-and-Hiding.md).
 
 Ordinary static rooms and furniture are reconstructed from the shared layout. They do not need NetworkObjects or entries in NetworkPrefabs.asset. Interactive network items and doors do.
 

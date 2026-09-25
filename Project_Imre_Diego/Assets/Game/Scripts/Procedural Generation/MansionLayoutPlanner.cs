@@ -10,10 +10,11 @@ namespace SurvivalFP
         public readonly List<RoomPlacement> Rooms = new();
         public readonly List<ConnectionPlacement> Connections = new();
         public readonly List<PropPlacement> Props = new();
+        public readonly List<StructurePlacement> Structures = new();
         public int ExitRoom, ExitConnector;
         public void Generate(MansionSettings settings, int seed)
         {
-            Rooms.Clear(); Connections.Clear(); Props.Clear();
+            Rooms.Clear(); Connections.Clear(); Props.Clear(); Structures.Clear();
             if (!settings || settings.rooms == null || settings.rooms.Length == 0) throw new InvalidOperationException("No room modules configured.");
             var rng = new System.Random(seed);
             int stairModule=Array.FindIndex(settings.rooms,r=>r.prefab && r.prefab.staircase);
@@ -90,6 +91,15 @@ namespace SurvivalFP
             }
             for (int r = 0; r < Rooms.Count; r++)
             {
+                var structures = settings.rooms[Rooms[r].module].prefab.randomizedStructures;
+                if (structures != null)
+                    for (int s = 0; s < structures.Length; s++)
+                    {
+                        var entry = structures[s];
+                        if (!entry.target) continue;
+                        Structures.Add(new StructurePlacement { room = r, entry = s,
+                            enabled = rng.NextDouble() * 100 < Mathf.Clamp(entry.spawnChance, 0, 100) });
+                    }
                 var anchors = settings.rooms[Rooms[r].module].prefab.propAnchors;
                 for (int a = 0; a < anchors.Length; a++)
                 {

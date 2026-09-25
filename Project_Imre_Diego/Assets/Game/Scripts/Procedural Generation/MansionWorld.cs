@@ -24,6 +24,14 @@ namespace SurvivalFP
                 var room=Instantiate(settings.rooms[placement.module].prefab,placement.position,placement.Rotation,geometry.transform);
                 room.name=$"Room {Rooms.Count:00} - {room.name}"; Rooms.Add(room);
             }
+            foreach(var choice in round.Structures)
+            {
+                if(choice.room<0 || choice.room>=Rooms.Count)continue;
+                var room=Rooms[choice.room];
+                if(room.randomizedStructures==null || choice.entry<0 || choice.entry>=room.randomizedStructures.Length)continue;
+                var target=room.randomizedStructures[choice.entry].target;
+                if(target && target!=room.gameObject && target.transform.IsChildOf(room.transform))target.SetActive(choice.enabled);
+            }
             var connected=new HashSet<(int,int)>();
             foreach(var connection in round.Connections) { connected.Add((connection.a,connection.ac)); connected.Add((connection.b,connection.bc)); }
             connected.Add((round.ExitRoom.Value,round.ExitConnector.Value));
