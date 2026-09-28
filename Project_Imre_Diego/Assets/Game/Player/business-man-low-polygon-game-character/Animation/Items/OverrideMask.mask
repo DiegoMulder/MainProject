@@ -73,6 +73,8 @@ AvatarMask:
     m_Weight: 1
   - m_Path: Rig/Hips/Spine/Spine 1/Chest/Clavicle_R/Upper_Arm_R/Lower_Arm_R/Hand_R
     m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Spine 1/Chest/Clavicle_R/Upper_Arm_R/Lower_Arm_R/Hand_R/Right Hand Item Hold
+    m_Weight: 1
   - m_Path: Rig/Hips/Spine/Spine 1/Chest/Clavicle_R/Upper_Arm_R/Lower_Arm_R/Hand_R/Index_R
     m_Weight: 1
   - m_Path: Rig/Hips/Spine/Spine 1/Chest/Clavicle_R/Upper_Arm_R/Lower_Arm_R/Hand_R/Index_R/Index_1_R
