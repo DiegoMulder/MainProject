@@ -158,7 +158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cce4e71f3abc35b4e856978c47b51808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PickupItem
-  kind: 3
+  kind: 1
   displayName: Seal
   primaryUse: {fileID: 0}
   heldEulerAngles: {x: 0, y: 0, z: 0}
