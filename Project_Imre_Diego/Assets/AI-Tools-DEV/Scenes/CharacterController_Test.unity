@@ -3509,6 +3509,10 @@ MonoBehaviour:
   displayName: Capsule
   primaryUse: {fileID: 0}
   heldEulerAngles: {x: 0, y: 0, z: 0}
+  rightHandPosition: {x: 0, y: 0, z: 0}
+  rightHandEuler: {x: 0, y: 0, z: 0}
+  rightHandScale: {x: 1, y: 1, z: 1}
+  firstPersonScale: 0.55
 --- !u!23 &615625828
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4028,6 +4032,10 @@ MonoBehaviour:
   displayName: Cube
   primaryUse: {fileID: 0}
   heldEulerAngles: {x: 0, y: 0, z: 0}
+  rightHandPosition: {x: 0, y: 0, z: 0}
+  rightHandEuler: {x: 0, y: 0, z: 0}
+  rightHandScale: {x: 1, y: 1, z: 1}
+  firstPersonScale: 0.55
 --- !u!23 &689714559
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -8679,6 +8687,10 @@ MonoBehaviour:
   displayName: Flashlight
   primaryUse: {fileID: 1575691518}
   heldEulerAngles: {x: 0, y: 0, z: 0}
+  rightHandPosition: {x: 0, y: 0, z: 0}
+  rightHandEuler: {x: 0, y: 0, z: 0}
+  rightHandScale: {x: 1, y: 1, z: 1}
+  firstPersonScale: 0.55
 --- !u!23 &1575691510
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -8914,10 +8926,16 @@ MonoBehaviour:
   beam: {fileID: 2092113181}
   toggleAudio: {fileID: 1575691517}
   toggleSound: {fileID: 8300000, guid: ece62531b6afc02489ebe9b28e05625c, type: 3}
+  flashlightRenderer: {fileID: 0}
+  flashlight_Mat_On: {fileID: 0}
+  flashlight_Mat_Off: {fileID: 0}
   startOn: 0
   toggleCooldown: 0.2
   fadeSpeed: 14
   onIntensity: 97.65625
+  toggleNoiseRadius: 3
+  aimResponse: 12
+  minimumAimDistance: 2
 --- !u!1 &1606440540
 GameObject:
   m_ObjectHideFlags: 0

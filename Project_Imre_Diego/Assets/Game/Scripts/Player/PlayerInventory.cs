@@ -30,7 +30,7 @@ namespace SurvivalFP
                 if (!handAnchor) handAnchor = new GameObject("Item Hand Anchor").transform;
             }
             handAnchor.SetParent(playerCamera.transform, false);
-            handAnchor.localPosition = new Vector3(.42f, -.34f, .62f);
+            //handAnchor.localPosition = new Vector3(.42f, -.34f, .62f);
             handAnchor.localRotation = Quaternion.identity;
             handAnchor.localScale = Vector3.one;
         }
