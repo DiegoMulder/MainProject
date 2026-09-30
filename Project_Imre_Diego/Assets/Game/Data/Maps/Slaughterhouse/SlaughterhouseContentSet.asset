@@ -18,6 +18,8 @@ MonoBehaviour:
   attemptsPerRoom: 80
   floorCount: 4
   floorHeight: 4
+  startingRoom: {fileID: 8547968971871318803, guid: 0922d1b6be3a1fa459d41d5f2df0b84c, type: 3}
+  uniqueStartingRoom: 0
   rooms:
   - prefab: {fileID: 8547968971871318803, guid: 0922d1b6be3a1fa459d41d5f2df0b84c, type: 3}
     weight: 8

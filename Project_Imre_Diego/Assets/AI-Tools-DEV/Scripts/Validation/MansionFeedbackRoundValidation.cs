@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,7 +38,7 @@ namespace SurvivalFP.Editor
             host.Controller.enabled=false;
             var enemy=FindAnyObjectByType<EnemyController>();var agent=enemy.GetComponent<NavMeshAgent>();enemy.enabled=false;agent.isStopped=true;
             Check(ClosetHideout.All.Count>0,"Closets selected through procedural prop manifest");
-            Check(Client().closets?.Length==ClosetHideout.All.Count && Client().props==round.Props.Count,"Client receives exactly the server closets and full prop manifest");
+            Check(Client().closets?.Length==ClosetHideout.All.Count && Client().props==round.World.NetworkPropCount,"Client receives exactly the server closets and full prop manifest");
             var closet=ClosetHideout.All.First(c=>c.HasClearExit(client));
             Vector3 home=round.World.Rooms.Last().NavigationPosition;
             host.Motor.Teleport(home);client.Motor.Teleport(closet.entryPoint.position);yield return new WaitForSecondsRealtime(.5f);

@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,7 +42,7 @@ namespace SurvivalFP.Editor
             Check(NetworkPlayer.Players.Count==2 && Client().players==2,"Host start spawns both players into the same round");
             var layout=new List<string>();foreach(var r in round.Layout)layout.Add($"{r.module}:{r.quarter}:{r.position.x:F2},{r.position.y:F2},{r.position.z:F2}");
             Check(Client().layout==string.Join(";",layout),"Clients receive identical three-dimensional room placements");
-            Check(Client().rooms==round.World.Rooms.Count && Client().props==round.Props.Count,"Client constructs every replicated room and prop before gameplay");
+            Check(Client().rooms==round.World.Rooms.Count && Client().props==round.World.NetworkPropCount,"Client constructs every replicated room and prop before gameplay");
             Check(round.World.Rooms.Select(r=>r.transform.position.y).Distinct().Count()>=2,"Multiple connected floors generated");
             var kits=FindObjectsByType<MedkitItem>();Check(kits.Length==round.settings.medkitCount,"Configured medkits spawn on reachable furniture anchors");
             Check(round.World.ItemAnchors.Count>=round.settings.objectiveCount+round.settings.medkitCount,"Validated anchors cover every required item");

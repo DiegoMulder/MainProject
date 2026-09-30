@@ -15,13 +15,14 @@ namespace SurvivalFP
         public override void OnNetworkDespawn(){player.Motor.Jumped-=Jump;player.Motor.Landed-=Land;}
         void Jump(){localJump=true;if(IsServer)Jumping.Value=true;}
         void Land(float speed){localJump=false;if(IsServer)Jumping.Value=false;}
-        public void ReportTalking(bool value){if(!IsOwner||(!value&&!reportedTalking)||(value&&Time.unscaledTime<nextSpeech))return;reportedTalking=value;nextSpeech=Time.unscaledTime+.1f;TalkRpc(value);}
+        // Speech refreshes a server lease at 5 Hz (lease .5 s) instead of 10 Hz; silence is implicit.
+        public void ReportTalking(bool value){if(!IsOwner||(!value&&!reportedTalking)||(value&&Time.unscaledTime<nextSpeech))return;reportedTalking=value;nextSpeech=Time.unscaledTime+.2f;if(value)TalkRpc(true);}
         [Rpc(SendTo.Server,InvokePermission=RpcInvokePermission.Owner)]
         void TalkRpc(bool value){if(!player.IsSpawned||player.IsGrabbed||(player.Life.Value!=PlayerLife.Alive&&player.Life.Value!=PlayerLife.Downed))return;if(value){lastSpeech=Time.unscaledTime;Talking.Value=true;}}
         void Update()
         {
             if(!IsSpawned||!animator)return;
-            if(IsServer){if(Time.unscaledTime-lastSpeech>.25f||player.IsGrabbed||(!player.Alive&&player.Life.Value!=PlayerLife.Downed))Talking.Value=false;if(!player.Alive||player.IsGrabbed)Jumping.Value=false;}
+            if(IsServer){if(Time.unscaledTime-lastSpeech>.5f||player.IsGrabbed||(!player.Alive&&player.Life.Value!=PlayerLife.Downed))Talking.Value=false;if(!player.Alive||player.IsGrabbed)Jumping.Value=false;}
             var motor=player.Motor;float speed=player.IsGrabbed?0:(IsOwner||IsServer?motor.ActualSpeed:Vector3.ProjectOnPlane(player.Velocity.Value,Vector3.up).magnitude);
             bool down=player.Life.Value==PlayerLife.Downed;
             bool crouch=!down&&(IsOwner||IsServer?motor.IsCrouching:player.Height.Value<motor.StandingHeight-.2f);

@@ -1,4 +1,4 @@
-#if UNITY_EDITOR || DEBUG
+﻿#if UNITY_EDITOR || DEBUG
 using System;
 using System.Collections;
 using System.IO;
@@ -142,7 +142,7 @@ namespace SurvivalFP
             snapshot.matchStarted=lobby && lobby.Started.Value;snapshot.lobbyCode=GameSession.Instance?GameSession.Instance.JoinCode:"";snapshot.status=GameSession.Instance?GameSession.Instance.Status:"";
             if(round)
             {
-                snapshot.seed=round.Seed.Value;snapshot.rooms=round.World.Rooms.Count;snapshot.props=round.World.PropInstanceCount;
+                snapshot.seed=round.Seed.Value;snapshot.rooms=round.World.Rooms.Count;snapshot.props=round.World.NetworkPropCount;
                 var placements=new System.Collections.Generic.List<string>();
                 foreach(var r in round.Layout) placements.Add($"{r.module}:{r.quarter}:{r.position.x:F2},{r.position.y:F2},{r.position.z:F2}");
                 snapshot.layout=string.Join(";",placements);

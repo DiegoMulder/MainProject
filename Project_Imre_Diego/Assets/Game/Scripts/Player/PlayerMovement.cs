@@ -24,18 +24,25 @@ namespace SurvivalFP
         [SerializeField, Min(0.1f)] float deceleration = 32f;
         [SerializeField, Range(0f, 1f)] float airControl = 0.3f;
         [Header("Posture (origin stays at feet)")]
-        [SerializeField, Min(1f)] float standingHeight = 2f;
+        [Tooltip("Capsule height when standing. Matches the ~1.6 m character model plus hair and margin; eye height is this minus the camera's Eye Inset.")]
+        [SerializeField, Min(1f)] float standingHeight = 1.75f;
         [SerializeField, Min(0.7f)] float crouchingHeight = 1f;
         [SerializeField, Min(0.01f)] float crouchSmoothTime = 0.1f;
         [SerializeField] LayerMask collisionMask = ~0;
         [SerializeField, Min(0f)] float ceilingPadding = 0.025f;
+        [Tooltip("Geometry intruding less than this into the head's radius (door jambs, lantern flanks) never blocks standing up.")]
+        [SerializeField, Range(0f, 0.15f)] float headroomSideTolerance = 0.06f;
+        [Tooltip("A surface blocks standing only if it faces down at least this much (1 = a flat ceiling).")]
+        [SerializeField, Range(0f, 1f)] float ceilingNormalThreshold = 0.35f;
         [Header("Jump and ground")]
-        [SerializeField, Min(0f)] float jumpHeight = 1.2f;
+        [Tooltip("Apex rise of the feet. 0.65 m is a strong human jump: the head clears 3 m ceilings with room to spare.")]
+        [SerializeField, Min(0f)] float jumpHeight = 0.65f;
         [SerializeField] float gravity = -24f;
         [SerializeField, Min(0f)] float coyoteTime = 0.12f;
         [SerializeField, Min(0f)] float jumpBuffer = 0.14f;
         [SerializeField, Min(0.01f)] float groundProbeDistance = 0.16f;
         [SerializeField, Min(0f)] float groundStickSpeed = 3f;
+        [Tooltip("Tallest ledge walked up without jumping: thresholds, seams between room models, stair treads.")]
         [SerializeField, Min(0f)] float stepHeight = .3f;
         [SerializeField, Min(1f)] float terminalSpeed = 45f;
         [Header("Steep slopes")]
@@ -100,7 +107,6 @@ namespace SurvivalFP
         float verticalSpeed, heightVelocity, coyoteRemaining, bufferRemaining;
         float airSpeedLimit, defaultStepOffset;
         float flatSupportHeight=float.NaN;
-        readonly Collider[] ceilingHits = new Collider[24];
         readonly RaycastHit[] groundHits = new RaycastHit[16];
 
         void Awake()
@@ -109,6 +115,8 @@ namespace SurvivalFP
             if (!stamina) stamina = GetComponent<PlayerStamina>();
             defaultStepOffset = stepHeight;
             airSpeedLimit = walkSpeed;
+            // The motor owns the capsule's dimensions; never start from a stale prefab value.
+            capsule.height = standingHeight; capsule.center = Vector3.up * standingHeight * .5f;
         }
 
         // Presentation only: clients consume authoritative motor results, never run a second motor.
@@ -249,8 +257,12 @@ namespace SurvivalFP
 
         void UpdatePosture(bool crouchRequested, float dt)
         {
-            CeilingBlocked = !CanOccupyHeight(standingHeight);
-            bool stayLow = Downed || crouchRequested || CeilingBlocked;
+            bool wantsLow = Downed || crouchRequested;
+            // Headroom only matters while rising. A standing player is never pushed into a crouch:
+            // the capsule already collides with anything in its way, so nearby decoration is not a ceiling.
+            CeilingBlocked = !wantsLow && capsule.height < standingHeight - 0.001f && !CanOccupyHeight(standingHeight);
+            bool stayLow = wantsLow || CeilingBlocked;
+            // Blocked while rising: stay crouched and stand as soon as there is room.
             float target = Downed ? ProneHeight : stayLow ? crouchingHeight : standingHeight;
             float height = Mathf.SmoothDamp(capsule.height, target, ref heightVelocity, crouchSmoothTime, Mathf.Infinity, dt);
             // Check the actual expansion too, guarding against a moving obstacle during the blend.
@@ -260,16 +272,27 @@ namespace SurvivalFP
             IsCrouching = stayLow || height < standingHeight - 0.025f;
         }
 
+        // True when the capsule can grow to this height. Sweeps the head sphere up through the space the
+        // taller capsule would add and counts only surfaces facing down onto it: a real ceiling, a table
+        // top, the underside of a lantern or door header. Side contacts (door-frame jambs, wall trim, the
+        // flank of a lantern) are walls the capsule already slides along, never a ceiling. The sweep radius
+        // is slightly smaller than the capsule, so geometry grazing the edge of the head is ignored too.
         public bool CanOccupyHeight(float height)
         {
-            float radius = capsule.radius - 0.015f;
-            // Query only the head's expansion volume, not the feet resting against a slope.
-            Vector3 bottom = transform.position + Vector3.up * (Mathf.Min(height, capsule.height) - capsule.radius + ceilingPadding);
-            Vector3 top = transform.position + Vector3.up * (height - capsule.radius + ceilingPadding);
-            int count = Physics.OverlapCapsuleNonAlloc(bottom, top, radius, ceilingHits, collisionMask, QueryTriggerInteraction.Ignore);
-            if (count == ceilingHits.Length) return false; // Fail closed if the query buffer is saturated.
+            float rise = height - capsule.height;
+            if (rise <= 0.001f) return true; // shrinking or holding never needs headroom
+            float radius = capsule.radius - headroomSideTolerance;
+            // Start inside the current capsule's head, which the controller already keeps clear.
+            Vector3 origin = transform.position + Vector3.up * (capsule.height - capsule.radius);
+            int count = Physics.SphereCastNonAlloc(origin, radius, Vector3.up, groundHits, rise + ceilingPadding, collisionMask, QueryTriggerInteraction.Ignore);
+            if (count == groundHits.Length) return false; // fail closed if the query buffer is saturated
             for (int i = 0; i < count; i++)
-                if (ceilingHits[i] != capsule && !ceilingHits[i].transform.IsChildOf(transform)) return false;
+            {
+                var hit = groundHits[i];
+                if (hit.collider == capsule || hit.transform.IsChildOf(transform)) continue;
+                // An initial overlap (distance 0) means something already intrudes deep into the head.
+                if (hit.distance <= 0f || hit.normal.y < -ceilingNormalThreshold) return false;
+            }
             return true;
         }
 

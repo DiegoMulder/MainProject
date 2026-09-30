@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 5095833613441459520}
   - component: {fileID: 413925086424060948}
   - component: {fileID: 5556951197309512490}
+  - component: {fileID: 387767804846310727}
   m_Layer: 6
   m_Name: Medkit
   m_TagString: Untagged
@@ -243,6 +244,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8a54f4cd49be164d8c0299a741485f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.MedkitItem
+--- !u!114 &387767804846310727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3262843679051667871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf2aab91030dc504d938d831a500b44a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.DynamicProbeLighting
+  interval: 0.15
+  height: 1
 --- !u!1 &3523596553149308082
 GameObject:
   m_ObjectHideFlags: 0

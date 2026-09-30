@@ -23,25 +23,26 @@ namespace SurvivalFP
         public void BeginKill(){if(IsServer)activeKills++;}
         public void EndKill(bool completed){if(!IsServer)return;activeKills=Mathf.Max(0,activeKills-1);if(completed)EndScreenAt.Value=NetworkManager.ServerTime.Time+finalKillGameOverDelay;EvaluateRound();}
         void Update(){if(IsServer&&EndScreenAt.Value>0&&NetworkManager.ServerTime.Time>=EndScreenAt.Value)EvaluateRound();}
-        void SelectContent(){if(maps!=null&&maps.Length>0){var map=maps[Mathf.Clamp(MapIndex.Value,0,maps.Length-1)];settings=map.content;RenderSettings.ambientLight=map.ambientColor;}}
+        void SelectContent(){if(maps!=null&&maps.Length>0){var map=maps[Mathf.Clamp(MapIndex.Value,0,maps.Length-1)];settings=map.content;RenderSettings.ambientLight=map.ambientColor;if(map.atmosphere)map.atmosphere.Apply();}}
         public NetworkVariable<int> Difficulty=new(1),TargetRooms=new(0),RequiredObjectives=new(0);
         public NetworkVariable<int> Seed=new(0),ExitRoom=new(0),ExitConnector=new(0);
         public NetworkVariable<bool> Ready=new(false);
-        public NetworkVariable<int> ExpectedRooms=new(0),ExpectedProps=new(0),ExpectedStructures=new(0);
+        public NetworkVariable<int> ExpectedRooms=new(0),ExpectedStructures=new(0);
         public NetworkVariable<RoundPhase> Phase=new(RoundPhase.Generating);
         public NetworkVariable<FixedString512Bytes> Failure=new(default);
         public NetworkList<RoomPlacement> Layout;
         public NetworkList<ConnectionPlacement> Connections;
-        public NetworkList<PropPlacement> Props;
         public NetworkList<StructurePlacement> Structures;
         public MansionWorld World {get;private set;}
         public ExitDoor Exit {get;private set;}
         readonly Dictionary<string,int> outstanding=new();
-        void Awake() { Layout=new(); Connections=new(); Props=new(); Structures=new(); World=GetComponent<MansionWorld>(); }
+        void Awake() { Layout=new(); Connections=new(); Structures=new(); World=GetComponent<MansionWorld>(); }
         public override void OnNetworkSpawn()
         {
             Instance=this; Ready.OnValueChanged+=OnReady;
-            if(IsServer){MapIndex.Value=LobbyRoster.Instance?LobbyRoster.Instance.Map.Value:0;SelectContent();runtimeSettings=Instantiate(settings);settings=runtimeSettings;Difficulty.Value=LobbyRoster.Instance?LobbyRoster.Instance.Difficulty.Value:1;
+            if(IsServer){MapIndex.Value=LobbyRoster.Instance?LobbyRoster.Instance.Map.Value:0;SelectContent();
+                if(!settings){Failure.Value=new FixedString512Bytes("Map configuration: map "+MapIndex.Value+" has no content set assigned.");Phase.Value=RoundPhase.Failed;return;}
+                runtimeSettings=Instantiate(settings);settings=runtimeSettings;Difficulty.Value=LobbyRoster.Instance?LobbyRoster.Instance.Difficulty.Value:1;
                 if(settings.difficultyConfig)settings.difficultyConfig.Apply(settings,Difficulty.Value);TargetRooms.Value=settings.roomCount;RequiredObjectives.Value=settings.objectiveCount;}
             if(IsServer) StartCoroutine(Setup()); else if(Ready.Value) StartCoroutine(BuildClientWorld());
         }
@@ -52,7 +53,7 @@ namespace SurvivalFP
             // Ready can deserialize before the NetworkLists in the same update.
             // Wait until the complete manifest has arrived, then construct exactly once.
             yield return null;
-            while(IsSpawned && Ready.Value && (ExpectedRooms.Value<4 || Layout.Count!=ExpectedRooms.Value || Connections.Count!=ExpectedRooms.Value-1 || Props.Count!=ExpectedProps.Value || Structures.Count!=ExpectedStructures.Value))yield return null;
+            while(IsSpawned && Ready.Value && (ExpectedRooms.Value<4 || Layout.Count!=ExpectedRooms.Value || Connections.Count!=ExpectedRooms.Value-1 || Structures.Count!=ExpectedStructures.Value))yield return null;
             if(IsSpawned && Ready.Value && !World.Built){SelectContent();World.Build(this,false);}
         }
         IEnumerator Setup()
@@ -61,6 +62,7 @@ namespace SurvivalFP
             try
             {
                 int candidate=settings.randomSeed?unchecked((int)DateTime.UtcNow.Ticks):settings.seed;
+                foreach(var warning in settings.Warnings())Debug.LogWarning(warning);
                 var plan=new MansionLayoutPlanner();
                 // A few valid grid seeds can exhaust the floor/exit placement attempts.
                 // Retry only random rounds; an explicitly chosen seed stays reproducible.
@@ -74,10 +76,9 @@ namespace SurvivalFP
                          ex.Message.StartsWith("No exit has enough")))
                     { candidate=unchecked(candidate+1); }
                 }
-                ExpectedRooms.Value=plan.Rooms.Count;ExpectedProps.Value=plan.Props.Count;ExpectedStructures.Value=plan.Structures.Count;
+                ExpectedRooms.Value=plan.Rooms.Count;ExpectedStructures.Value=plan.Structures.Count;
                 foreach(var room in plan.Rooms) Layout.Add(room);
                 foreach(var connection in plan.Connections) Connections.Add(connection);
-                foreach(var prop in plan.Props) Props.Add(prop);
                 foreach(var structure in plan.Structures) Structures.Add(structure);
                 ExitRoom.Value=plan.ExitRoom; ExitConnector.Value=plan.ExitConnector;
                 World.Build(this,true);
@@ -143,8 +144,8 @@ namespace SurvivalFP
         {
             if(!IsServer || Phase.Value!=RoundPhase.Playing || !NetworkManager.ConnectedClients.ContainsKey(id) || NetworkManager.ConnectedClients[id].PlayerObject) return;
             int index=NetworkPlayer.Players.Count;
-            Vector3 point=World.SpawnPosition+new Vector3((index%3-1)*1.2f,0,(index/3)*1.2f);
-            var player=Instantiate(settings.player,point,Quaternion.identity);
+            Vector3 point=World.SpawnPoint(index);
+            var player=Instantiate(settings.player,point,World.SpawnRotation);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(id);
             var torch=Instantiate(settings.flashlight,point+Vector3.up,Quaternion.identity); torch.SafeAnchor=point;
             torch.GetComponent<NetworkObject>().Spawn(); torch.Claim(player);

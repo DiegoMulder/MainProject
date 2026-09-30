@@ -1,7 +1,8 @@
 using UnityEngine;
 namespace SurvivalFP
 {
-    // Screen-space presentation after the PSX world image; no extra camera or network traffic.
+    // Local-only bleed-out presentation state, driven by the replicated bleed-out timer.
+    // GameUI draws it as a full-screen UI Toolkit element; no extra camera or network traffic.
     [DefaultExecutionOrder(950),RequireComponent(typeof(NetworkPlayer))]
     public sealed class DownedVignette:MonoBehaviour
     {
@@ -12,7 +13,7 @@ namespace SurvivalFP
         [Min(.01f)] public float fadeTime=.25f;
         public float Intensity {get;private set;}
         public float Opacity {get;private set;}
-        NetworkPlayer player;Texture2D mask;float intensityVelocity,opacityVelocity;
+        NetworkPlayer player;float intensityVelocity,opacityVelocity;
         void Awake()=>player=GetComponent<NetworkPlayer>();
         void LateUpdate()
         {
@@ -23,23 +24,21 @@ namespace SurvivalFP
             Opacity=Mathf.SmoothDamp(Opacity,down?Mathf.Lerp(minimumOpacity,maximumOpacity,progress):0,ref opacityVelocity,fadeTime,Mathf.Infinity,Time.unscaledDeltaTime);
         }
         void ResetEffect(){Intensity=Opacity=intensityVelocity=opacityVelocity=0;}
-        void OnGUI()
+        // Radial edge mask drawn by GameUI; shared by every local player instance.
+        static Texture2D mask;
+        public static Texture2D Mask
         {
-            if(!player||!player.IsSpawned||!player.IsOwner||Opacity<.001f)return;
-            if(!mask)
+            get
             {
+                if(mask)return mask;
                 const int size=128;mask=new Texture2D(size,size,TextureFormat.RGBA32,false){name="Bleed-out vignette",wrapMode=TextureWrapMode.Clamp,filterMode=FilterMode.Bilinear,hideFlags=HideFlags.DontSave};
                 var pixels=new Color[size*size];
                 for(int y=0;y<size;y++)for(int x=0;x<size;x++){float dx=2f*x/(size-1)-1,dy=2f*y/(size-1)-1;float edge=Mathf.SmoothStep(0,1,Mathf.InverseLerp(.35f,1.15f,Mathf.Sqrt(dx*dx+dy*dy)));pixels[y*size+x]=new Color(1,1,1,edge);}
-                mask.SetPixels(pixels);mask.Apply(false,true);
+                mask.SetPixels(pixels);mask.Apply(false,true);return mask;
             }
-            var oldColour=GUI.color;int oldDepth=GUI.depth;GUI.depth=50;
-            GUI.color=new Color(colour.r,colour.g,colour.b,colour.a*Opacity);
-            float scale=Mathf.Lerp(1.5f,1,Intensity);float w=Screen.width*scale,h=Screen.height*scale;
-            GUI.DrawTexture(new Rect((Screen.width-w)*.5f,(Screen.height-h)*.5f,w,h),mask,ScaleMode.StretchToFill,true);
-            GUI.color=oldColour;GUI.depth=oldDepth;
         }
+        // Screen scale shrinks the clear centre as bleed-out progresses.
+        public float Scale=>Mathf.Lerp(1.5f,1,Intensity);
         void OnDisable()=>ResetEffect();
-        void OnDestroy(){if(mask)Destroy(mask);}
     }
 }

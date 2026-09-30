@@ -53,11 +53,13 @@ Select **Assets/Game/Data/Maps/Mansion/MansionContentSet.asset**. The existing a
 | --- | --- |
 | Seed | Number used to repeat generation with the same content/settings |
 | Random Seed | Enabled: new seed each round. Disabled: use Seed |
-| Room Count | Target module count, including halls and stairs; not a guaranteed exact count |
+| Room Count | Target module count, including the starting room, halls and stairs; not a guaranteed exact count |
+| Starting Room | Always placed first, exactly once: the root of the room graph and where players spawn (its **Player Start**). Mansion: **Grand Hall** |
+| Unique Starting Room | Enabled: the starting room is never picked again from the pool, even if listed there (a warning is logged) |
 | Attempts Per Room | Placement attempts; increasing this cannot fix incompatible geometry |
 | Floor Count | Requested levels; requires a valid stair route |
 | Floor Height | Vertical spacing between levels; must match stair rise |
-| Rooms | Allowed room prefabs and relative selection weights |
+| Rooms (Normal Room Pool) | Room prefabs picked randomly as the layout grows, with relative selection weights |
 | Player / Flashlight / Objective / Medkit / Door / Exit / Enemy | Templates used by the corresponding spawning systems |
 | Objective Count | Total required items |
 | Objective Types | Names distributed across that total; see the item tutorial |
@@ -68,7 +70,7 @@ Select **Assets/Game/Data/Maps/Mansion/MansionContentSet.asset**. The existing a
 
 For a shorter experiment, record your current settings, then try 12 rooms, 1 floor, 3 objectives, and 1 medkit. Keep connected rooms and sufficient surfaces. Disable Random Seed and use Seed 12345 to reproduce a layout while debugging. Restore your recorded settings afterwards. Changing the catalog or geometry can change a layout even with the same seed.
 
-The first Rooms entry is special: it supplies the starting module and participates in the floor route. Keep a dependable ordinary room in Element 0. Add experiments at the end.
+The starting room is configured separately from the pool; the order of the Rooms list no longer matters. Generation stops with a clear error when no Starting Room is assigned, when it has no Player Start or connectors, or when it is a staircase. The Slaughterhouse uses its Standard Room as Starting Room with Unique Starting Room off, so Standard Rooms still appear elsewhere in its layouts.
 
 ## Inspector changes versus new features
 

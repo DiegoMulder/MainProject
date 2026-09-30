@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace SurvivalFP
 {
@@ -27,6 +28,8 @@ namespace SurvivalFP
         public Light Beam => beam;
         float cooldown;
         PickupItem item;
+        [Tooltip("Metres the beam reaches. Keep it short enough that the far end of a hall stays dark.")]
+        [SerializeField, Min(2f)] float beamRange = 22f;
         [Header("Beam aiming")]
         [SerializeField, Min(.1f)] float aimResponse = 12f;
         [SerializeField, Min(.5f)] float minimumAimDistance = 2f;
@@ -82,11 +85,7 @@ namespace SurvivalFP
                 child.name = "Flashlight Beam";
                 beam = child.GetComponentInChildren<Light>(true);
             }
-            beam.type = LightType.Spot;
-            beam.range = 40f;
-            beam.spotAngle = 62f;
-            beam.innerSpotAngle = 32f;
-            beam.color = new Color(1f, .94f, .82f);
+            ConfigureBeam();
             if (!toggleAudio) toggleAudio = GetComponent<AudioSource>();
             toggleAudio.playOnAwake = false;
             toggleAudio.spatialBlend = GetComponent<NetworkPickup>() ? 1f : 0f;
@@ -97,6 +96,64 @@ namespace SurvivalFP
             beam.intensity = startOn ? onIntensity : 0f;
             beam.enabled = startOn;
             UpdateFlashlightMaterial();
+        }
+
+        // A focused, slightly harsh torch beam: a tight hot centre, a quick falloff to a dim ring, darkness beyond.
+        // URP takes a light's rendering layers from its additional light data, not Light.renderingLayerMask:
+        // the beam must reach every layer, including the Mansion's Baked Environment layer.
+        void ConfigureBeam()
+        {
+            beam.type = LightType.Spot;
+            beam.range = beamRange;
+            beam.spotAngle = 56f;
+            beam.innerSpotAngle = 18f;
+            beam.color = new Color(1f, .93f, .8f);
+            beam.cookie = Cookie;
+            beam.renderMode = LightRenderMode.ForcePixel;
+            beam.lightmapBakeType = LightmapBakeType.Realtime;
+            // One hard spot shadow per torch keeps the beam from shining through walls and doors.
+            beam.shadows = LightShadows.Hard; beam.shadowStrength = .92f; beam.shadowNearPlane = .2f;
+            var data = beam.GetUniversalAdditionalLightData();
+            data.renderingLayers = (UnityEngine.RenderingLayerMask)uint.MaxValue;
+            data.customShadowLayers = false;
+            ApplyShadowTier();
+        }
+        // The local player's own torch gets a sharper shadow than teammates' torches.
+        void ApplyShadowTier()
+        {
+            var holder = GetComponentInParent<NetworkPlayer>();
+            bool mine = !holder || holder == NetworkPlayer.Local;
+            if (mine == shadowTierMine && shadowTierSet) return;
+            shadowTierMine = mine; shadowTierSet = true;
+            beam.GetUniversalAdditionalLightData().additionalLightsShadowResolutionTier = mine
+                ? UniversalAdditionalLightData.AdditionalLightsShadowResolutionTierMedium
+                : UniversalAdditionalLightData.AdditionalLightsShadowResolutionTierLow;
+        }
+        bool shadowTierMine, shadowTierSet;
+
+        // Generated lens pattern: a hot core, a faint reflector ring and a soft dark edge, lightly mottled.
+        static Texture2D cookie;
+        static Texture2D Cookie
+        {
+            get
+            {
+                if (cookie) return cookie;
+                const int size = 128;
+                cookie = new Texture2D(size, size, TextureFormat.R8, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear, hideFlags = HideFlags.DontSave, name = "Flashlight Cookie" };
+                var rng = new System.Random(11);
+                for (int y = 0; y < size; y++)
+                    for (int x = 0; x < size; x++)
+                    {
+                        float dx = (x + .5f) / size * 2f - 1f, dy = (y + .5f) / size * 2f - 1f, r = Mathf.Sqrt(dx * dx + dy * dy);
+                        float core = Mathf.Exp(-r * r * 9f);
+                        float ring = .16f * Mathf.Exp(-Mathf.Pow((r - .62f) / .07f, 2f));
+                        float body = .42f * (1f - Mathf.SmoothStep(.35f, .95f, r));
+                        float grit = 1f - .08f * (float)rng.NextDouble();
+                        cookie.SetPixel(x, y, new Color(Mathf.Clamp01((core * .6f + body + ring) * grit), 0, 0, 1));
+                    }
+                cookie.Apply(false, true);
+                return cookie;
+            }
         }
 
         // The item owns its light lifecycle. PlayerController only forwards inventory input.
@@ -146,6 +203,9 @@ namespace SurvivalFP
 
             if (IsOn)
                 beam.enabled = true;
+            // A switched-off torch never holds a shadow slot; ownership can change when it is picked up.
+            beam.shadows = IsOn ? LightShadows.Hard : LightShadows.None;
+            ApplyShadowTier();
 
             beam.intensity = Mathf.Lerp(
                 beam.intensity,

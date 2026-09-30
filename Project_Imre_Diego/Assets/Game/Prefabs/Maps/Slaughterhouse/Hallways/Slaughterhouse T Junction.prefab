@@ -1,59 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &82807846574265358
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1488317234008202501}
-  - component: {fileID: 4484021570542870257}
-  m_Layer: 0
-  m_Name: Furniture surface anchor
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1488317234008202501
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 82807846574265358}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 3.9, y: 0, z: -2.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8301962856587906638}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4484021570542870257
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 82807846574265358}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eca00dff5785bbd46a27efa37f605ffa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PropSpawnPoint
-  category: Furniture
-  chance: 1
-  variants:
-  - prefab: {fileID: 5444166795226902166, guid: f3c39a3f5c6998e479a5e6e2c6c6500f, type: 3}
-    weight: 2
-  - prefab: {fileID: 8090903106032274554, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
-    weight: 1
-  - prefab: {fileID: 3751884050339092208, guid: 630416e4259c3ee4d93c7bf873d1df23, type: 3}
-    weight: 1
-  randomHalfTurn: 0
 --- !u!1 &197897473705839674
 GameObject:
   m_ObjectHideFlags: 0
@@ -322,7 +268,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d407f93658333ca49921a2e8520c525a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.RoomConnector
-  connectorType: Mansion
+  connectorType: Slaughterhouse
   width: 2.4
   allowDoor: 1
   exitEligible: 1
@@ -438,6 +384,38 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2104552371224638512
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8474486896126903042}
+  m_Layer: 0
+  m_Name: Plant Setup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8474486896126903042
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104552371224638512}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -3.9, y: 0, z: 2.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1648927652698709232}
+  m_Father: {fileID: 8301962856587906638}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3057289920228026092
 GameObject:
   m_ObjectHideFlags: 0
@@ -594,7 +572,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d407f93658333ca49921a2e8520c525a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.RoomConnector
-  connectorType: Mansion
+  connectorType: Slaughterhouse
   width: 2.4
   allowDoor: 1
   exitEligible: 1
@@ -934,7 +912,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &5039309689160686203
+--- !u!1 &4668132805739265794
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -942,52 +920,30 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1351766833116604026}
-  - component: {fileID: 8037045065994245871}
+  - component: {fileID: 8207465974457743073}
   m_Layer: 0
-  m_Name: Optional prop anchor
+  m_Name: Shelf Setup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1351766833116604026
+--- !u!4 &8207465974457743073
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5039309689160686203}
+  m_GameObject: {fileID: 4668132805739265794}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -3.9, y: 0, z: 2.5}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 3.9, y: 0, z: -2.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1436792807985583302}
   m_Father: {fileID: 8301962856587906638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8037045065994245871
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5039309689160686203}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eca00dff5785bbd46a27efa37f605ffa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PropSpawnPoint
-  category: Furniture
-  chance: 0.65
-  variants:
-  - prefab: {fileID: 4469557159347570782, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
-    weight: 2
-  - prefab: {fileID: 8090903106032274554, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
-    weight: 1
-  - prefab: {fileID: 3751884050339092208, guid: 630416e4259c3ee4d93c7bf873d1df23, type: 3}
-    weight: 1
-  randomHalfTurn: 0
 --- !u!1 &6857339636069134710
 GameObject:
   m_ObjectHideFlags: 0
@@ -1144,8 +1100,8 @@ Transform:
   - {fileID: 751966140330780399}
   - {fileID: 6030165941668557040}
   - {fileID: 4952044084366651540}
-  - {fileID: 1488317234008202501}
-  - {fileID: 1351766833116604026}
+  - {fileID: 8207465974457743073}
+  - {fileID: 8474486896126903042}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4338228573065895548
@@ -1167,9 +1123,12 @@ MonoBehaviour:
   - {fileID: 5311185586332050487}
   - {fileID: 5533635045491264419}
   - {fileID: 5655074925657236401}
-  propAnchors:
-  - {fileID: 4484021570542870257}
-  - {fileID: 8037045065994245871}
+  randomizedStructures:
+  - target: {fileID: 4668132805739265794}
+    spawnChance: 100
+  - target: {fileID: 2104552371224638512}
+    spawnChance: 65
+  occupancy: []
 --- !u!1 &7190324880415414859
 GameObject:
   m_ObjectHideFlags: 0
@@ -1550,7 +1509,131 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d407f93658333ca49921a2e8520c525a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.RoomConnector
-  connectorType: Mansion
+  connectorType: Slaughterhouse
   width: 2.4
   allowDoor: 1
   exitEligible: 1
+--- !u!1001 &1257155192955533371
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8474486896126903042}
+    m_Modifications:
+    - target: {fileID: 545046648683373771, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 545046648683373771, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 545046648683373771, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 545046648683373771, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 545046648683373771, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 545046648683373771, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 545046648683373771, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 545046648683373771, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 545046648683373771, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 545046648683373771, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469557159347570782, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
+      propertyPath: m_Name
+      value: Slaughterhouse Plant
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
+--- !u!4 &1648927652698709232 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 545046648683373771, guid: f471fde5e7860b943adf4c59a9277898, type: 3}
+  m_PrefabInstance: {fileID: 1257155192955533371}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2358780004574423208
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8207465974457743073}
+    m_Modifications:
+    - target: {fileID: 3696490579792952430, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3696490579792952430, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3696490579792952430, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3696490579792952430, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3696490579792952430, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3696490579792952430, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3696490579792952430, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3696490579792952430, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3696490579792952430, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3696490579792952430, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8090903106032274554, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
+      propertyPath: m_Name
+      value: Slaughterhouse Shelf
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
+--- !u!4 &1436792807985583302 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3696490579792952430, guid: baf0ce12d6bb07c4a859cc88f664c8dc, type: 3}
+  m_PrefabInstance: {fileID: 2358780004574423208}
+  m_PrefabAsset: {fileID: 0}

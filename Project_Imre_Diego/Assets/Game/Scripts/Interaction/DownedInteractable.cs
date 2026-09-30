@@ -16,8 +16,9 @@ namespace SurvivalFP
             return target && target.IsSpawned && target.Life.Value==PlayerLife.Downed && target.BleedOutRemaining>0
                 && helper && helper!=target && helper.Alive && !helper.IsHidden;
         }
+        // No prompt at all unless the target is actually downed and the helper is alive.
         public string Prompt(PlayerInteraction interaction)=>!Eligible(interaction)?"":Kit(interaction)
-            ?$"E  Revive {target.DisplayName} (consume medkit)":"Needs Medkit to Revive";
+            ?$"Revive {target.DisplayName}  (uses medkit)":$"Needs a medkit to revive {target.DisplayName}";
         public bool CanInteract(PlayerInteraction interaction)
         {
             var helper=interaction.GetComponent<NetworkPlayer>();

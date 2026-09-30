@@ -17,6 +17,7 @@ namespace SurvivalFP
         void Awake(){view=GetComponent<Camera>();cameraData=GetComponent<UniversalAdditionalCameraData>();}
         void LateUpdate()
         {
+            MapAtmosphere.ApplyToCamera(view);
             if(!profile || !profile.effectEnabled || !LocalSettings.Psx || !view.enabled || !view.gameObject.activeInHierarchy){Release();return;}
             int height=Mathf.Min(Screen.height,Mathf.Clamp(profile.internalHeight,120,720));
             int width=Mathf.Max(1,Mathf.RoundToInt(height*(float)Screen.width/Mathf.Max(1,Screen.height)));
@@ -34,6 +35,7 @@ namespace SurvivalFP
                 target.Create();view.targetTexture=target;
             }
             view.aspect=(float)Screen.width/Mathf.Max(1,Screen.height);
+            Shader.SetGlobalVector(SnapParams,new Vector4(width,height,profile.vertexSnap?1:0,0));
             if(profile.presentationShader && (!material || material.shader!=profile.presentationShader))
             {if(material)Destroy(material);material=new Material(profile.presentationShader);}
             UpdateOutput();
@@ -69,8 +71,10 @@ namespace SurvivalFP
                 material.SetFloat("_Dither",Mathf.Clamp01(profile.dithering));
             }
         }
+        static readonly int SnapParams=Shader.PropertyToID("_PsxSnapParams");
         void Release()
         {
+            if(configured)Shader.SetGlobalVector(SnapParams,Vector4.zero);
             if(configured && view)
             {
                 view.targetTexture=previousTarget;view.allowMSAA=oldMSAA;view.allowHDR=oldHDR;view.aspect=oldAspect;

@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -68,7 +68,7 @@ namespace SurvivalFP.Editor
             Check(client.Motor.Height<.7f && Vector3.Dot(client.visualBody.up,Vector3.up)<.1f,"Downed body is prone with a low capsule and upright network root");
             var perception=enemy.GetComponent<EnemyPerception>();
             Check(!perception.CanSee(client) && !perception.HasLineOfSight(client),"Downed player is rejected by vision and line-of-sight entry points");
-            Check(revive.Prompt(host.Interaction)=="Needs Medkit to Revive" && !revive.CanInteract(host.Interaction),"Downed teammate without medkit gives requirement feedback only");
+            Check(revive.Prompt(host.Interaction).StartsWith("Needs a medkit") && !revive.CanInteract(host.Interaction),"Downed teammate without medkit gives requirement feedback only");
             start=client.transform.position;Send("drive",0);yield return new WaitForSecondsRealtime(.2f);Send("jump");Send("drop");
             yield return new WaitForSecondsRealtime(1.8f);Send("stop");yield return new WaitForSecondsRealtime(.4f);
             float crawl=Vector3.Distance(start,client.transform.position);

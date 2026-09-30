@@ -41,7 +41,8 @@ namespace SurvivalFP
             Master=Mathf.Clamp01(master);Sfx=Mathf.Clamp01(sfx);Voice=Mathf.Clamp01(voice);
             Sensitivity=Mathf.Clamp(sensitivity,.01f,.5f);Fov=Mathf.Clamp(fov,MinFov,MaxFov);
             Smoothing=smoothing;SmoothingStrength=Mathf.Clamp01(strength);Psx=psx;Muted=muted;
-            Apply();Save();
+            // Applied live; persisted by Save() when the options screen closes, not on every slider tick.
+            Apply();
         }
         static void Apply(){AudioListener.volume=Master;Changed?.Invoke();}
         public static void Save()

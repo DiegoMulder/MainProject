@@ -125,6 +125,7 @@ GameObject:
   - component: {fileID: 5786953601169760269}
   - component: {fileID: 8092832743338591169}
   - component: {fileID: 3936702095790822179}
+  - component: {fileID: 6501557383073771820}
   m_Layer: 0
   m_Name: Slaughterhouse Ordinary Door
   m_TagString: Untagged
@@ -160,14 +161,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1592337078
+  GlobalObjectIdHash: 3152439550
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 1
+  m_InScenePlaced: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -323,6 +324,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &6501557383073771820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4946856487810179568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf2aab91030dc504d938d831a500b44a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.DynamicProbeLighting
+  interval: 0.15
+  height: 1
 --- !u!1 &6503803570446381217
 GameObject:
   m_ObjectHideFlags: 0

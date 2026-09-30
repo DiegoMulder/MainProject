@@ -21,13 +21,16 @@ The values shown on an existing prefab win over initial values written in a scri
 | Backwards/Strafe Speed | Directional limits at walking gait |
 | Acceleration/Deceleration | How quickly movement starts/stops |
 | Air Control | Amount of steering while airborne |
-| Standing/Crouching Height | Physical height; recheck hiding and door clearance |
-| Jump Height | Desired jump height |
+| Standing/Crouching Height | Physical height (1.75 / 1.0 m, fitting the ~1.6 m character). The motor sets the CharacterController from these at startup. Recheck hiding and door clearance after changing |
+| Headroom Side Tolerance / Ceiling Normal Threshold | What counts as a ceiling when standing up. Only surfaces facing down onto the head block standing; side contacts such as door jambs or lantern flanks never do |
+| Jump Height | Apex rise of the feet (0.65 m, a strong human jump). With a 1.75 m capsule the head clears the 2.4 m door heads and 3 m room ceilings |
 | Gravity | Downward acceleration; existing convention uses a negative value |
 | Coyote Time | Brief jump allowance just after leaving an edge |
 | Jump Buffer | Remembers a jump pressed shortly before landing |
 | Step Height | Height of small ledges the motor can traverse |
 | CharacterController: Radius/Slope Limit | Capsule width and climbable slope angle |
+
+Crouching is always manual or forced by being downed. Headroom is only checked while rising from a crouch: a standing player is never pushed into a crouch by nearby decoration, because the capsule already collides with anything truly in the way. If something low is overhead when you release crouch (a table, a low beam), you stay crouched and stand automatically once clear.
 
 Keep the player root at unit scale with its origin at the feet. To change step traversal, use PlayerMovement > Step Height: the motor establishes the controller's step offset at startup. Editing only CharacterController's step offset is not enough. Keep ground probes short rather than enlarging them to disguise gaps or overly tall stairs.
 
@@ -54,7 +57,14 @@ Keep only the local player's camera and AudioListener active. The network player
 5. Start a new round; this is the flashlight given to spawned players.
 6. Test F from another inventory slot, left-click while equipped, aiming, dropping, and the other player's view.
 
-F only operates a flashlight actually carried in inventory. The held beam aims toward the camera target; a dropped beam follows the item. The authored flashlight intensity differs from the C# initializer, so judge the actual prefab in URP rather than copying an old HDRP intensity value.
+F only operates a flashlight actually carried in inventory. The held beam aims at the point under the holder's crosshair and follows the view within about 0.1 s. A teammate's beam uses their replicated look pitch. A dropped beam follows the item. The authored flashlight intensity (**On Intensity** on PlayerFlashlight) differs from the C# initializer, so judge the actual prefab in URP rather than copying an old value.
+
+`PlayerFlashlight` configures its own light on Awake:
+- **Beam:** a spot light with a 56° outer and 18° inner angle, a generated lens cookie (hot core, faint reflector ring, dark edge), and **Beam Range** 22 m, so the far end of a hall stays dark.
+- **Rendering layers:** set through URP's `UniversalAdditionalLightData.renderingLayers`, to every layer. URP ignores `Light.renderingLayerMask` for this. If the beam only lights the Default layer, it never touches the Mansion's baked walls and floors (the Baked Environment layer).
+- **Shadows:** one hard spot shadow while the light is on (none when off), so it can't shine through walls or doors. It uses the medium shadow tier for your own torch and the low tier for teammates' torches.
+
+The wall lanterns and chandeliers are separate and unaffected.
 
 ## Recipe: tune the enemy
 

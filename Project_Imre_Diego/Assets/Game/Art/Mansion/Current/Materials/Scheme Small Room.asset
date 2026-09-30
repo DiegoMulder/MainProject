@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf7af7b1abfc87448e5fef0ee450bcb, type: 3}
+  m_Name: Scheme Small Room
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.RoomMaterialScheme
+  entries:
+  - match: V2Wallpaper
+    material: {fileID: 2100000, guid: 0f162c94aa5a40841b9d2ab66b40f270, type: 2}
+  - match: V2Wood
+    material: {fileID: 2100000, guid: b6a994f6ab6a09e499c34bfc2eba22f1, type: 2}
+  - match: V2Floor
+    material: {fileID: 2100000, guid: 710c434586a9f0a4891e33a956416b97, type: 2}
+  - match: V2Dressing
+    material: {fileID: 2100000, guid: cd8491907256c304c8dc242bec842336, type: 2}
+  - match: TarnishedBrass
+    material: {fileID: 2100000, guid: a8f216a7bfa150742aa0de5ff1a58f33, type: 2}
+  - match: LanternGlass
+    material: {fileID: 2100000, guid: 0b93aee66f731db4899fff6011145499, type: 2}
+  - match: PlantAtlas
+    material: {fileID: 2100000, guid: 6d0ad05c022bca1459386719efab008e, type: 2}

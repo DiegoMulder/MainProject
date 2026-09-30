@@ -241,7 +241,7 @@ namespace SurvivalFP.Editor
             Check(camera.transform.localPosition.y < 1.1f, "Crouched eye remains below ceiling");
             motor.Teleport(new Vector3(-10f, 0.05f, 14f));
             Step(default, 90);
-            Check(!motor.CeilingBlocked && !motor.IsCrouching && Mathf.Abs(motor.Height - 2f) < 0.01f, "Stands up after leaving tunnel");
+            Check(!motor.CeilingBlocked && !motor.IsCrouching && Mathf.Abs(motor.Height - motor.StandingHeight) < 0.01f, "Stands up after leaving tunnel");
 
             ResetAt(spawn);
             float takeoff = motor.transform.position.y;

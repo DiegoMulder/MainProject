@@ -21,6 +21,8 @@ These beginner tutorials explain the systems actually present in this URP projec
 
 13. [Using the supplied Mansion FBX models and adding rooms](Tutorials/12-Mansion-FBX-Integration.md)
 
+14. [UI: theme, screens, and adding a menu](Tutorials/13-UI-Theme-and-Screens.md)
+
 The tutorials distinguish Inspector changes from optional programming examples. Code printed in a tutorial does not run until you create and attach the described script. Optional code examples remain examples; the closet, noise, heartbeat, and PSX systems described in tutorial 7 are implemented in the project.
 
 ## Where to play
@@ -69,6 +71,7 @@ All paths below start at Assets.
 | Game/Data | Shared difficulty, visual settings and network-prefab registries |
 | Game/Audio | Sound clips and license information |
 | Game/Materials, Shaders and Input | Shared visual assets and input actions |
+| Game/UI | UI Toolkit theme (GameUI.uss), panel settings and fonts |
 | Game/Resources/Flashlight | Runtime fallback beam and switch sound, loaded by name |
 | Game/Tutorials | Beginner guides for playing and expanding the game |
 | AI-Tools-DEV/Scenes and Prefabs | Offline controller course, example items and test beam |

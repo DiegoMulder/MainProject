@@ -11,7 +11,8 @@ namespace SurvivalFP
     public sealed class NetworkPlayer : NetworkBehaviour, IPlayerAuthority
     {
         public static readonly List<NetworkPlayer> Players = new();
-        public static NetworkPlayer Local => Players.FirstOrDefault(p => p && p.IsOwner);
+        // Cached at spawn; read many times per frame by UI, voice and presentation.
+        public static NetworkPlayer Local { get; private set; }
         public NetworkVariable<PlayerLife> Life = new(PlayerLife.Alive);
         public NetworkVariable<ulong> GrabbedBy=new(ulong.MaxValue);
         public bool IsGrabbed=>GrabbedBy.Value!=ulong.MaxValue;
@@ -30,7 +31,9 @@ namespace SurvivalFP
         [Min(0)] public float voiceNoiseRadius=16;
         [Min(.2f)] public float voiceNoiseInterval=.65f;
         float nextVoiceNoise, nextVoiceReport;
-        public NetworkVariable<float> Stamina = new(100f), Height = new(2f), Pitch = new(0f), Yaw = new(0f);
+        // Stamina only drives the owner's HUD, so non-owners are never sent it.
+        public NetworkVariable<float> Stamina = new(100f, NetworkVariableReadPermission.Owner);
+        public NetworkVariable<float> Height = new(1.75f), Pitch = new(0f), Yaw = new(0f);
         public NetworkVariable<Vector3> Velocity = new(Vector3.zero);
         public NetworkVariable<int> Selection = new(-1), Gait = new(0);
         public NetworkVariable<bool> Grounded = new(true);
@@ -70,10 +73,14 @@ namespace SurvivalFP
         }
         public override void OnNetworkSpawn()
         {
-            Players.Add(this);
+            Players.Add(this); if(IsOwner) Local=this;
             Controller.enabled = IsOwner; CameraMotion.enabled = IsOwner;
             View.GetComponent<Camera>().enabled = IsOwner;
-            View.GetComponent<AudioListener>().enabled = IsOwner;
+            var ears = View.GetComponent<AudioListener>();
+            // Take over hearing in the same frame: the loading/menu camera's listener would otherwise overlap ours
+            // until GameUI's next Update ("2 audio listeners in the scene").
+            if(IsOwner)foreach(var other in FindObjectsByType<AudioListener>())if(other!=ears && other.enabled)other.enabled=false;
+            ears.enabled = IsOwner;
             // Remote capsules must participate in local collision prediction too.
             // Only the owner/server ticks a motor; remote transforms remain network-driven.
             GetComponent<CharacterController>().enabled = true;
@@ -90,7 +97,7 @@ namespace SurvivalFP
             HiddenClosetId.OnValueChanged-=OnHiding;
             if (IsServer && RoundManager.Instance && !(GameSession.Instance && GameSession.Instance.Transitioning)) RoundManager.Instance.ReleaseItems(this);
             if(IsServer)foreach(var enemy in EnemyController.Enemies.ToArray())if(enemy)enemy.InvalidatePlayer(this);
-            Players.Remove(this); Life.OnValueChanged -= OnLife; Selection.OnValueChanged -= OnSelection;
+            Players.Remove(this); if(Local==this) Local=null; Life.OnValueChanged -= OnLife; Selection.OnValueChanged -= OnSelection;
             if (IsOwner) Controller.SetCursor(false);
             if (IsServer && RoundManager.Instance && !(GameSession.Instance && GameSession.Instance.Transitioning)) RoundManager.Instance.EvaluateRound();
         }
@@ -130,15 +137,26 @@ namespace SurvivalFP
             if(IsOwner){CameraMotion.enabled=(Alive || Life.Value==PlayerLife.Downed) && !IsHidden;GetComponent<PlayerAudio>().enabled=Alive && !IsHidden;}
             ApplyBodyVisibility();
         }
+        readonly List<Renderer> childRenderers=new();
+        PlayerAnimationDriver animationDriver;
+        // Runs every LateUpdate because held items are re-parented at runtime; it reuses one list
+        // and only writes renderer state that actually changed, so it allocates nothing per frame.
         public void ApplyBodyVisibility()
         {
             bool visible=Life.Value==PlayerLife.Alive||Life.Value==PlayerLife.Downed;
-            var driver=GetComponent<PlayerAnimationDriver>();if(driver&&driver.animator)driver.animator.enabled=visible;
-            foreach(var renderer in GetComponentsInChildren<Renderer>(true))renderer.forceRenderingOff=!visible||IsHidden;
-            if(!visualBody)return;
-            foreach(var renderer in visualBody.GetComponentsInChildren<Renderer>(true))
-                if(!renderer.GetComponentInParent<PickupItem>())renderer.shadowCastingMode=IsOwner && (Alive || Life.Value==PlayerLife.Downed)?ShadowCastingMode.ShadowsOnly:ShadowCastingMode.On;
+            if(!animationDriver)animationDriver=GetComponent<PlayerAnimationDriver>();
+            if(animationDriver&&animationDriver.animator&&animationDriver.animator.enabled!=visible)animationDriver.animator.enabled=visible;
+            bool off=!visible||IsHidden;
+            var shadows=IsOwner&&visible?ShadowCastingMode.ShadowsOnly:ShadowCastingMode.On;
+            GetComponentsInChildren(true,childRenderers);
+            foreach(var renderer in childRenderers)
+            {
+                if(renderer.forceRenderingOff!=off)renderer.forceRenderingOff=off;
+                if(visualBody && renderer.shadowCastingMode!=shadows && renderer.transform.IsChildOf(visualBody) && !renderer.GetComponentInParent<PickupItem>())renderer.shadowCastingMode=shadows;
+            }
         }
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics(){Players.Clear();Local=null;}
         void LateUpdate()
         {
             ApplyBodyVisibility();

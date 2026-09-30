@@ -42,9 +42,12 @@ namespace SurvivalFP
                 for(int i=0;i<=24;i++)
                 {
                     var matrix=Matrix4x4.TRS(socket.position,socket.rotation,Vector3.one)*DoorMatrix(prefab,collider.transform,prefab.openAngle*i/24f);
-                    Vector3 half=Vector3.Scale(collider.size*.5f,matrix.lossyScale);
-                    var center=matrix.MultiplyPoint3x4(collider.center);
-                    foreach(var hit in Physics.OverlapBox(center,Vector3.Max(Vector3.one*.001f,half-Vector3.one*.003f),matrix.rotation,~0,QueryTriggerInteraction.Ignore))
+                    // Same inset leaf probe as runtime doors, so the leaf may meet its own frame.
+                    var hingeInBox=prefab.hinge?collider.transform.InverseTransformPoint(prefab.hinge.position):collider.center;
+                    DoorInteractable.SwingProbe(collider,hingeInBox,out var probeCenter,out var probeSize);
+                    Vector3 half=Vector3.Scale(probeSize*.5f,matrix.lossyScale);
+                    var center=matrix.MultiplyPoint3x4(probeCenter);
+                    foreach(var hit in Physics.OverlapBox(center,Vector3.Max(Vector3.one*.001f,half),matrix.rotation,~0,QueryTriggerInteraction.Ignore))
                         if(hit.bounds.max.y>socket.position.y+.035f && !hit.GetComponentInParent<ExitDoor>())
                         {reason="Door swing obstructed by "+hit.name;return false;}
                 }

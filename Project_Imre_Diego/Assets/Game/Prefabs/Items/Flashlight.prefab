@@ -82,7 +82,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 4294967295
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -145,6 +145,7 @@ GameObject:
   - component: {fileID: 6777661001949848659}
   - component: {fileID: 8338934286537262607}
   - component: {fileID: 8394300380271687384}
+  - component: {fileID: 8086664749569171522}
   m_Layer: 6
   m_Name: Flashlight
   m_TagString: Untagged
@@ -482,6 +483,20 @@ MonoBehaviour:
   maximumRadius: 16
   cooldown: 0.5
   pitchRange: {x: 0.94, y: 1.06}
+--- !u!114 &8086664749569171522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3794528641409718767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf2aab91030dc504d938d831a500b44a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.DynamicProbeLighting
+  interval: 0.15
+  height: 1
 --- !u!1 &4963432606017099055
 GameObject:
   m_ObjectHideFlags: 0

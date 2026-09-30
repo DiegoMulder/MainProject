@@ -27,7 +27,7 @@ namespace SurvivalFP
         public string JoinCode=>cloudSession?.Code??"Local test session";
         public string VoiceChannel=>cloudSession==null?null:"mansion_"+cloudSession.Id.Replace("-","");
         public static string MenuNotice="";
-        NetworkManager manager; ISession cloudSession; bool leaving,startingMatch,cloudConnecting;
+        NetworkManager manager; ISession cloudSession; bool leaving,quitting,startingMatch,cloudConnecting;
         void Awake()
         {
             if(Instance && Instance!=this){Destroy(gameObject);return;}
@@ -132,7 +132,14 @@ namespace SurvivalFP
             }
             catch(Exception ex){Transitioning=false;Starting=false;Status="Could not return to lobby: "+ex.Message;}
         }
-        void ServiceEnded(){if(!leaving){MenuNotice="The lobby has ended.";ReturnToMenu();}}
+        // The service already removed or deleted the session (lobby closed, kicked, or the services shutting down):
+        // drop it instead of trying to leave or delete it a second time.
+        void ServiceEnded()
+        {
+            if(leaving)return;
+            if(cloudSession!=null){cloudSession.RemovedFromSession-=ServiceEnded;cloudSession.Deleted-=ServiceEnded;cloudSession=null;}
+            MenuNotice="The lobby has ended.";ReturnToMenu();
+        }
         void Disconnected(ulong id)
         {
             if(leaving)return;
@@ -143,6 +150,8 @@ namespace SurvivalFP
         {
             if(leaving)return;leaving=true;Cursor.lockState=CursorLockMode.None;Cursor.visible=true;
             var voice=GetComponent<ProximityVoice>();if(voice)await voice.Leave();
+            // Quitting (or leaving Play Mode) while this was in flight: the services dispose the session themselves.
+            if(quitting){cloudSession=null;return;}
             if(cloudSession!=null)
             {
                 cloudSession.RemovedFromSession-=ServiceEnded;cloudSession.Deleted-=ServiceEnded;
@@ -160,9 +169,18 @@ namespace SurvivalFP
         }
         void OnApplicationQuit()
         {
-            // Play-mode exit destroys objects immediately; stop the session first so
-            // spawned behaviours still have their NetworkManager during teardown.
-            if(manager && manager.IsListening)manager.Shutdown(true);
+            // Quitting destroys every object in the same frame. Despawn server objects first so
+            // none is still "spawned" when its NetworkManager disappears, then stop the session.
+            // The application is ending: a disconnect callback from this or NetworkManager's own shutdown must
+            // not start a return to the menu against services that are already being disposed.
+            leaving=true;quitting=true;
+            if(!manager || !manager.IsListening)return;
+            // Transitioning suppresses gameplay reactions (item release, round evaluation) to despawns.
+            Transitioning=true;
+            if(manager.IsServer && manager.SpawnManager!=null)
+                foreach(var obj in manager.SpawnManager.SpawnedObjectsList.ToArray())
+                    if(obj && obj.IsSpawned)try{obj.Despawn(true);}catch(Exception ex){Debug.LogWarning("Quit despawn: "+ex.Message);}
+            manager.Shutdown(true);
         }
     }
 }

@@ -130,7 +130,27 @@ During Play Mode, a temporary **PSX screen output** camera presents this texture
 
 Disable Effect Enabled to compare with ordinary rendering. Disabling/removing the camera component also restores its prior target and camera settings. Values are local presentation and are not synchronized over the network.
 
-Normal world materials remain URP materials; no PSX shader replacement is required on every prop. This implementation provides low resolution, point upscaling, colour reduction, and dithering. It does not claim to implement affine texture warping, vertex wobble, VHS noise, or CRT scanlines.
+The camera treatment gives low resolution, point upscaling, colour reduction and dithering. **Vertex Snap** (on by default) adds PSX vertex precision: geometry using the PSX Lit shader snaps to a screen grid at half the internal resolution, so it shimmers very slightly in motion. There is deliberately no affine texture warping (it tears large wall quads), no VHS noise and no CRT scanlines.
+
+### PSX Lit materials
+
+Mansion rooms use **SurvivalFP/PSX Lit** (`Shaders/Generated/PsxLit.shader`). It is URP's own Lit shader regenerated with two additions:
+- vertex snapping, applied identically in the depth, normals (SSAO) and colour passes;
+- procedural **grime**: dirt along the base of walls, damp stains, streaks and a broad value drift, in world space so no two walls match. Each material has a **Grime** amount; colour and overall strength come from the map's atmosphere.
+
+After a URP upgrade, run **Survival FP > Rendering > Regenerate PSX Lit Shader**.
+
+The Mansion materials live in `Art/Mansion/Current/Materials`: wallpaper in Damask, Oxblood, Moss and Faded; wood in Walnut, Ebony and Oak; normal and worn floors; plus furniture, brass, glass and plant. They are matte and mostly non-reflective, so nothing reads as modern gloss. Each room type picks its set through a **Room Material Scheme**, referenced by the room's `Room Visual Source`; the splitter applies it. The textures import at 512 (1024 for the furniture sheet), point-filtered, for crisp PSX texels.
+
+### Map atmosphere
+
+A map's **Map Definition > Atmosphere** (for example `Data/Maps/Mansion/Mansion Atmosphere.asset`) sets:
+- flat ambient light;
+- exponential distance fog (Mansion 0.035: distant corridors fall into darkness while rooms stay readable);
+- the grime colour and strength;
+- the post-processing profile (`Mansion Post`: neutral tonemapping, gentle contrast and desaturation, cool shadows and warm highlights, vignette, light film grain, restrained bloom for lantern glass).
+
+It is applied locally on every peer when the round starts and never affects gameplay.
 
 ## Smooth flashlight aiming and standing on edges
 

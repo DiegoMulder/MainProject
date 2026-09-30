@@ -39,8 +39,9 @@ namespace SurvivalFP
         public string Prompt(PlayerInteraction interaction)
         {
             var player=interaction.GetComponent<NetworkPlayer>();
-            if(player && player.HiddenCloset==this) return !ExitBlocked.Value?"E  Exit closet":"Exit blocked — wait for space";
-            return Occupant.Value==Empty?"E  Hide in closet":"Closet occupied";
+            if(player && player.IsSpawned && !player.Alive) return "";
+            if(player && player.HiddenCloset==this) return !ExitBlocked.Value?"Leave closet":"Exit blocked  —  wait for space";
+            return Occupant.Value==Empty?"Hide in closet":"Closet occupied";
         }
         public bool CanInteract(PlayerInteraction interaction)
         {

@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 5424273498486042716}
   - component: {fileID: 4124200906359927453}
   - component: {fileID: 8027595216068101059}
+  - component: {fileID: 7594941802476494160}
   m_Layer: 0
   m_Name: GhostWomen
   m_TagString: Untagged
@@ -263,6 +264,20 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 18446744073709551615
+--- !u!114 &7594941802476494160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4913353664386796471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf2aab91030dc504d938d831a500b44a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.DynamicProbeLighting
+  interval: 0.15
+  height: 1
 --- !u!1 &6766286143616566342
 GameObject:
   m_ObjectHideFlags: 0

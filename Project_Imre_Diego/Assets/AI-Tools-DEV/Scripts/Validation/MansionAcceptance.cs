@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -48,7 +48,7 @@ namespace SurvivalFP.Editor
             var layout=new List<string>();foreach(var r in round.Layout)layout.Add($"{r.module}:{r.quarter}:{r.position.x:F2},{r.position.z:F2}");
             yield return new WaitForSecondsRealtime(1);
             Check(Client().layout==string.Join(";",layout),"Client reconstructs exactly the authoritative room layout");
-            Check(Client().props==round.Props.Count && Client().rooms==round.World.Rooms.Count,"Room and prop counts agree across peers");
+            Check(Client().props==round.World.NetworkPropCount && Client().rooms==round.World.Rooms.Count,"Room and prop counts agree across peers");
             Check(host.Inventory.Current && client.Inventory.Current && client.Inventory.Current.GetComponent<PlayerFlashlight>(),"Each player starts with a normal-slot flashlight");
             Check(Client().activeCameras==1,"Remote player camera does not activate on client");
             Send("select",slot:2);yield return new WaitForSecondsRealtime(.5f);Send("light");yield return new WaitForSecondsRealtime(.5f);

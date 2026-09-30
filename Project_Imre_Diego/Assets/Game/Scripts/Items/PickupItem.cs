@@ -41,7 +41,7 @@ namespace SurvivalFP
             body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
         }
-        public string Prompt(PlayerInteraction player) => player.Inventory.HasSpace ? "E  Pick up " + displayName : "Inventory full";
+        public string Prompt(PlayerInteraction player) => Held ? "" : player.Inventory.HasSpace ? "Pick up " + displayName : "Inventory full  —  drop an item with Q";
         public bool CanInteract(PlayerInteraction player) => !Held && player.Inventory.HasSpace;
         public void Interact(PlayerInteraction player) => player.Inventory.TryAdd(this);
         public bool CanUse {get{var player=GetComponentInParent<NetworkPlayer>();return Held&&(!player||player.CanUseItems);}}

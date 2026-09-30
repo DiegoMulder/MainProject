@@ -4,7 +4,9 @@
 
 ## How a room becomes part of the mansion
 
-A room prefab contains visible geometry, physical colliders, a RoomModule component, and doorway markers called RoomConnectors. The generator joins compatible markers and checks that the declared room bounds do not overlap another room. Mansion furniture is now placed as child groups listed in RoomModule's Randomized Structures array; closets still use PropSpawnPoints. See [the furniture tutorial](02-Furniture-and-Hiding.md).
+A room prefab contains visible geometry, physical colliders, a RoomModule component, and doorway markers called RoomConnectors. The generator joins compatible markers and checks that the declared occupancy volumes do not overlap another room. All furniture and closets are child groups listed in RoomModule's Randomized Structures array. See [the furniture tutorial](02-Furniture-and-Hiding.md).
+
+**Collision.** Mansion rooms collide with their actual model: the `Current V2 Visual` object carries a Mesh Collider of the room FBX (floors, walls, stairs, door frames and baked decoration). The old invisible placeholder walls, floors, lintels and steps have been removed. Do not add box walls on top. If the art changes, the mesh collider follows it automatically. Room FBXs have Read/Write enabled so the collider cooks correctly at runtime. Doorways in the models are 1.8 m wide and 2.4 m high, and the door prefabs fit them exactly; doors open 80° so the leaf clears the frame.
 
 Ordinary static rooms and furniture are reconstructed from the shared layout. They do not need NetworkObjects or entries in NetworkPrefabs.asset. Interactive network items and doors do.
 
@@ -27,13 +29,31 @@ Weights are relative preferences, not guaranteed quantities. With two equally fe
 
 ## Room Module, field by field
 
-**Size** reserves width X, occupied height Y, and depth Z. A normal 10 by 10 room with 3-metre walls uses (10, 3, 10). Its origin is at floor level. Keep root rotation (0, 0, 0) and root scale (1, 1, 1). Resize geometry and update Size together; Size alone does not resize a mesh.
+**Occupancy** lists generation-only boxes in room-local space (Center and Extent/Size). They are separate from gameplay colliders and are what the planner checks against other rooms, in full 3D. Rooms need not be a standard size: a 7.3 by 3.4 hall is fine, and an L-shaped room uses two boxes so another room can sit in its notch. Select the room root to see the boxes as cyan wireframes and connectors as yellow spheres with outward rays. Author volumes explicitly rather than trusting renderer bounds; imported FBXs can have bad pivots or decorative overhangs.
 
-The bounds are centred horizontally and extend upward from the base. The planner uses right-angle rotations. An arbitrarily rotated root is not a supported way to pack diagonal rooms.
+**Size** is only the fallback when Occupancy is empty: one box, centred on X/Z, from floor level up. A normal 10 by 10 room with 3-metre walls uses (10, 3, 10). Keep root rotation (0, 0, 0) and root scale (1, 1, 1).
+
+The planner places rooms in right-angle rotations and aligns connectors from their actual transforms. Connectors do not need to be centred on a wall; they only need a Y rotation that is a multiple of 90.
+
+Validation is split in two. **Room graph disconnected** means the logical connector graph does not reach a room (a generator or content bug). **NavMesh path failure** means the room is connected logically, but its geometry or colliders stop walking from the start (a blocked doorway, bad collider or unreachable anchor).
 
 **Navigation Anchor** is a local point on clear floor used to verify enemy access. For an open room, (0, 0, 0) works. If a statue fills the centre, move the anchor to another clear floor spot. Avoid furniture interiors, solid stairs, and isolated ledges.
 
-**Connectors** lists this room's doorway markers. **Prop Anchors** lists its furniture selection points. Creating components in the Hierarchy is not enough: drag them into these arrays.
+**Connectors** lists this room's doorway markers. Creating components in the Hierarchy is not enough: drag them into this array.
+
+**Player Start** is only needed on a map's Starting Room: an empty child on open floor whose blue arrow is the direction players face. It follows the room's generated rotation. The first player stands on it; others line up 1.2 m beside and behind it.
+
+## The starting room: Grand Hall
+
+`MansionContentSet > Starting Room` is the **Grand Hall** (Prefabs/Maps/Mansion/Rooms/Grand Hall.prefab). Every Mansion layout starts from it exactly once, as room 0: the root of the room graph that every other room must connect back to. It is not in the normal pool, and Unique Starting Room guarantees it is never picked again even if someone adds it there. It counts toward Room Count. The exit is never placed in it unless Allow Exit In Starting Room is enabled.
+
+The hall is two storeys (ground floor at 0 m, gallery at 4 m) and uses ordinary connectors at its real doorways: Ground East/West at (±9, 0, 3), Gallery East/West at (±9, 4, 3) and Gallery South at (0, 4, -12). A single 18 × 7 × 24 occupancy box covers both storeys, so rooms attached to the gallery are placed on the second floor with no false overlap. Player Start is at (0, 0, 6.5), facing the grand staircase.
+
+To use a different starting room, give it a Player Start and assign it in Starting Room. Generation stops with a clear error if the Starting Room is missing, has no Player Start or connectors, or is a staircase.
+
+## T-Junction
+
+`Hallways/T Junction.prefab` uses the new `TJunction.fbx`. It is a full 10 × 10 room with doorways at (0, 0, 5), (5, 0, 0) and (-5, 0, 0), one occupancy box, three lanterns and a baked plant. It is an ordinary pool room (weight 4).
 
 ## Recipe: add or move a doorway
 
@@ -44,7 +64,7 @@ Start from a duplicated room so you can compare a working opening.
 3. Add Room Connector. Keep it a **direct child**: the planner reads its local transform. An extra parent folder can change the meaning of that transform.
 4. Put it at the doorway centre, at walking-floor height.
 5. Rotate it so its blue local +Z arrow points **out of the room**. Use Local transform handles in the Scene view.
-6. Set Connector Type to Mansion and Width to 2.4 to match the supplied catalog.
+6. Set Connector Type to match its map pool (Mansion rooms use `Mansion` with Width 2.2; Slaughterhouse rooms use `Slaughterhouse` with Width 2.4). Copy the values from an existing connector in the same folder.
 7. Enable Allow Door if an ordinary door may appear here. Enable Exit Eligible if it may become the exit.
 8. Select the root, add an entry to Room Module > Connectors, and drag the marker into it.
 9. Save, generate, and walk through the opening in both directions.
@@ -73,7 +93,9 @@ Keep clear floor one metre inside each doorway, opposite its outward arrow. Navi
 7. Keep Navigation Anchor on clear floor.
 8. Add the prefab to Rooms, save, and test several seeds.
 
-Understating Size can allow intersecting geometry. Overstating it wastes space and rejects placements. Consider decorations that protrude outside the reserved area; bounds are not automatically calculated from every decorative mesh.
+Understating occupancy can allow intersecting geometry. Overstating it wastes space and rejects placements. Include decorations that protrude outside the walls; volumes are never calculated automatically from meshes. A small seam overlap (4 cm per side) is tolerated so flush doorways stay valid.
+
+For an irregular room, skip Size and add one Occupancy box per rectangular part. Put each connector exactly on the doorway, not on a grid point.
 
 ## Recipe: add a staircase style
 

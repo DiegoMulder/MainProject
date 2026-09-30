@@ -271,13 +271,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2
+  m_Height: 1.75
   m_Radius: 0.3
   m_SlopeLimit: 46
   m_StepOffset: 0.28
   m_SkinWidth: 0.035
   m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 0.875, z: 0}
 --- !u!114 &5230841742126918979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -320,19 +320,22 @@ MonoBehaviour:
   acceleration: 22
   deceleration: 32
   airControl: 0.3
-  standingHeight: 2
+  standingHeight: 1.75
   crouchingHeight: 1
   crouchSmoothTime: 0.1
   collisionMask:
     serializedVersion: 2
     m_Bits: 4294967295
   ceilingPadding: 0.025
-  jumpHeight: 1.2
+  headroomSideTolerance: 0.06
+  ceilingNormalThreshold: 0.35
+  jumpHeight: 0.65
   gravity: -24
   coyoteTime: 0.12
   jumpBuffer: 0.14
   groundProbeDistance: 0.16
   groundStickSpeed: 3
+  stepHeight: 0.3
   terminalSpeed: 45
   slideAcceleration: 18
   maximumSlideSpeed: 9
@@ -399,8 +402,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.PlayerInventory
   handAnchor: {fileID: 7924632291490245529}
+  rightHandAnchor: {fileID: 0}
   playerCamera: {fileID: 2324725114874763348}
   pickupDistance: 5
+  dropForwardDistance: 0.9
+  dropForwardImpulse: 2.3
+  dropMinimumClearance: 0.04
+  dropCheckPadding: 0.015
+  dropVerticalCorrectionLimit: 0.45
   slots:
   - {fileID: 0}
   - {fileID: 0}

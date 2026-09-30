@@ -276,6 +276,9 @@ MonoBehaviour:
   beam: {fileID: 7047950411228183158}
   toggleAudio: {fileID: 820000000000000001}
   toggleSound: {fileID: 8300000, guid: ece62531b6afc02489ebe9b28e05625c, type: 3}
+  flashlightRenderer: {fileID: 0}
+  flashlight_Mat_On: {fileID: 0}
+  flashlight_Mat_Off: {fileID: 0}
   startOn: 0
   toggleCooldown: 0.2
   fadeSpeed: 14

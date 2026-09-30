@@ -3,7 +3,17 @@ guid: 30c71046669e6314fa0af485489da6d0
 ModelImporter:
   serializedVersion: 24600
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Mansion_TarnishedBrass
+    second: {fileID: 2100000, guid: a8f216a7bfa150742aa0de5ff1a58f33, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Mansion_V2Wood
+    second: {fileID: 2100000, guid: b6a994f6ab6a09e499c34bfc2eba22f1, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -31,7 +41,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 0
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1

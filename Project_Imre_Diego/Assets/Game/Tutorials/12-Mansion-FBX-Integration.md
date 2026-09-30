@@ -6,11 +6,17 @@ The Mansion still uses the grid-based room generator. A **gameplay prefab** is t
 
 ## Find the files
 
-- `Assets/Game/Art/Mansion/Current` contains the active V2 FBX models and their `Textures` folder. Their materials use URP.
+- `Assets/Game/Art/Mansion/Current` contains the active V2 FBX models and their `Textures` folder. Their materials use PSX Lit (see `Materials`).
+- Textures dropped into `Current/Textures` are set up automatically by `Editor/MansionTextureImporter.cs`:
+  - `*_Normal.png` becomes a Normal Map;
+  - only `*_BaseColor.png` is sRGB;
+  - metallic, smoothness and roughness maps stay linear.
+
+  A normal map imported as an ordinary texture tilts every surface's shading. You can spot it when a lantern's pool of light ends in a hard diagonal line across the wall. Check the importer before blaming the lighting.
 - `Assets/Game/Art/Mansion/Archive/Version1` contains the old source package for comparison and rollback. No active gameplay prefab, scene, or other map asset uses it. The old `Closet.fbx` had already been removed before this change; the current closet uses the V2 model.
 - `Assets/Game/Prefabs/Maps/Mansion` contains the actual playable room, hallway, staircase, door, and prop prefabs.
 
-The active set includes V2 Standard, Small, and Large rooms; Straight, Corner, and T hallways; the Staircase; Door; and Closet. `WallLantern.fbx` is a source model only. Its meshes are already part of each room FBX, so do not add separate lantern meshes.
+The active set includes V2 Standard, Small, and Large rooms; Straight, Corner, and T hallways; the Staircase; the Grand Hall; Door; Closet; Plant; and **WallLantern**. The room FBXs still contain the lanterns they were modelled with, but those are no longer shown: the furniture splitter removes every baked wall lantern from the room shell (visual and collision) and hangs a `Props/Wall Lantern.prefab` in exactly its place. The room FBXs stay unchanged as the splitter's source.
 
 The supplied V2 set does not contain standalone Table, Shelf, Cabinet, or Plant FBXs. Some of those details are baked into the room meshes; the separate optional furniture groups still use the project's gameplay furniture prefabs. They are placed in clear areas so they do not sit on top of the baked-in details.
 
@@ -24,7 +30,22 @@ The supplied V2 set does not contain standalone Table, Shelf, Cabinet, or Plant 
 6. Save, host a Mansion round from Main Menu, and walk through doors and stairs. Check pickups, enemy movement, and several generated layouts.
 7. After the new model works, check its old version has no active references. Move the old source asset into `Archive/Version1` through Unity's Project window, which preserves its `.meta` GUID.
 
-The current Corner Hall and T Junction visuals have child-only scale and position adjustments to fit the existing 8×8 and 10×10 grid footprints. The Staircase visual faces 180 degrees relative to its import so the upper landing meets the upper connector. Preserve those settings when changing only materials.
+### One physical scale
+
+**Every Mansion visual uses scale `(100, 100, 100)`, and every room root uses scale 1. Never stretch a model to fit a footprint.** The generator joins rooms connector to connector and checks overlap with occupancy boxes. It has no grid, so a room can be any size.
+
+Reference dimensions, measured with physics raycasts in every room:
+
+| | Size |
+| --- | --- |
+| Doorway (all 8 rooms, every connector) | 1.80 m wide × 2.40 m high, centred on its connector |
+| Door panel collider | 1.79 × 2.40 m |
+| Player capsule | 1.75 m tall, 0.30 m radius, eye at 1.57 m |
+| Connector `width` | 1.8 (the clear opening; only equal widths join) |
+
+The Corner Hall used to be stretched to (114, 114, 100) to fill an 8×8 footprint. Its doorways were then 2.06 m wide, so the doors looked lost in them, and its furniture was 14% too wide. It now uses its real 7×7 m size, with connectors at (0, 0, 4) and (−4, 0, 0) and one occupancy box centred at (−0.5, 1.5, 0.5).
+
+To check a new model, instantiate it and measure the opening at each connector before placing anything. The Staircase visual faces 180 degrees relative to its import so the upper landing meets the upper connector.
 
 ## Add an extra room to generation
 
@@ -41,7 +62,53 @@ Door prefabs keep their `Hinge`, door panel collider, scripts, and networking. T
 
 The Closet prefab keeps its hide interaction, entry/exit points, AI approach, and collision. Its V2 model is only the visible child. Closets remain separate networked hiding props and use their original closet spawn anchors.
 
-Every room's `LanternLights` child has Point Lights at the built-in lantern glass locations. Select a `LanternLight` child to edit warm color, intensity, range, or shadows in the Inspector. For a new room model, place a Point Light at each built-in bulb on the room side of the wall and check it from multiple angles. Keep range short and shadows off unless needed; a generated Mansion has many lanterns. Do not put lanterns into `Randomized Structures`.
+### Wall lanterns
+
+`Props/Wall Lantern.prefab` is the current lantern: the `WallLantern.fbx` model (pivot on its back plate, facing +Z out of the wall), a small box collider, and a `Flame` point light driven by **Lantern Light**. After a split, each room lists its lanterns under `Wall Lanterns`. The light sits at the flame, in the centre of the glass and in front of the wall. There is no separate `LanternLights` fill any more, except the Grand Hall's two **Chandelier Candle Light**s. These sit at the chandelier's candle rings, below the ceiling and outside the opaque model, and are marked **Major** and **Always Burning**.
+
+To relight the Mansion, edit the prefab's **Lantern Light**: Intensity, Range, Flame Colour, Glass Glow and Flicker. Every lantern updates.
+
+### How the Mansion is lit (hybrid: baked rooms, real-time for moving things)
+
+Unity keeps lightmaps and light probes per scene, and the Mansion is assembled from prefabs at runtime. So each room prefab carries its own bake:
+
+- **`Survival FP > Lighting > Bake Mansion Room Lighting (All Rooms)`** bakes every room alone in an empty scene.
+  - It bakes once per mood: Lit, Dim and Dark. A room with an authored mood, like the Grand Hall (Lit), only gets that one.
+  - It generates lightmap UVs, because the FBX lightmap UVs are empty or overlapping.
+  - Lightmaps are non-directional, so they stay correct under the generator's 90° rotations.
+  - Furniture is lit but casts no baked shadow, so a piece the randomizer switches off leaves no ghost behind.
+  - About 2.5 minutes for all rooms and about 10 MB of lightmaps.
+- **`RoomBakedLighting`** on each room stores everything:
+  - the lightmaps and each renderer's lightmap slot;
+  - which lanterns burn, gutter or are out in each mood;
+  - a probe grid (six-direction light per probe, bounce only).
+
+  When a room spawns, it picks its mood from its position (the same on every client), registers its lightmaps, and moves its surfaces to rendering layer 1 (Baked Environment).
+- **Lantern real-time lights** only light rendering layer 0: players, enemies, doors, closets and pickups. They never light the walls a second time, and they cast no shadow maps. The environment's shadows are baked.
+  - Each client still activates only the lights near its own camera: on at 20 m, off at 26 m (45 m and 55 m for chandeliers), with a 0.4 s fade and at most 40 lights.
+  - About 22 are active at a time.
+- **`DynamicProbeLighting`** is on the survivor, enemies, pickups, doors and closets. A few times a second it samples the nearest probes of the room it is in and feeds them to its renderers. Their shadow side gets the room's bounce light instead of going black.
+- **Flashlights** light every layer, with real-time shadows.
+- The lantern glass always glows from its material's emission, independent of any light.
+
+Measured on the same 60-room layout, compared with lighting the whole Mansion in real time:
+- CPU: 2.65 → 2.30 ms median.
+- GPU: 2.27 → 1.90 ms median.
+- Shadow casters: 246 → 0 per frame.
+- Shadow-mapped lanterns: 4 → 0.
+
+To compare setups on any layout, add `LightingBenchmark` to an object during a round (development builds only). Setting `RoomBakedLighting.Enabled = false` before a round starts uses the old all-real-time path.
+
+**Rebake after:**
+- splitting furniture (the splitter clears the old bake and warns);
+- changing a room model;
+- moving lanterns;
+- changing lantern Intensity or Range;
+- changing the Mansion atmosphere's ambient.
+
+Lanterns in a room without a bake fall back to fully real-time light, and the 4 nearest cast shadows.
+
+For a new room model, rerun the splitter (baked lanterns are detected by their glass), then rebake. You can also drag `Wall Lantern.prefab` onto a wall, with its back plate flush and +Z facing into the room. Never put lanterns into `Randomized Structures`.
 
 ## Final check
 
