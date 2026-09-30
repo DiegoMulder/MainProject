@@ -80,7 +80,7 @@ Unity keeps lightmaps and light probes per scene, and the Mansion is assembled f
   - About 2.5 minutes for all rooms and about 10 MB of lightmaps.
 - **`RoomBakedLighting`** on each room stores everything:
   - the lightmaps and each renderer's lightmap slot;
-  - which lanterns burn, gutter or are out in each mood;
+  - which lanterns burn steadily or gutter in each mood. Every lantern burns in every mood: a dead lantern looked like a broken light, so the mood only decides how many gutter (Lit about 10%, Dim about 40%, Dark about 65%). `LanternLight.StateFor` holds the odds; rebake after changing them;
   - a probe grid (six-direction light per probe, bounce only).
 
   When a room spawns, it picks its mood from its position (the same on every client), registers its lightmaps, and moves its surfaces to rendering layer 1 (Baked Environment).
@@ -88,7 +88,7 @@ Unity keeps lightmaps and light probes per scene, and the Mansion is assembled f
   - Each client still activates only the lights near its own camera: on at 20 m, off at 26 m (45 m and 55 m for chandeliers), with a 0.4 s fade and at most 40 lights.
   - About 22 are active at a time.
 - **`DynamicProbeLighting`** is on the survivor, enemies, pickups, doors and closets. A few times a second it samples the nearest probes of the room it is in and feeds them to its renderers. Their shadow side gets the room's bounce light instead of going black.
-- **Flashlights** light every layer, with real-time shadows.
+- **Flashlights** light every layer, with real-time shadows from everything except rendering layer 2 (Local Player Body): on each client, the own player's invisible body is on that layer only, so it never throws a torch shadow in front of you. Walls, furniture, doors, enemies and other players still cast. Held items keep their normal layers.
 - The lantern glass always glows from its material's emission, independent of any light.
 
 Measured on the same 60-room layout, compared with lighting the whole Mansion in real time:

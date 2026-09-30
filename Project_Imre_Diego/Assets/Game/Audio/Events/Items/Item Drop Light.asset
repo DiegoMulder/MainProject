@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ec160c2baaed44998a21b0a47751b9, type: 3}
+  m_Name: Item Drop Light
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.SoundEvent
+  clips:
+  - {fileID: 8300000, guid: fbc3b20ecf16df4419c299bf9d5b3f80, type: 3}
+  - {fileID: 8300000, guid: 55ac54e786317bb48b71549e39e4c5cd, type: 3}
+  - {fileID: 8300000, guid: b7235a7e9b7156e41bbd8f28cb303712, type: 3}
+  - {fileID: 8300000, guid: fc27c46cf0b12a947a4ff0b1ce38dfed, type: 3}
+  - {fileID: 8300000, guid: e54428e48ee3adb43a3992fbb500773b, type: 3}
+  - {fileID: 8300000, guid: ad56c2ed8477b314da476e6f5022cbca, type: 3}
+  - {fileID: 8300000, guid: afcbc878a6897bb439ec27563ed34108, type: 3}
+  - {fileID: 8300000, guid: d9c6c9ab55e8e824fa5e586305872a7b, type: 3}
+  - {fileID: 8300000, guid: 40a7bc19361e3c24bb55e3cc0466b654, type: 3}
+  - {fileID: 8300000, guid: 2d49b56a82c65d1489bee8688c1a17f5, type: 3}
+  - {fileID: 8300000, guid: 748f3ac6ef605b24da9755a2963e23af, type: 3}
+  - {fileID: 8300000, guid: 8a545f31004fab742b965689c9272527, type: 3}
+  - {fileID: 8300000, guid: da687716effa5764f9f2a3ec328e62d9, type: 3}
+  - {fileID: 8300000, guid: 3da9fc02c630fe14398dedbab233ce85, type: 3}
+  - {fileID: 8300000, guid: ba22fe43eb5dcaf49b5d7f390d72307b, type: 3}
+  avoidRepeat: 1
+  volume: 0.65
+  volumeVariation: 0.1
+  pitch: 1
+  pitchVariation: 0.06
+  bus: 2
+  spatialBlend: 1
+  minDistance: 1.5
+  maxDistance: 18
+  reverbMix: 1
+  alertsEnemy: 0
+  hearingRadius: 0
+  hearingCategory: 3

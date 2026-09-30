@@ -119,7 +119,7 @@ If replacing the player model, preserve the DownedInteractable setup and its ass
 4. Keep the leaf collider beneath the interactable hierarchy, sized to the new leaf.
 5. Set Open Angle and Speed. Check that it swings into clear space.
 6. Keep Interactable enabled for player use. Set Start Open only if desired.
-7. Assign Audio Source and Sound if the door should play a clip; Noise Radius separately controls AI hearing.
+7. Door sounds (handle, open, close, latch) come from the Sound Library's DOOR AUDIO section. Assign Sound Events under the door's DOOR AUDIO header only if this door should sound different. Noise Radius is used for AI hearing when the door's open/close Sound Event does not tick *Alerts Enemy* ([audio tutorial](14-Audio-Closets-and-Menu-States.md)).
 8. Preserve the supplied exclusion of the swinging leaf from static navigation. A leaf baked as a permanent obstacle can block the route even when open.
 9. Save/register the new prefab and assign MansionSettings > Door.
 10. Test E from both sides and let the enemy approach it. The server enemy can open ordinary doors.
@@ -132,16 +132,16 @@ The exit's PlayerEscaped event is an extension point for progression/presentatio
 
 These are independent systems:
 
-- **AudioSource/PlayerAudio:** audible clips for the people playing.
+- **Sound Events (Sound Library):** audible clips for the people playing. See [tutorial 14](14-Audio-Closets-and-Menu-States.md).
 - **GameplayNoiseSystem:** gameplay events used by enemy hearing.
 
 Turning down a footstep clip does not automatically make footsteps quieter to the monster. Raising a noise radius does not turn up speakers.
 
 On Network Survivor > MovementNoiseEmitter, tune Crouch Radius, Walk Radius, Sprint Radius, and Stride. Noise is emitted from actual movement. The supplied radii are 2, 7, and 14 metres, so crouching is quieter than sprinting.
 
-On a pickup > ImpactNoiseEmitter, Minimum Speed ignores gentle contacts, Cooldown prevents rapid repeated impact events, Reference Speed sets the strongest impact, and Minimum/Maximum Radius control AI hearing. Impact Sounds is a configurable array; Minimum/Maximum Volume and Pitch Range control audio. A very low threshold can make resting objects overly noisy.
+On a pickup > ImpactNoiseEmitter, Minimum Speed ignores gentle contacts, Cooldown prevents rapid repeated impact events, Reference Speed sets the strongest impact, and Minimum/Maximum Radius control AI hearing. The clip comes from Impact Event (if set), otherwise the Sound Library's Item Drop Heavy/Light by mass, otherwise the legacy Impact Sounds array; Minimum/Maximum Volume and Pitch Range scale it. A very low threshold can make resting objects overly noisy.
 
-To replace player clips, inspect PlayerAudio on the appropriate player prefab and assign new AudioClip assets to its clip fields. Keep a few variations for footsteps. Then test volume and timing separately from enemy hearing. Sources/licenses for bundled audio remain in the Audio folder.
+To replace player clips, open the Sound Library > PLAYER AUDIO and edit the Walk/Sprint/Crouch Steps, Jump, Land Soft/Hard, Crouch Down/Stand Up and Clothing events. Keep a few variations for footsteps. Then test volume and timing separately from enemy hearing. Sources/licenses for bundled audio remain in the Audio folder.
 
 Custom server-side noises call GameplayNoiseSystem.Emit(position, radius, category, source). Supply the responsible player's GameObject when the sound should identify a hidden player. See the bell example in the pickup tutorial for a complete use action.
 

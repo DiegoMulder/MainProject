@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ec160c2baaed44998a21b0a47751b9, type: 3}
+  m_Name: Butcher Chase Start
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.SoundEvent
+  clips:
+  - {fileID: 8300000, guid: fb3ac1b5af845ab448efbfd246785176, type: 3}
+  - {fileID: 8300000, guid: 2df4c8fbc757df547b25ca1a1073de2a, type: 3}
+  - {fileID: 8300000, guid: d641343978bbc14438483e7b39ee3573, type: 3}
+  - {fileID: 8300000, guid: e052346061c89a341aef9beb9645cb47, type: 3}
+  - {fileID: 8300000, guid: 8c944671378b5164089a6da8c4efce15, type: 3}
+  - {fileID: 8300000, guid: 741e1d3b9fa1f044e81b07c0f1978c54, type: 3}
+  - {fileID: 8300000, guid: 00ee34d099e103448bc39fdbbc4ba2f3, type: 3}
+  avoidRepeat: 1
+  volume: 1
+  volumeVariation: 0.02
+  pitch: 0.7
+  pitchVariation: 0.03
+  bus: 4
+  spatialBlend: 1
+  minDistance: 3
+  maxDistance: 30
+  reverbMix: 1
+  alertsEnemy: 0
+  hearingRadius: 0
+  hearingCategory: 3

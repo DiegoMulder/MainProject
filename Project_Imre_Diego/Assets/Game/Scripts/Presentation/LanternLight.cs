@@ -105,13 +105,15 @@ namespace SurvivalFP
             return StateFor(roomMood, Frac(roll * 13.7f));
         }
         // Shared with the room baker, so baked and real-time rooms follow the same odds.
+        // Every lantern burns: a dead lantern read as a broken light, so the mood only decides how many gutter
+        // (a dimmer, stuttering flame that still lights its wall). Out remains for scripted use only.
         public static State StateFor(LightingMood roomMood, float own)
         {
             switch (roomMood)
             {
-                case LightingMood.Lit: return own < .86f ? State.Lit : own < .95f ? State.Guttering : State.Out;
-                case LightingMood.Dim: return own < .3f ? State.Lit : own < .7f ? State.Guttering : State.Out;
-                default: return own < .25f ? State.Guttering : State.Out;
+                case LightingMood.Lit: return own < .9f ? State.Lit : State.Guttering;
+                case LightingMood.Dim: return own < .6f ? State.Lit : State.Guttering;
+                default: return own < .35f ? State.Lit : State.Guttering;
             }
         }
 

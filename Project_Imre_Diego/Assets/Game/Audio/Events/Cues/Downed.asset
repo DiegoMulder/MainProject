@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ec160c2baaed44998a21b0a47751b9, type: 3}
+  m_Name: Downed
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.SoundEvent
+  clips:
+  - {fileID: 8300000, guid: 1c23aa86d2292ab42afa564467446364, type: 3}
+  - {fileID: 8300000, guid: d779d32f3d331af4d86acf98113bbc33, type: 3}
+  - {fileID: 8300000, guid: 34a89d6eae28d004ea74e6c207c39174, type: 3}
+  - {fileID: 8300000, guid: dbd99b70d1e60b14bb1cfec5a6946dcf, type: 3}
+  - {fileID: 8300000, guid: 81ebb454b96d3ba40a14338bd311bc56, type: 3}
+  avoidRepeat: 1
+  volume: 1
+  volumeVariation: 0.02
+  pitch: 0.6
+  pitchVariation: 0.03
+  bus: 4
+  spatialBlend: 1
+  minDistance: 2
+  maxDistance: 26
+  reverbMix: 1
+  alertsEnemy: 0
+  hearingRadius: 0
+  hearingCategory: 3

@@ -18,7 +18,7 @@ namespace SurvivalFP
         {
             player=GetComponent<NetworkPlayer>();
             var audio=new GameObject("Local heartbeat");audio.transform.SetParent(transform,false);
-            speaker=audio.AddComponent<AudioSource>();speaker.playOnAwake=false;speaker.spatialBlend=0;AudioVolumeBus.RouteSfx(speaker);
+            speaker=audio.AddComponent<AudioSource>();speaker.playOnAwake=false;speaker.spatialBlend=0;speaker.priority=0;AudioVolumeBus.RouteSfx(speaker); // top of the mix: an important cue
         }
         public float ProximityIntensity(Vector3 position)
         {

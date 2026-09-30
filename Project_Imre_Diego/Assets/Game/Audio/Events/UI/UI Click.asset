@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ec160c2baaed44998a21b0a47751b9, type: 3}
+  m_Name: UI Click
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.SoundEvent
+  clips:
+  - {fileID: 8300000, guid: 18d41b15a41d22d47bedf7d7d5f8355b, type: 3}
+  - {fileID: 8300000, guid: d6cb8e892d3759348972ab791d729f02, type: 3}
+  avoidRepeat: 1
+  volume: 0.4
+  volumeVariation: 0.05
+  pitch: 0.75
+  pitchVariation: 0.03
+  bus: 5
+  spatialBlend: 0
+  minDistance: 1
+  maxDistance: 2
+  reverbMix: 0
+  alertsEnemy: 0
+  hearingRadius: 0
+  hearingCategory: 3

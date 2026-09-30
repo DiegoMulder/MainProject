@@ -37,10 +37,17 @@ namespace SurvivalFP
             if (bound) bound.Inventory.RemoveItem(item);
             transform.SetParent(null,true);
         }
-        void Changed(ItemLocation old, ItemLocation value) => ApplyLocation();
-        public void PlaySwitchSound() { if (IsServer) SwitchSoundRpc(); }
+        [Tooltip("Optional: this item's own pickup sound. Empty = Sound Library (ITEM AUDIO).")]
+        public SoundEvent pickupSound;
+        void Changed(ItemLocation old, ItemLocation value)
+        {
+            // Picked up (from the floor, or taken from someone): a short handling sound where the item was.
+            if (!old.Held && value.Held) { var sound = SoundLibrary.Pick(pickupSound, l => l.itemPickup); if (sound) sound.Play(transform.position); }
+            ApplyLocation();
+        }
+        public void PlaySwitchSound() { if (IsServer && flashlight) SwitchSoundRpc(flashlight.IsOn); }
         [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Server)]
-        void SwitchSoundRpc() { if (flashlight) flashlight.PlaySwitchSound(); }
+        void SwitchSoundRpc(bool on) { if (flashlight) flashlight.PlaySwitchSound(on); }
         public void PlayImpactSound(float strength,int clip,float pitch) { if (IsServer) ImpactSoundRpc(strength,clip,pitch); }
         [Rpc(SendTo.Everyone, InvokePermission = RpcInvokePermission.Server)]
         void ImpactSoundRpc(float strength,int clip,float pitch) { GetComponent<ImpactNoiseEmitter>()?.PlayImpact(strength,clip,pitch); }

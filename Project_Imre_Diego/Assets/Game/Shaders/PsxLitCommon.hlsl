@@ -3,19 +3,35 @@
 
 // Globals set by PsxCameraPresentation / MansionAtmosphere. Outside UnityPerMaterial on purpose:
 // they are frame- or map-wide, so they never break SRP Batcher compatibility.
-float4 _PsxSnapParams;   // xy: snap grid in pixels, z: 1 = snapping on
+float4 _PsxSnapParams;   // xy: snap grid in pixels, z: 1 = snapping on, w: share of the snap allowed along world up
 float4 _PsxGrimeTint;    // rgb: colour grime multiplies towards
 float4 _PsxGrimeParams;  // x: storey spacing (m), y: skirting grime height (m), z: global grime scale
 
 // Classic PSX vertex precision: clip-space positions snap to a coarse screen grid, so geometry
 // shimmers very slightly as the camera moves. Every pass that writes depth uses the same function,
 // so depth prepass, normals (SSAO) and colour stay in exact agreement.
+//
+// Grounded snapping: the screen snap moves a vertex sideways on screen but keeps its depth, so a surface
+// no longer passes through the points it was modelled through. A room floor is only a couple of huge
+// triangles; the snap error of corners many metres away, interpolated across it, lifted the floor up to
+// ~2 cm above its true height right under a small item (which is not snapped, or snapped by its own nearby
+// corners), and the floor then drew over the item's base. The snap's movement is therefore turned into a
+// world-space displacement and its vertical part dropped (scaled by _PsxSnapParams.w): floors, table tops
+// and shelves stay exactly level, so nothing resting on them can sink in, while the horizontal shimmer that
+// gives the PSX look remains. The displacement depends on the position alone, so coincident vertices still
+// move together and meshes stay watertight.
 float4 PsxSnap(float4 positionCS)
 {
     if (_PsxSnapParams.z < 0.5 || positionCS.w <= 0.05) return positionCS;
     float2 grid = max(_PsxSnapParams.xy * 0.5, 1.0);
-    positionCS.xy = round(positionCS.xy / positionCS.w * grid) / grid * positionCS.w;
-    return positionCS;
+    float4 snapped = positionCS;
+    snapped.xy = round(positionCS.xy / positionCS.w * grid) / grid * positionCS.w;
+    float4 original = mul(UNITY_MATRIX_I_VP, positionCS);
+    float4 moved = mul(UNITY_MATRIX_I_VP, snapped);
+    float3 positionWS = original.xyz / original.w;
+    float3 displacement = moved.xyz / moved.w - positionWS;
+    displacement.y *= saturate(_PsxSnapParams.w);
+    return mul(UNITY_MATRIX_VP, float4(positionWS + displacement, 1.0));
 }
 
 float PsxHash(float3 p)

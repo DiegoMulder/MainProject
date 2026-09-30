@@ -70,7 +70,7 @@ All these actions feed **GameplayNoiseSystem**, and EnemyController subscribes t
 | Dropped-item collision | Pickup prefab > ImpactNoiseEmitter: Minimum Speed, Reference Speed, Cooldown, Minimum Radius, Maximum Radius |
 | Player-sourced noise from a closet | ClosetHideout: Noise Multiplier |
 
-Flashlight noise occurs only when the toggle succeeds, respecting its existing cooldown. A press that cannot toggle does not emit another click. The sound uses the flashlight's replaceable Toggle Sound clip and is relayed to peers as spatial audio.
+Flashlight noise occurs only when the toggle succeeds, respecting its existing cooldown. A press that cannot toggle does not emit another click. The sound uses the Sound Library's Flashlight On / Flashlight Off events (the old Toggle Sound clip is only a fallback) and is relayed to peers as spatial audio. Closet open/close/enter/exit sounds and their hearing are described in [tutorial 14](14-Audio-Closets-and-Menu-States.md).
 
 Drops emit their main noise when the physical object hits something, not when Q is pressed. Slow contacts below Minimum Speed are ignored; stronger contacts scale up to Maximum Radius; Cooldown prevents bounce spam. Impact Sounds accepts any number of clips; Minimum/Maximum Volume and Pitch Range configure audible playback independently of the AI radius. Empty audio arrays are safe and do not stop gameplay noise. See tutorial 07 for a step-by-step setup. The server evaluates the actual collision and sends the audio event to peers.
 
@@ -130,7 +130,7 @@ During Play Mode, a temporary **PSX screen output** camera presents this texture
 
 Disable Effect Enabled to compare with ordinary rendering. Disabling/removing the camera component also restores its prior target and camera settings. Values are local presentation and are not synchronized over the network.
 
-The camera treatment gives low resolution, point upscaling, colour reduction and dithering. **Vertex Snap** (on by default) adds PSX vertex precision: geometry using the PSX Lit shader snaps to a screen grid at half the internal resolution, so it shimmers very slightly in motion. There is deliberately no affine texture warping (it tears large wall quads), no VHS noise and no CRT scanlines.
+The camera treatment gives low resolution, point upscaling, colour reduction and dithering. **Vertex Snap** (on by default) adds PSX vertex precision: geometry using the PSX Lit shader snaps to a screen grid at half the internal resolution, so it shimmers very slightly in motion. The snap is **grounded**: its movement is taken in world space and its vertical part is scaled by **Vertical Snap** (0 by default), so floors, table tops and shelves stay exactly level. Without this, a room floor (a few huge triangles) rose up to about 2 cm above its true height under small items, and their bases vanished into the boards. Set Vertical Snap to 1 for the classic unconstrained snap. There is deliberately no affine texture warping (it tears large wall quads), no VHS noise and no CRT scanlines.
 
 ### PSX Lit materials
 

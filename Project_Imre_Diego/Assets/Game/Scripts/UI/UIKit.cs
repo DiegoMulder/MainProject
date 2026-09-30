@@ -20,7 +20,17 @@ namespace SurvivalFP
         {
             var button = new Button(onClick) { text = text }.With("btn", variant);
             button.focusable = true;
+            bool back = text != null && text.ToUpperInvariant().Contains("BACK");
+            button.clicked += () => UISound(back ? l => l.uiBack : l => l.uiClick);
             return button;
+        }
+        // Menu sounds: flat, in the head, on the UI bus. They go through the local sound pool only and never
+        // through enemy hearing, so nothing in a menu (including the pause menu mid-round) can alert the monster.
+        public static void UISound(Func<SoundLibrary, SoundEvent> pick)
+        {
+            var library = SoundLibrary.Instance;
+            var sound = library ? pick(library) : null;
+            if (sound) sound.Play(Vector3.zero);
         }
         public static VisualElement NewScreen(VisualElement root, string name, params string[] classes)
         {
@@ -46,7 +56,7 @@ namespace SurvivalFP
             var mark = NewLabel("◂", "menu-item__mark"); mark.pickingMode = PickingMode.Ignore; wrap.Add(mark);
             bool pointer = false, focus = false;
             void Refresh() => wrap.EnableInClassList("menu-item-wrap--hot", (pointer || focus) && item.enabledInHierarchy);
-            item.RegisterCallback<PointerEnterEvent>(_ => { pointer = true; Refresh(); });
+            item.RegisterCallback<PointerEnterEvent>(_ => { pointer = true; Refresh(); if (item.enabledInHierarchy) UISound(l => l.uiHover); });
             item.RegisterCallback<PointerLeaveEvent>(_ => { pointer = false; Refresh(); });
             item.RegisterCallback<FocusInEvent>(_ => { focus = true; Refresh(); });
             item.RegisterCallback<FocusOutEvent>(_ => { focus = false; Refresh(); });
@@ -92,7 +102,12 @@ namespace SurvivalFP
             fill.pickingMode = PickingMode.Ignore;
             slider.Q(className: "unity-base-slider__tracker")?.Add(fill);
             void Refresh(float v) { value.text = format(v); fill.style.width = Length.Percent(Mathf.InverseLerp(min, max, v) * 100f); }
-            slider.RegisterValueChangedCallback(e => { Refresh(e.newValue); changed(e.newValue); });
+            float nextTick = 0;
+            slider.RegisterValueChangedCallback(e =>
+            {
+                Refresh(e.newValue); changed(e.newValue);
+                if (Time.unscaledTime >= nextTick) { nextTick = Time.unscaledTime + .08f; UISound(l => l.uiSlider); }
+            });
             slider.userData = (Action)(() => Refresh(slider.value));
             return slider;
         }
@@ -112,7 +127,7 @@ namespace SurvivalFP
             var off = NewLabel("OFF", "switch__word", "switch__word--off"); off.pickingMode = PickingMode.Ignore;
             input?.Add(on); input?.Add(off);
             void Refresh(bool value) { toggle.EnableInClassList("switch--on", value); }
-            toggle.RegisterValueChangedCallback(e => { Refresh(e.newValue); changed(e.newValue); });
+            toggle.RegisterValueChangedCallback(e => { Refresh(e.newValue); changed(e.newValue); UISound(l => l.uiToggle); });
             toggle.userData = (Action)(() => Refresh(toggle.value));
             return toggle;
         }

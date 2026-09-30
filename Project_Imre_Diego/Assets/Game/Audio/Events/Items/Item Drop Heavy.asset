@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ec160c2baaed44998a21b0a47751b9, type: 3}
+  m_Name: Item Drop Heavy
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.SoundEvent
+  clips:
+  - {fileID: 8300000, guid: 1c23aa86d2292ab42afa564467446364, type: 3}
+  - {fileID: 8300000, guid: d779d32f3d331af4d86acf98113bbc33, type: 3}
+  - {fileID: 8300000, guid: 34a89d6eae28d004ea74e6c207c39174, type: 3}
+  - {fileID: 8300000, guid: dbd99b70d1e60b14bb1cfec5a6946dcf, type: 3}
+  - {fileID: 8300000, guid: 81ebb454b96d3ba40a14338bd311bc56, type: 3}
+  - {fileID: 8300000, guid: 765907ed0ba772e479553fef92789c87, type: 3}
+  - {fileID: 8300000, guid: a5d04cb1761d6de4081b2a4f419d6026, type: 3}
+  - {fileID: 8300000, guid: e865f5235dc854b4f93bdf57c2999715, type: 3}
+  - {fileID: 8300000, guid: 9843f13ea5ddfcc48a298579ae873009, type: 3}
+  - {fileID: 8300000, guid: eb4eaf2c27222e247aaea2b7a0c5dedd, type: 3}
+  - {fileID: 8300000, guid: e1e1861c0b37ea8488898f15a27c6c4c, type: 3}
+  - {fileID: 8300000, guid: d0e0546228da9344886ecfde6a1a8639, type: 3}
+  - {fileID: 8300000, guid: a46fd5306e0260e4b9402ff06b6351d5, type: 3}
+  - {fileID: 8300000, guid: c9be551e87b9563438c038d8b2e7a8bd, type: 3}
+  - {fileID: 8300000, guid: 1eff0db393454d54bb7841406c4955b2, type: 3}
+  avoidRepeat: 1
+  volume: 0.8
+  volumeVariation: 0.1
+  pitch: 0.95
+  pitchVariation: 0.05
+  bus: 2
+  spatialBlend: 1
+  minDistance: 2
+  maxDistance: 24
+  reverbMix: 1
+  alertsEnemy: 0
+  hearingRadius: 0
+  hearingCategory: 3

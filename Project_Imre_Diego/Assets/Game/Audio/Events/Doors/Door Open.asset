@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ec160c2baaed44998a21b0a47751b9, type: 3}
+  m_Name: Door Open
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.SoundEvent
+  clips:
+  - {fileID: 8300000, guid: e02aa449932f1434bb1a115f3d005674, type: 3}
+  - {fileID: 8300000, guid: 138c0d5c4f9f383468420bcc4ff0445f, type: 3}
+  avoidRepeat: 1
+  volume: 0.8
+  volumeVariation: 0.1
+  pitch: 0.92
+  pitchVariation: 0.07
+  bus: 2
+  spatialBlend: 1
+  minDistance: 2
+  maxDistance: 24
+  reverbMix: 1
+  alertsEnemy: 1
+  hearingRadius: 6
+  hearingCategory: 2

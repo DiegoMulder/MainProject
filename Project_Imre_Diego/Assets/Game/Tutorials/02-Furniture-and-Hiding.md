@@ -13,6 +13,7 @@ The furniture in the Mansion is the furniture **baked into each room FBX**. `Sur
 - The walls, floor, panelling, rugs, door frames, wall-hung decoration and stair rails stay in the room shell.
 - Baked wall lanterns are removed from the shell and replaced by `Wall Lantern.prefab` at the same spot (see [the Mansion models tutorial](12-Mansion-FBX-Integration.md)).
 - Faces whose UVs are broken in the model are re-mapped at the room's own texture scale, with wood grain along the piece. These are the collapsed doorway soffits and the strip-mapped wooden door liners. Other surfaces keep their UVs.
+- Upper-floor doorway sills that the model textured with wallpaper become floor. These are upward-facing wallpaper faces lying on a walkable floor level and touching it: the staircase landing and the Grand Hall's three gallery doors. They take the adjoining floor's UV mapping, so the boards run through the threshold with no seam. Wall tops above the ceiling are never touched. The report says "N doorway sill faces floored".
 - The room's **Room Material Scheme** is applied to the shell and every piece.
 - Meshes are written to `Assets/Game/Art/Mansion/Current/Split/<Room>/`. The original FBX is untouched, and `_Visuals` keeps a reference to it (`Room Visual Source`).
 
@@ -55,6 +56,8 @@ Closets synchronize their occupant, so the host spawns them over the network. Th
 2. Inside it, create an empty `Closet Spawn` and add **Network Spawn Marker**. Assign `Props/Closet.prefab` (or `Slaughterhouse Closet.prefab`) to `Prefab`. The orange gizmo shows its footprint.
 3. Add `Closet Setup` to `Randomized Structures` with its chance (the supplied rooms use 45%).
 4. The prefab must be listed in `Assets/Game/Data/NetworkPrefabs.asset`. The supplied closets already are.
+
+A closet that is part of the room's *model* (baked into the shell mesh) is only scenery and cannot be used. The Room Furniture Splitter detects such closets by size, cuts them out of the shell and adds a `Modelled Closet N Setup` group (100% chance) whose marker has **Keep Authored Pose** ticked, so the real closet appears exactly where the modelled one was. The Grand Hall's two closets work this way. See [tutorial 14](14-Audio-Closets-and-Menu-States.md).
 
 When the group is enabled, the server spawns the closet at the marker. When it is disabled, no closet exists.
 

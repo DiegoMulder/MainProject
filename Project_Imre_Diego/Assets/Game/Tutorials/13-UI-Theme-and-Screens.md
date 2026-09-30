@@ -37,7 +37,7 @@ Keep red for accents; small text in red is hard to read on black.
 
 ## Interaction
 
-- **Menu items** (`NewMenuItem`) are words. On hover or keyboard/gamepad focus, the word brightens and eases right, a thin crimson line draws itself under it, and a small ◂ mark slides in.
+- **Menu items** (`NewMenuItem`) are words. On hover or keyboard/gamepad focus, the word brightens and eases right with a faint crimson glow, a thin crimson line draws itself under it, and a small ◂ mark slides in. Pressed stays ivory; disabled is dim but legible. The *State guard* block in GameUI.uss removes Unity's default light hover/press fill from every control, so text is never light-on-light. Hover, click, back, toggle and slider sounds come from the Sound Library's UI AUDIO section and never alert the enemy ([tutorial 14](14-Audio-Closets-and-Menu-States.md)).
   - The word, line and mark share a `menu-item-wrap` that shrinks to the word. A Button with child elements stops measuring its text, so never add children to the Button itself.
   - Variants: `menu-item--primary` (main action) and `menu-item--danger` (leaving).
   - `button.SetCurrent(true)` keeps the line and mark drawn, as for the open options section.

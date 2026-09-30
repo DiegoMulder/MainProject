@@ -37,6 +37,19 @@ namespace SurvivalFP
                 // Show every furniture piece: the menu is a composed shot, not a random roll.
                 var module = room.GetComponent<RoomModule>();
                 if (module) foreach (var s in module.randomizedStructures) if (s.target) s.target.SetActive(!s.target.GetComponentInChildren<NetworkSpawnMarker>(true));
+                // Networked props (closets) cannot spawn without a session; show just their model where the room places them.
+                if (module) foreach (var marker in room.GetComponentsInChildren<NetworkSpawnMarker>(true))
+                {
+                    if (!marker.prefab) continue;
+                    var model = marker.prefab.GetComponentsInChildren<MeshRenderer>(true);
+                    foreach (var part in model)
+                    {
+                        if (!part.enabled) continue;
+                        var copy = Instantiate(part.gameObject, marker.transform.position, marker.transform.rotation * part.transform.localRotation, room);
+                        copy.transform.localScale = part.transform.lossyScale;
+                        foreach (var extra in copy.GetComponents<Component>()) if (!(extra is Transform || extra is MeshFilter || extra is MeshRenderer)) Destroy(extra);
+                    }
+                }
             }
             if (view)
             {

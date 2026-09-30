@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 4124200906359927453}
   - component: {fileID: 8027595216068101059}
   - component: {fileID: 1398965261670204019}
+  - component: {fileID: 4109872151886578736}
   m_Layer: 0
   m_Name: Butcher
   m_TagString: Untagged
@@ -278,6 +279,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.DynamicProbeLighting
   interval: 0.15
   height: 1
+--- !u!114 &4109872151886578736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4913353664386796471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2185cecda2b3f194ba84504640e8e583, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.EnemyAudio
+  ShowTopMostFoldoutHeaderGroup: 1
+  roamVocal: {fileID: 11400000, guid: eeab2f8782753be48a7e9fced3db0f3d, type: 2}
+  investigate: {fileID: 11400000, guid: 653e082333d70ea4fa235102576cf42b, type: 2}
+  search: {fileID: 11400000, guid: 656abd78d53dc0143b712eb2787085de, type: 2}
+  chaseStart: {fileID: 11400000, guid: 95c3c7248b887914c90f1a892b944569, type: 2}
+  attack: {fileID: 0}
+  stagger: {fileID: 11400000, guid: 6014e45e2a28ca34cb188baf204422bb, type: 2}
+  roamVocalInterval: {x: 0, y: 0}
+  voiceHeight: 1.6
 --- !u!1 &7432319880728549369
 GameObject:
   m_ObjectHideFlags: 0

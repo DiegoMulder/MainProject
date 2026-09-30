@@ -22,7 +22,23 @@ namespace SurvivalFP
         void LifeChanged(PlayerLife old,PlayerLife value)=>ValidateTransmission();
         void SelectionChanged(int old,int value)=>ValidateTransmission();
         public void ValidateTransmission(){if(IsServer&&Transmitting.Value&&!CanTransmit)Transmitting.Value=false;}
-        void Changed(bool old,bool current){var radio=ActiveRadio;if(radio)radio.PlayTransmissionCue(current);}
+        // Every client: the talker's radio squelches, and every radio that receives squelches and hisses until the
+        // transmission ends. The same radios are released at the end even if their owner switched off meanwhile.
+        readonly System.Collections.Generic.List<WalkieTalkieUse> receiving=new();
+        void Changed(bool old,bool current)
+        {
+            var radio=ActiveRadio;if(radio)radio.PlayTransmissionCue(current);
+            foreach(var r in receiving)if(r)r.SetReceiving(false);
+            receiving.Clear();
+            if(!current)return;
+            foreach(var other in NetworkPlayer.Players)
+            {
+                if(!other || other==player)continue;
+                var receiver=other.GetComponent<PlayerRadio>();
+                var device=receiver && receiver.Eligible?receiver.ActiveRadio:null;
+                if(device){device.SetReceiving(true);receiving.Add(device);}
+            }
+        }
         void Update(){if(IsServer && Transmitting.Value && (!CanTransmit || Time.unscaledTime-lastReport>.5f))Transmitting.Value=false;}
         public void RegisterVoice(string id){if(IsOwner && !string.IsNullOrEmpty(id) && id.Length<=120 && VoiceId.Value.ToString()!=id)RegisterVoiceRpc(new FixedString128Bytes(id));}
         [Rpc(SendTo.Server,InvokePermission=RpcInvokePermission.Owner)]

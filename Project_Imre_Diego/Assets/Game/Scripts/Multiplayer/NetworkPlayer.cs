@@ -87,7 +87,8 @@ namespace SurvivalFP
             // Only the owner/server ticks a motor; remote transforms remain network-driven.
             GetComponent<CharacterController>().enabled = true;
             if(IsOwner && !IsServer)GetComponent<NetworkTransform>().enabled=false;
-            GetComponent<PlayerAudio>().enabled = IsOwner;
+            // Every client hears every player's body: the owner from its own motor, others from replicated movement.
+            GetComponent<PlayerAudio>().enabled = true;
             ApplyBodyVisibility();
             Life.OnValueChanged += OnLife; Selection.OnValueChanged += OnSelection; HiddenClosetId.OnValueChanged+=OnHiding;
             HeldItemNumber.OnValueChanged += OnHeldItemNumberChanged; ApplyHeldItemAnimation(HeldItemNumber.Value);
@@ -123,6 +124,7 @@ namespace SurvivalFP
         {
             bool alive = value == PlayerLife.Alive;
             bool downed=value==PlayerLife.Downed;pending=default;
+            if(downed && old==PlayerLife.Alive){var cue=SoundLibrary.Instance?SoundLibrary.Instance.downed:null;if(cue)cue.Play(transform.position+Vector3.up*.5f,transform);}
             if(IsServer&&!alive)foreach(var enemy in EnemyController.Enemies.ToArray())if(enemy)enemy.InvalidatePlayer(this);
             Motor.SetDowned(downed,downedCrawlSpeed);
             if(visualBody && !GetComponent<PlayerAnimationDriver>()){visualBody.localPosition=downed?new Vector3(0,.3f,0):bodyPosition;
@@ -132,7 +134,8 @@ namespace SurvivalFP
             foreach (var c in GetComponentsInChildren<Collider>()) if (!(c is CharacterController) && !c.GetComponentInParent<PickupItem>()) c.enabled = alive;
             var revive = GetComponent<DownedInteractable>();
             if(revive) revive.SetDowned(value==PlayerLife.Downed);
-            if (IsOwner) { CameraMotion.enabled = alive || downed; GetComponent<PlayerAudio>().enabled = alive; Controller.SetCursor((alive || downed) && !paused); }
+            GetComponent<PlayerAudio>().enabled = alive && !IsHidden;
+            if (IsOwner) { CameraMotion.enabled = alive || downed; Controller.SetCursor((alive || downed) && !paused); }
             ApplyHiding();
             if(IsServer)prediction.ForceState();
         }
@@ -151,11 +154,20 @@ namespace SurvivalFP
             if(!IsHidden && hidingPresented){View.localPosition=savedViewPosition;View.localRotation=savedViewRotation;}
             hidingPresented=IsHidden;
             GetComponent<CharacterController>().enabled=(Alive || Life.Value==PlayerLife.Downed) && !IsHidden;
-            if(IsOwner){CameraMotion.enabled=(Alive || Life.Value==PlayerLife.Downed) && !IsHidden;GetComponent<PlayerAudio>().enabled=Alive && !IsHidden;}
+            GetComponent<PlayerAudio>().enabled=Alive && !IsHidden;
+            if(IsOwner)CameraMotion.enabled=(Alive || Life.Value==PlayerLife.Downed) && !IsHidden;
             ApplyBodyVisibility();
         }
         readonly List<Renderer> childRenderers=new();
         PlayerAnimationDriver animationDriver;
+        // Rendering layer 2 ("Local Player Body"): on each client, the body of that client's own player (every
+        // renderer under the body: skin, clothing, extra meshes), which its own camera never sees (ShadowsOnly).
+        // It is the ONLY layer those renderers carry, because a renderer casts for a light whenever any of its
+        // layers is in the light's shadow layers. Flashlights leave this layer out of their shadow casters, so
+        // your own invisible body never throws a torch shadow in front of you, while walls, furniture, doors,
+        // enemies and other players still do. Other clients see this player on the normal layer with normal
+        // shadows. Held items keep their layers: they are visible in first person, so their shadow is real.
+        public const uint LocalBodyRenderingLayer=1u<<2;
         // Runs every LateUpdate because held items are re-parented at runtime; it reuses one list
         // and only writes renderer state that actually changed, so it allocates nothing per frame.
         public void ApplyBodyVisibility()
@@ -169,7 +181,10 @@ namespace SurvivalFP
             foreach(var renderer in childRenderers)
             {
                 if(renderer.forceRenderingOff!=off)renderer.forceRenderingOff=off;
-                if(visualBody && renderer.shadowCastingMode!=shadows && renderer.transform.IsChildOf(visualBody) && !renderer.GetComponentInParent<PickupItem>())renderer.shadowCastingMode=shadows;
+                if(!visualBody || !renderer.transform.IsChildOf(visualBody) || renderer.GetComponentInParent<PickupItem>())continue;
+                if(renderer.shadowCastingMode!=shadows)renderer.shadowCastingMode=shadows;
+                uint layers=IsOwner?LocalBodyRenderingLayer:(renderer.renderingLayerMask==LocalBodyRenderingLayer?RoomBakedLighting.DynamicLayer:renderer.renderingLayerMask);
+                if(renderer.renderingLayerMask!=layers)renderer.renderingLayerMask=layers;
             }
         }
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

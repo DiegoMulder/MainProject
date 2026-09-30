@@ -23,16 +23,24 @@ public class EnemyRandomSounds : MonoBehaviour
     private bool bloodToggle = false;
     [SerializeField] private GameObject bloodParticle;
 
+    [Tooltip("Optional Sound Event for footsteps (clips, variation, 3D range). Empty = Sound Library ENEMY AUDIO, then the clips above.")]
+    [SerializeField] private SurvivalFP.SoundEvent footstepEvent;
+    private int lastFootstep = -1;
+
+    // Called by the walk/run animation, so steps land exactly on the feet.
     public void Footstep()
     {
-        if (footstepSounds.Length == 0)
+        var sound = SurvivalFP.SoundLibrary.Pick(footstepEvent, l => l.enemyFootstep);
+        if (sound && sound.HasClips) { sound.Play(transform.position, transform); return; }
+
+        if (footstepSounds == null || footstepSounds.Length == 0)
             return;
 
-        AudioClip clip = footstepSounds[
-            Random.Range(0, footstepSounds.Length)
-        ];
-
-        footstepSource.PlayOneShot(clip);
+        int index = Random.Range(0, footstepSounds.Length);
+        if (index == lastFootstep && footstepSounds.Length > 1) index = (index + 1) % footstepSounds.Length;
+        lastFootstep = index;
+        footstepSource.pitch = Random.Range(.93f, 1.05f);
+        footstepSource.PlayOneShot(footstepSounds[index], Random.Range(.85f, 1f));
     }
 
     public void BreathingIn()

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ec160c2baaed44998a21b0a47751b9, type: 3}
+  m_Name: Closet Enter
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.SoundEvent
+  clips:
+  - {fileID: 8300000, guid: da76518becf4cf24988d5a7c901d7525, type: 3}
+  - {fileID: 8300000, guid: 6ebf09e18bad7464ead1dd82edf5d517, type: 3}
+  - {fileID: 8300000, guid: 7969cf73db953a840acaf1b7dd77227f, type: 3}
+  - {fileID: 8300000, guid: 98626412e189e894fb3a17588bfab019, type: 3}
+  - {fileID: 8300000, guid: a396f972a8e23324bbc6361027c7337f, type: 3}
+  avoidRepeat: 1
+  volume: 0.55
+  volumeVariation: 0.1
+  pitch: 0.82
+  pitchVariation: 0.05
+  bus: 2
+  spatialBlend: 1
+  minDistance: 1
+  maxDistance: 14
+  reverbMix: 1
+  alertsEnemy: 1
+  hearingRadius: 5
+  hearingCategory: 2

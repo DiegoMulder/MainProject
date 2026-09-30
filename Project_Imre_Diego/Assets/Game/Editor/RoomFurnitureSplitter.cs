@@ -77,6 +77,8 @@ namespace SurvivalFP.EditorTools
                 if (!entry.target) continue;
                 var marker = entry.target.GetComponentInChildren<NetworkSpawnMarker>(true);
                 if (!marker || !marker.prefab) continue;
+                // A closet that replaces one modelled into the room stays exactly where the model had it.
+                if (marker.keepAuthoredPose) { notes.Add($"{entry.target.name} kept at its modelled spot"); continue; }
                 var probe = new GameObject("__PlacementProbe") { hideFlags = HideFlags.HideAndDontSave };
                 probe.transform.position = new Vector3(0, -5000, 0);
                 try
@@ -243,6 +245,11 @@ namespace SurvivalFP.EditorTools
             var lanterns = FindWallLanterns(tris, islands.Values, materials, v, toRoom);
             var lanternTris = new HashSet<Tri>(lanterns.SelectMany(l => l.tris));
             var lanternIslands = new HashSet<Piece>(islands.Values.Where(i => i.tris.Any(lanternTris.Contains)));
+            // Closets modelled into the room look real but are only shell geometry: nobody can hide in them.
+            // They leave the shell and a real networked closet stands in exactly the same place.
+            var bakedClosets = FindBakedClosets(tris, islands.Values, room, v, toRoom, lanternTris);
+            foreach (var bc in bakedClosets) lanternTris.UnionWith(bc.tris);
+            foreach (var island in islands.Values) if (island.tris.Any(t => bakedClosets.Any(bc => bc.tris.Contains(t)))) lanternIslands.Add(island);
 
             // Candidates: furniture-material islands, excluding flat floor decor (rugs) and long wall trims
             // (skirting, crown moulding) that would otherwise glue neighbouring pieces together.
@@ -287,6 +294,7 @@ namespace SurvivalFP.EditorTools
             var shellTris = tris.Where(t => !furnitureTris.Contains(t) && !lanternTris.Contains(t)).ToList();
             var shellMesh = BuildMesh(mesh, shellTris, Matrix4x4.identity, Vector3.zero, materials, out var shellMaterials, $"{root.name} Shell");
             int uvFixes = RepairCollapsedUVs(shellMesh, toRoom, shellMaterials);
+            int sillFixes = RepairDoorwaySills(shellMesh, toRoom, shellMaterials);
             filter.sharedMesh = SaveMesh(shellMesh, $"{folder}/{root.name} Shell.asset");
             renderer.sharedMaterials = Styled(shellMaterials);
             int lanternCount = PlaceWallLanterns(root, source, lanterns);
@@ -344,9 +352,84 @@ namespace SurvivalFP.EditorTools
                 entries.Add(new RandomizedStructure { target = setup, spawnChance = chance });
                 created.Add($"{setup.name} {chance}%");
             }
+            // Real closets where the model had them: always present (the model always showed them), fixed pose.
+            var closetPrefab = AssetDatabase.LoadAssetAtPath<Unity.Netcode.NetworkObject>(ClosetPrefab);
+            int closetIndex = 0;
+            foreach (var bc in bakedClosets)
+            {
+                if (!closetPrefab) break;
+                string setupName = $"Modelled Closet {++closetIndex} Setup";
+                var setup = new GameObject(setupName); setup.transform.SetParent(root.transform, false);
+                setup.transform.localPosition = bc.position; setup.transform.localRotation = Quaternion.Euler(0, bc.yaw, 0);
+                var spawn = new GameObject("Closet Spawn"); spawn.transform.SetParent(setup.transform, false);
+                var marker = spawn.AddComponent<NetworkSpawnMarker>(); marker.prefab = closetPrefab; marker.keepAuthoredPose = true;
+                source.generatedPieces.Add(setup);
+                float chance = keptChance.TryGetValue(setupName, out var kept) ? kept : 100f;
+                entries.Add(new RandomizedStructure { target = setup, spawnChance = chance });
+                created.Add($"{setupName} {chance}%");
+            }
             room.randomizedStructures = entries.ToArray();
             EditorUtility.SetDirty(room);
-            return $"{root.name}: {pieces.Count} pieces [{string.Join(", ", created)}], {anchors} item anchors, {plants} plant capsules, {lanternCount} wall lanterns, {uvFixes} stretched faces re-mapped, removed {legacy} legacy prop groups, shell {filter.sharedMesh.triangles.Length / 3} tris";
+            return $"{root.name}: {pieces.Count} pieces [{string.Join(", ", created)}], {anchors} item anchors, {plants} plant capsules, {lanternCount} wall lanterns, {bakedClosets.Count} modelled closets made real, {uvFixes} stretched faces re-mapped, {sillFixes} doorway sill faces floored, removed {legacy} legacy prop groups, shell {filter.sharedMesh.triangles.Length / 3} tris";
+        }
+
+        const string ClosetPrefab = "Assets/Game/Prefabs/Maps/Mansion/Props/Closet.prefab";
+        sealed class BakedCloset { public HashSet<Tri> tris = new(); public Vector3 position; public float yaw; }
+
+        // A modelled closet is an island the size of the Closet prefab's model (about 1.24 x 2.1 x 0.67 m), standing
+        // near the floor. Everything wholly inside its footprint (feet, crown, handles) goes with it. It faces the
+        // room: its back is to the wall.
+        static List<BakedCloset> FindBakedClosets(List<Tri> tris, IEnumerable<Piece> islandSet, RoomModule room, Vector3[] v, Matrix4x4 toRoom, HashSet<Tri> taken)
+        {
+            var found = new List<BakedCloset>();
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ClosetPrefab);
+            var model = prefab ? prefab.GetComponentsInChildren<MeshRenderer>(true).FirstOrDefault(r => r.enabled) : null;
+            if (!model) return found;
+            var size = model.bounds.size; float width = Mathf.Max(size.x, size.z), depth = Mathf.Min(size.x, size.z);
+            var occupancy = room.OccupancyVolumes.Aggregate(room.OccupancyVolumes[0], (a, b) => { a.Encapsulate(b); return a; });
+            // Connected by position alone: a modelled closet mixes materials, so the per-material islands split it up.
+            var ids = new Dictionary<Vector3Int, int>();
+            // Half-millimetre welding: at 1 mm a closet can fuse with the furniture standing against it.
+            int Id(int i) { var k = Vector3Int.RoundToInt(v[i] * 2000f); if (!ids.TryGetValue(k, out int id)) ids[k] = id = ids.Count; return id; }
+            var nodes = tris.Select(t => (Id(t.a), Id(t.b), Id(t.c))).ToArray();
+            var parent = Enumerable.Range(0, ids.Count).ToArray();
+            int Find(int x) { while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; }
+            foreach (var n in nodes) { int r = Find(n.Item1); parent[Find(n.Item2)] = r; parent[Find(n.Item3)] = r; }
+            var groups = new Dictionary<int, Bounds>();
+            for (int ti = 0; ti < tris.Count; ti++)
+            {
+                var t = tris[ti]; int r = Find(nodes[ti].Item1);
+                var p = toRoom.MultiplyPoint3x4(v[t.a]);
+                if (!groups.TryGetValue(r, out var gb)) gb = new Bounds(p, Vector3.zero);
+                gb.Encapsulate(p); gb.Encapsulate(toRoom.MultiplyPoint3x4(v[t.b])); gb.Encapsulate(toRoom.MultiplyPoint3x4(v[t.c]));
+                groups[r] = gb;
+            }
+            foreach (var b in groups.Values)
+            {
+                float w = Mathf.Max(b.size.x, b.size.z), d = Mathf.Min(b.size.x, b.size.z);
+                if (Mathf.Abs(w - width) > .12f || Mathf.Abs(d - depth) > .15f || b.size.y < size.y * .8f || b.size.y > size.y * 1.1f) continue;
+                if (found.Any(f => Vector3.Distance(new Vector3(f.position.x, 0, f.position.z), new Vector3(b.center.x, 0, b.center.z)) < .5f)) continue;
+                // Footprint down to the floor it stands on, so the feet under the body come along.
+                var foot = new Bounds(b.center, b.size); foot.min = new Vector3(b.min.x - .03f, b.min.y - (size.y - b.size.y) - .05f, b.min.z - .03f); foot.max = new Vector3(b.max.x + .03f, b.max.y + .05f, b.max.z + .03f);
+                var closet = new BakedCloset();
+                float floorY = float.MaxValue;
+                foreach (var t in tris)
+                {
+                    if (taken.Contains(t)) continue;
+                    Vector3 a = toRoom.MultiplyPoint3x4(v[t.a]), bb = toRoom.MultiplyPoint3x4(v[t.b]), c = toRoom.MultiplyPoint3x4(v[t.c]);
+                    if (!foot.Contains(a) || !foot.Contains(bb) || !foot.Contains(c)) continue;
+                    closet.tris.Add(t); floorY = Mathf.Min(floorY, Mathf.Min(a.y, Mathf.Min(bb.y, c.y)));
+                }
+                // Facing: along the thin axis, towards the middle of the room.
+                bool thinX = b.size.x < b.size.z;
+                float toCentre = thinX ? occupancy.center.x - b.center.x : occupancy.center.z - b.center.z;
+                closet.yaw = thinX ? (toCentre >= 0 ? 90f : 270f) : (toCentre >= 0 ? 0f : 180f);
+                // The prefab's model sits slightly forward of its pivot; place the pivot so the models coincide.
+                var offset = Quaternion.Euler(0, closet.yaw, 0) * new Vector3(model.bounds.center.x - prefab.transform.position.x, 0, model.bounds.center.z - prefab.transform.position.z);
+                closet.position = new Vector3(b.center.x, floorY, b.center.z) - offset;
+                found.Add(closet);
+            }
+            return found;
         }
 
         sealed class Lantern { public HashSet<Tri> tris = new(); public Vector3 mount; public Vector3 outward; }
@@ -462,6 +545,100 @@ namespace SurvivalFP.EditorTools
                 instance.transform.localRotation = Quaternion.LookRotation(lantern.outward, Vector3.up);
             }
             return n;
+        }
+
+        // Upper-floor doorways in the room models (the staircase landing, the Grand Hall's gallery doors) were cut
+        // through the wall with the wall's own wallpaper left on the bottom of the opening: a strip of wallpaper
+        // lying on the floor right at the threshold. A face is such a sill when it faces straight up, carries a
+        // wallpaper material, and lies exactly on a walkable floor level next to that level's floor. It moves to
+        // the floor material and takes its UVs from the adjoining floor face's own mapping, so the boards run
+        // straight through the doorway with no seam. Tops of walls (above the ceiling, no floor there) never
+        // qualify. Geometry is untouched.
+        static int RepairDoorwaySills(Mesh mesh, Matrix4x4 toRoom, Material[] materials)
+        {
+            int floorSub = -1;
+            for (int s = 0; s < materials.Length && s < mesh.subMeshCount; s++) if (materials[s] && materials[s].name.Contains("Floor")) { floorSub = s; break; }
+            if (floorSub < 0) return 0;
+            var verts = new List<Vector3>(); mesh.GetVertices(verts);
+            var normals = new List<Vector3>(); mesh.GetNormals(normals);
+            var colors = new List<Color>(); mesh.GetColors(colors);
+            var uvs = new List<Vector2>[4]; for (int c = 0; c < 4; c++) { uvs[c] = new List<Vector2>(); mesh.GetUVs(c, uvs[c]); }
+            if (uvs[0].Count != verts.Count) return 0;
+            Vector3 P(int i) => toRoom.MultiplyPoint3x4(verts[i]);
+            bool Up(Vector3 a, Vector3 b, Vector3 c, out float area) { var n = Vector3.Cross(b - a, c - a); area = n.magnitude * .5f; return area > 1e-5f && n.y / (area * 2f) > .95f; }
+            var subTris = new List<List<int>>(); for (int s = 0; s < mesh.subMeshCount; s++) subTris.Add(mesh.GetTriangles(s).ToList());
+            // The floor's up-facing faces, kept for their UV mapping.
+            var floor = new List<(Vector3 a, Vector3 b, Vector3 c, Vector2 ua, Vector2 ub, Vector2 uc)>();
+            var ft = subTris[floorSub];
+            for (int i = 0; i < ft.Count; i += 3)
+            {
+                Vector3 a = P(ft[i]), b = P(ft[i + 1]), c = P(ft[i + 2]);
+                if (Up(a, b, c, out float area) && area > .01f) floor.Add((a, b, c, uvs[0][ft[i]], uvs[0][ft[i + 1]], uvs[0][ft[i + 2]]));
+            }
+            if (floor.Count == 0) return 0;
+            float EdgeDistance(Vector2 p, Vector2 a, Vector2 b) { var ab = b - a; float t = Mathf.Clamp01(Vector2.Dot(p - a, ab) / Mathf.Max(ab.sqrMagnitude, 1e-8f)); return (a + ab * t - p).magnitude; }
+            int moved = 0;
+            for (int s = 0; s < subTris.Count; s++)
+            {
+                if (s == floorSub || s >= materials.Length || !materials[s] || !materials[s].name.Contains("Wallpaper")) continue;
+                var t = subTris[s];
+                for (int i = t.Count - 3; i >= 0; i -= 3)
+                {
+                    Vector3 a = P(t[i]), b = P(t[i + 1]), c = P(t[i + 2]);
+                    if (!Up(a, b, c, out _)) continue;
+                    float y = (a.y + b.y + c.y) / 3f;
+                    // The floor face on this level that shares an edge with the sill (touching within 2 cm).
+                    int best = -1; float bestGap = .02f;
+                    for (int f = 0; f < floor.Count; f++)
+                    {
+                        var fl = floor[f]; if (Mathf.Abs((fl.a.y + fl.b.y + fl.c.y) / 3f - y) > .01f) continue;
+                        Vector2 fa = new(fl.a.x, fl.a.z), fb = new(fl.b.x, fl.b.z), fc = new(fl.c.x, fl.c.z);
+                        foreach (var p in new[] { a, b, c })
+                        {
+                            var q = new Vector2(p.x, p.z);
+                            float gap = Mathf.Min(EdgeDistance(q, fa, fb), Mathf.Min(EdgeDistance(q, fb, fc), EdgeDistance(q, fc, fa)));
+                            if (gap < bestGap) { bestGap = gap; best = f; }
+                        }
+                    }
+                    if (best < 0) continue;
+                    // The floor face's affine mapping (x, z) -> UV, extended over the sill.
+                    var src = floor[best];
+                    Vector2 e1 = new(src.b.x - src.a.x, src.b.z - src.a.z), e2 = new(src.c.x - src.a.x, src.c.z - src.a.z);
+                    float det = e1.x * e2.y - e2.x * e1.y; if (Mathf.Abs(det) < 1e-8f) continue;
+                    Vector2 d1 = src.ub - src.ua, d2 = src.uc - src.ua;
+                    Vector2 Map(Vector3 p)
+                    {
+                        float px = p.x - src.a.x, pz = p.z - src.a.z;
+                        float u = (px * e2.y - e2.x * pz) / det, w = (e1.x * pz - px * e1.y) / det; // barycentric along e1, e2
+                        return src.ua + d1 * u + d2 * w;
+                    }
+                    var corner = new[] { t[i], t[i + 1], t[i + 2] };
+                    var fresh = new int[3];
+                    for (int k = 0; k < 3; k++)
+                    {
+                        int old = corner[k], n0 = verts.Count;
+                        verts.Add(verts[old]);
+                        if (normals.Count == n0) normals.Add(normals[old]);
+                        if (colors.Count == n0) colors.Add(colors[old]);
+                        for (int ch = 1; ch < 4; ch++) if (uvs[ch].Count == n0) uvs[ch].Add(uvs[ch][old]);
+                        uvs[0].Add(Map(P(old)));
+                        fresh[k] = n0;
+                    }
+                    t.RemoveRange(i, 3);
+                    subTris[floorSub].AddRange(fresh);
+                    moved++;
+                }
+            }
+            if (moved == 0) return 0;
+            if (verts.Count > 65000) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+            mesh.SetVertices(verts);
+            if (normals.Count == verts.Count) mesh.SetNormals(normals);
+            if (colors.Count == verts.Count) mesh.SetColors(colors);
+            for (int c = 0; c < 4; c++) if (uvs[c].Count == verts.Count) mesh.SetUVs(c, uvs[c]);
+            for (int s = 0; s < subTris.Count; s++) mesh.SetTriangles(subTris[s], s, false);
+            mesh.RecalculateTangents();
+            mesh.RecalculateBounds();
+            return moved;
         }
 
         // Some faces in the room models (notably the underside of every doorway head) have all three UVs

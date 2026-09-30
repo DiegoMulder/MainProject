@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ec160c2baaed44998a21b0a47751b9, type: 3}
+  m_Name: Clothing Rustle
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.SoundEvent
+  clips:
+  - {fileID: 8300000, guid: 050396c23373e534b80f5de00bf99a11, type: 3}
+  - {fileID: 8300000, guid: 60a7bb08fb0973a43974fa9a29fe31aa, type: 3}
+  - {fileID: 8300000, guid: 6bb2b4385fb568745aebf8449ec1b758, type: 3}
+  - {fileID: 8300000, guid: 086e52df1f2cfe248a99692c84f4e58a, type: 3}
+  - {fileID: 8300000, guid: a140613ffc612bc4b8d5921aba4f4c4c, type: 3}
+  - {fileID: 8300000, guid: d0a0dccba85bab84fae5d3790e6ef069, type: 3}
+  - {fileID: 8300000, guid: 92d837809f647184ea448fc4f957dd05, type: 3}
+  - {fileID: 8300000, guid: f992a8ae694dcee4eb8b6936434a28f2, type: 3}
+  avoidRepeat: 1
+  volume: 0.14
+  volumeVariation: 0.2
+  pitch: 1
+  pitchVariation: 0.08
+  bus: 1
+  spatialBlend: 1
+  minDistance: 1
+  maxDistance: 5
+  reverbMix: 1
+  alertsEnemy: 0
+  hearingRadius: 0
+  hearingCategory: 3

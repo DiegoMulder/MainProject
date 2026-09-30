@@ -35,7 +35,7 @@ namespace SurvivalFP
                 target.Create();view.targetTexture=target;
             }
             view.aspect=(float)Screen.width/Mathf.Max(1,Screen.height);
-            Shader.SetGlobalVector(SnapParams,new Vector4(width,height,profile.vertexSnap?1:0,0));
+            Shader.SetGlobalVector(SnapParams,new Vector4(width,height,profile.vertexSnap?1:0,profile.verticalSnap));
             if(profile.presentationShader && (!material || material.shader!=profile.presentationShader))
             {if(material)Destroy(material);material=new Material(profile.presentationShader);}
             UpdateOutput();

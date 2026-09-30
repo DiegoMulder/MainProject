@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31927f869d1f51b4899b7d2e5339dcfa, type: 3}
+  m_Name: Sound Library
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.SoundLibrary
+  environmentVolume: 0.6
+  playerVolume: 0.75
+  interactionVolume: 0.85
+  enemyVolume: 1
+  cueVolume: 1
+  uiVolume: 0.5
+  output: {fileID: 0}
+  walkSteps: {fileID: 11400000, guid: 35898656e0887814db18ef23f9a1f5ba, type: 2}
+  sprintSteps: {fileID: 11400000, guid: 2fada004383648441ad6a125812f281e, type: 2}
+  crouchSteps: {fileID: 11400000, guid: 39ee4b0e8aaeb2a43bf2c16a6f324c96, type: 2}
+  jump: {fileID: 11400000, guid: c2d73b7bed2dd684ba20303c2df34e9b, type: 2}
+  landSoft: {fileID: 11400000, guid: eb593baf741d8654cab526b5092861e4, type: 2}
+  landHard: {fileID: 11400000, guid: 9268f2066b65b8342bb399b9e4e8b943, type: 2}
+  hardLandingSpeed: 6.5
+  crouchDown: {fileID: 11400000, guid: 803a2875615db484e999af99d2a0b593, type: 2}
+  standUp: {fileID: 11400000, guid: 8d07a7b1b71d7ae46919126f0bc31467, type: 2}
+  clothing: {fileID: 11400000, guid: b2d3e00400496c4448bcb2670c28025f, type: 2}
+  clothingChance: 0.22
+  breathing: {fileID: 11400000, guid: 638e655f33206114eaf92f37a8658fcb, type: 2}
+  doorHandle: {fileID: 11400000, guid: 1e4b671a1b72e5449bb74fbb4d8d9a0f, type: 2}
+  doorOpen: {fileID: 11400000, guid: 26589239e21775d4181974a9de10fef6, type: 2}
+  doorClose: {fileID: 11400000, guid: a8734ddaa2f2e41498bd1c98aeef78d6, type: 2}
+  doorLatch: {fileID: 11400000, guid: 1c9c1a095d9cb31438c78ea4c3dcd8c8, type: 2}
+  closetOpen: {fileID: 11400000, guid: fa28a192293bfde45a7a6f0193061563, type: 2}
+  closetClose: {fileID: 11400000, guid: a129391df20a9644caf7e98f96463674, type: 2}
+  closetEnter: {fileID: 11400000, guid: bec5cdaf584e4d044a2721e773109e60, type: 2}
+  closetExit: {fileID: 11400000, guid: 1f57c15fae229ef46a2656231204c26a, type: 2}
+  itemPickup: {fileID: 11400000, guid: 608048240fb48b2418f1e9a0ce717df5, type: 2}
+  itemDropLight: {fileID: 11400000, guid: a0d9918b24d27744dabfd91d686855c5, type: 2}
+  itemDropHeavy: {fileID: 11400000, guid: 34463708abaa38844a0301d8165f3e7b, type: 2}
+  heavyItemMass: 0.9
+  flashlightOn: {fileID: 11400000, guid: 4425f8005fe50804fb0df7e5487788c8, type: 2}
+  flashlightOff: {fileID: 11400000, guid: 6a4610a663702d1489e9a1c216ed2217, type: 2}
+  walkieOn: {fileID: 11400000, guid: 40f7516fbccf7d34bbd7229d75da38d0, type: 2}
+  walkieOff: {fileID: 11400000, guid: 03a78eeed6df9074fa56a3ac83671c03, type: 2}
+  transmitStart: {fileID: 11400000, guid: 6181e1b296d9e18409fc416e228f87e9, type: 2}
+  transmitEnd: {fileID: 11400000, guid: c2946301a3ac98444aac2451fe965a6d, type: 2}
+  receiveStart: {fileID: 11400000, guid: f7f9bd31f02172b4da4901ea86e0f4bc, type: 2}
+  receiveEnd: {fileID: 11400000, guid: 36c7436e5287dee448b0e48840845d25, type: 2}
+  receiveStatic: {fileID: 11400000, guid: 52afbfd8a8e1eb24286695c6969cb842, type: 2}
+  enemyFootstep: {fileID: 0}
+  enemyRoamVocal: {fileID: 0}
+  roamVocalInterval: {x: 10, y: 22}
+  enemyInvestigate: {fileID: 0}
+  enemySearch: {fileID: 0}
+  enemyChaseStart: {fileID: 0}
+  enemyAttack: {fileID: 11400000, guid: 378a6069fa2702e4188b0032a10dd414, type: 2}
+  enemyStagger: {fileID: 0}
+  downed: {fileID: 11400000, guid: 6380ce542cecc8a48b7b5d99fb66ced2, type: 2}
+  uiHover: {fileID: 11400000, guid: 930576ad43239424d8a004ce3adc24f3, type: 2}
+  uiClick: {fileID: 11400000, guid: 56aa388b25d02524ab5161957fbc4a36, type: 2}
+  uiBack: {fileID: 11400000, guid: 440d22598cec57446813cc4eefc15aee, type: 2}
+  uiToggle: {fileID: 11400000, guid: de6e6bbab4b1d144eacce5180dbc6438, type: 2}
+  uiSlider: {fileID: 11400000, guid: ce6b75088a9e21e4fb3bee78ce1cc95b, type: 2}

@@ -7,8 +7,13 @@ namespace SurvivalFP
         public Transform hinge;
         public float openAngle=100f, speed=130f, noiseRadius=6f;
         public bool startOpen, interactable=true;
+        [Tooltip("Legacy fallback, used only when neither this door nor the Sound Library has door sounds.")]
         public AudioSource audioSource;
         public AudioClip sound;
+        [Header("DOOR AUDIO (empty = Sound Library)")]
+        public SoundEvent handleSound;
+        public SoundEvent openSound, closeSound, latchSound;
+        bool closing;
         public NetworkVariable<bool> Open = new(false);
         public NetworkVariable<float> SwingAngle = new(100f);
         Quaternion closedRotation;
@@ -59,7 +64,23 @@ namespace SurvivalFP
         }
         public override void OnNetworkSpawn() { AudioVolumeBus.RouteSfx(audioSource);Open.OnValueChanged+=Changed; if(IsServer){SwingAngle.Value=openAngle;Open.Value=startOpen;} }
         public override void OnNetworkDespawn() => Open.OnValueChanged-=Changed;
-        void Changed(bool old,bool value) { if(audioSource && sound) audioSource.PlayOneShot(sound); }
+        SoundEvent Handle=>SoundLibrary.Pick(handleSound,l=>l.doorHandle);
+        SoundEvent Opening=>SoundLibrary.Pick(openSound,l=>l.doorOpen);
+        SoundEvent Closing=>SoundLibrary.Pick(closeSound,l=>l.doorClose);
+        SoundEvent Latch=>SoundLibrary.Pick(latchSound,l=>l.doorLatch);
+        // Every client: the handle turns, then the leaf swings; a closing door latches when it meets the frame.
+        void Changed(bool old,bool value)
+        {
+            var at=hinge?hinge.position+Vector3.up*1.1f:transform.position+Vector3.up*1.1f;
+            var swing=value?Opening:Closing;
+            if(swing && swing.HasClips)
+            {
+                if(value && Handle)Handle.Play(at,hinge);
+                swing.Play(at,hinge);
+                closing=!value;
+            }
+            else if(audioSource && sound) audioSource.PlayOneShot(sound);
+        }
         public virtual string Prompt(PlayerInteraction player) => Open.Value ? "Close door" : "Open door";
         public virtual bool CanInteract(PlayerInteraction player) => interactable;
         public virtual void Interact(PlayerInteraction player) { if(IsServer && interactable) SetOpen(!Open.Value,player.gameObject); }
@@ -80,14 +101,20 @@ namespace SurvivalFP
                 }
                 SwingAngle.Value=angle;
             }
-            Open.Value=value; GameplayNoiseSystem.Emit(transform.position,noiseRadius,NoiseCategory.Door,source?source:gameObject);
+            Open.Value=value;
+            // Hearing comes from the door's Sound Event when it asks for it, otherwise from noiseRadius.
+            var heard=value?Opening:Closing;
+            if(heard && heard.alertsEnemy)heard.EmitHearing(transform.position,source?source:gameObject);
+            else GameplayNoiseSystem.Emit(transform.position,noiseRadius,NoiseCategory.Door,source?source:gameObject);
         }
         // Idle doors skip the write: touching a transform every frame forces a physics sync of its colliders.
         void Update()
         {
             if(!hinge) return;
             var target=closedRotation*Quaternion.Euler(0,Open.Value?SwingAngle.Value:0,0);
-            if(hinge.localRotation!=target) hinge.localRotation=Quaternion.RotateTowards(hinge.localRotation,target,speed*Time.deltaTime);
+            if(hinge.localRotation==target) return;
+            hinge.localRotation=Quaternion.RotateTowards(hinge.localRotation,target,speed*Time.deltaTime);
+            if(closing && hinge.localRotation==target){closing=false;var latch=Latch;if(latch)latch.Play(hinge.position+Vector3.up*1.1f);}
         }
     }
 }

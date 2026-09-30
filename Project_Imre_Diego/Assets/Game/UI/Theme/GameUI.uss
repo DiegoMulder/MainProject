@@ -91,8 +91,8 @@
     color: var(--text-muted); font-size: 25px; letter-spacing: 7px;
     -unity-font: url("../Fonts/EBGaramond-Variable.ttf"); -unity-font-style: bold; -unity-text-align: middle-left;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
-    transition-property: color, translate, letter-spacing;
-    transition-duration: 0.22s, 0.22s, 0.3s; transition-timing-function: ease-out-cubic;
+    transition-property: color, translate, letter-spacing, text-shadow;
+    transition-duration: 0.22s, 0.22s, 0.3s, 0.3s; transition-timing-function: ease-out-cubic;
 }
 .menu-item__line {
     position: absolute; left: 2px; bottom: 7px; height: 1px; width: 0; background-color: var(--accent-bright);
@@ -104,11 +104,15 @@
     opacity: 0; translate: 10px 0;
     transition-property: opacity, translate; transition-duration: 0.25s, 0.25s; transition-timing-function: ease-out-cubic;
 }
-.menu-item-wrap--hot > .btn.menu-item { color: var(--ivory); translate: 6px 0; letter-spacing: 8px; }
+/* Hover / focus: ivory word, a faint crimson glow behind it (dark enough to keep the contrast), the line and the mark. */
+.menu-item-wrap--hot > .btn.menu-item { color: var(--ivory); translate: 6px 0; letter-spacing: 8px; text-shadow: 0 0 14px rgba(120, 18, 16, 0.95); }
 .menu-item-wrap--hot > .menu-item__line { width: 100%; }
 .menu-item-wrap--hot > .menu-item__mark { opacity: 1; translate: 0 0; }
-.btn.menu-item:active { color: var(--accent-bright); }
-.btn.menu-item:disabled { opacity: 0.28; }
+/* Pressed: the word settles back a little and stays ivory; the line turns full crimson. */
+.menu-item-wrap--hot > .btn.menu-item:active { color: var(--ivory); translate: 3px 0; }
+.menu-item-wrap--hot:active > .menu-item__line { background-color: var(--accent); height: 2px; }
+/* Disabled: dim and flat, but still legible. */
+.btn.menu-item:disabled { opacity: 0.45; color: var(--text-faint); text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); }
 .btn.menu-item--primary { color: var(--text); }
 .btn.menu-item--danger { color: rgb(150, 96, 88); }
 .menu-item-wrap--hot > .btn.menu-item--danger { color: var(--danger); }
@@ -126,7 +130,9 @@
     -unity-font: url("../Fonts/Inter-SemiBold.ttf"); font-size: 12px; letter-spacing: 3px; color: var(--text-muted);
     transition-property: color, border-color; transition-duration: 0.2s, 0.2s;
 }
-.btn.link:hover, .btn.link:focus { color: var(--ivory); border-color: var(--accent-bright); }
+.btn.link:hover, .btn.link:focus { color: var(--ivory); border-color: var(--accent-bright); text-shadow: 0 0 10px rgba(120, 18, 16, 0.95); }
+.btn.link:active { color: var(--ivory); border-color: var(--accent); translate: 0 1px; }
+.btn.link:disabled { opacity: 0.45; }
 .btn.link--danger { color: var(--danger); }
 
 /* ---------- Inputs: a line to write on, not a box ---------- */
@@ -184,7 +190,36 @@
     transition-property: border-color, color; transition-duration: 0.15s, 0.15s;
 }
 .btn:hover { color: var(--ivory); border-color: var(--accent-bright); }
-.btn:disabled { opacity: 0.3; }
+.btn:disabled { opacity: 0.45; }
+
+/* ---------- State guard ----------
+   Unity's default theme gives buttons, fields and toggles a light fill on :hover, :focus and :active
+   (and a pressed fill on :hover:active). Our words have no fill in any state, so the theme's is removed
+   here with a higher specificity than the theme's selectors. Without this the hover state showed ivory
+   text on a light-grey box. */
+.btn.unity-button:hover, .btn.unity-button:focus, .btn.unity-button:active, .btn.unity-button:hover:active,
+.btn.unity-button:checked, .btn.unity-button:disabled, .btn.unity-button:focus:hover {
+    background-color: rgba(0, 0, 0, 0); background-image: none;
+}
+.btn.menu-item.unity-button:hover, .btn.menu-item.unity-button:focus, .btn.menu-item.unity-button:active, .btn.menu-item.unity-button:hover:active,
+.btn.stepper__arrow.unity-button:hover, .btn.stepper__arrow.unity-button:focus, .btn.stepper__arrow.unity-button:active, .btn.stepper__arrow.unity-button:hover:active {
+    border-width: 0;
+}
+.field.unity-base-field:hover > .unity-base-text-field__input, .field.unity-base-field:focus > .unity-base-text-field__input,
+.field.unity-base-field:active > .unity-base-text-field__input, .field.unity-base-field:disabled > .unity-base-text-field__input,
+.field > .unity-base-text-field__input:hover, .field > .unity-base-text-field__input:focus {
+    background-color: rgba(0, 0, 0, 0); background-image: none;
+}
+.switch.unity-toggle:hover > .unity-toggle__input, .switch.unity-toggle:focus > .unity-toggle__input,
+.switch.unity-toggle:active > .unity-toggle__input, .switch.unity-toggle:checked > .unity-toggle__input {
+    background-color: rgba(0, 0, 0, 0); border-width: 0;
+}
+.slider.unity-base-slider:hover .unity-base-slider__tracker, .slider.unity-base-slider:focus .unity-base-slider__tracker,
+.slider.unity-base-slider:active .unity-base-slider__tracker {
+    background-color: rgba(196, 184, 170, 0.22); border-width: 0;
+}
+.slider.unity-base-slider:active .unity-base-slider__dragger { background-color: var(--ivory); scale: 1.2 1.2; }
+.slider.unity-base-slider:active .slider__fill { background-color: var(--accent-bright); }
 
 /* ---------- Sections (options, lobby) ---------- */
 .section { margin-bottom: var(--space-xl); }
@@ -268,8 +303,10 @@
     -unity-font: url("../Fonts/EBGaramond-Variable.ttf"); font-size: 34px; color: var(--text-faint);
     transition-property: color, translate; transition-duration: 0.18s, 0.18s;
 }
-.btn.stepper__arrow:hover, .btn.stepper__arrow:focus { color: var(--accent-bright); }
-.btn.stepper__arrow:disabled { opacity: 0.15; }
+.btn.stepper__arrow:hover, .btn.stepper__arrow:focus { color: var(--ivory); text-shadow: 0 0 12px rgba(150, 30, 26, 0.95); }
+.btn.stepper__arrow:active { color: var(--accent-bright); scale: 0.9 0.9; }
+.btn.stepper__arrow:disabled { opacity: 0.3; }
+.stepper:hover .stepper__label { color: var(--text); }
 .stepper__detail { -unity-font: url("../Fonts/EBGaramond-Variable.ttf"); -unity-font-style: italic; font-size: 18px; color: var(--text-muted); -unity-text-align: middle-center; margin: var(--space-xs) 0 var(--space-s) 150px; }
 
 /* ---------- End of round ---------- */

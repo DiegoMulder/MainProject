@@ -21,7 +21,11 @@ namespace SurvivalFP
         [SerializeField, Min(0f)] float fadeSpeed = 14f;
         [Tooltip("Spot light intensity calibrated for the URP scene lighting.")]
         [SerializeField, Min(0f)] float onIntensity = 12.6953125f;
+        [Header("FLASHLIGHT AUDIO (empty = Sound Library)")]
+        [SerializeField] SoundEvent onSound;
+        [SerializeField] SoundEvent offSound;
         [Header("Gameplay hearing")]
+        [Tooltip("Used when the on/off Sound Event does not set its own enemy hearing.")]
         [Min(0)] public float toggleNoiseRadius = 3f;
         public bool IsOn { get; private set; }
         public float Intensity => beam ? beam.intensity : 0f;
@@ -55,14 +59,24 @@ namespace SurvivalFP
             IsOn = !IsOn;
             cooldown = toggleCooldown;
             var holder = GetComponentInParent<NetworkPlayer>();
-            GameplayNoiseSystem.Emit(holder ? holder.transform.position : transform.position,
-                toggleNoiseRadius, NoiseCategory.Flashlight, holder ? holder.gameObject : gameObject);
+            var where = holder ? holder.transform.position : transform.position;
+            var who = holder ? holder.gameObject : gameObject;
+            var heard = Switch(IsOn);
+            if (heard && heard.alertsEnemy) heard.EmitHearing(where, who);
+            else GameplayNoiseSystem.Emit(where, toggleNoiseRadius, NoiseCategory.Flashlight, who);
             if (network && network.IsSpawned) network.PlaySwitchSound();
-            else PlaySwitchSound();
+            else PlaySwitchSound(IsOn);
         }
 
         public void ApplyNetworkState(bool on) { IsOn = on; }
-        public void PlaySwitchSound() { if (toggleAudio && toggleSound) toggleAudio.PlayOneShot(toggleSound); }
+        SoundEvent Switch(bool on) => on ? SoundLibrary.Pick(onSound, l => l.flashlightOn) : SoundLibrary.Pick(offSound, l => l.flashlightOff);
+        public void PlaySwitchSound() => PlaySwitchSound(IsOn);
+        public void PlaySwitchSound(bool on)
+        {
+            var sound = Switch(on);
+            if (sound && sound.HasClips) { sound.Play(transform.position, transform); return; }
+            if (toggleAudio && toggleSound) toggleAudio.PlayOneShot(toggleSound);
+        }
 
         void Awake()
         {
@@ -115,7 +129,10 @@ namespace SurvivalFP
             beam.shadows = LightShadows.Hard; beam.shadowStrength = .92f; beam.shadowNearPlane = .2f;
             var data = beam.GetUniversalAdditionalLightData();
             data.renderingLayers = (UnityEngine.RenderingLayerMask)uint.MaxValue;
-            data.customShadowLayers = false;
+            // Shadows come from everything except this client's own player (see NetworkPlayer.LocalBodyRenderingLayer):
+            // the local body is invisible to its own camera, so it must not throw a shadow either.
+            data.customShadowLayers = true;
+            data.shadowRenderingLayers = (UnityEngine.RenderingLayerMask)~NetworkPlayer.LocalBodyRenderingLayer;
             ApplyShadowTier();
         }
         // The local player's own torch gets a sharper shadow than teammates' torches.

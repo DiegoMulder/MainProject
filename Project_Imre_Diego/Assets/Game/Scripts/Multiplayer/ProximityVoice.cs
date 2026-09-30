@@ -65,6 +65,9 @@ namespace SurvivalFP
             try
             {
                 var voice=VivoxService.Instance;var radio=player.GetComponent<PlayerRadio>();
+                // Vivox can drop the channel underneath us (a reconnect, or a late leave from an earlier session when
+                // Play Mode restarts without a domain reload). Rejoin instead of calling into a channel we are not in.
+                if(!voice.ActiveChannels.ContainsKey(channel)){joined=false;radioTransmission=false;Status="Voice reconnecting";return;}
                 radio?.RegisterVoice(voice.SignedInPlayerId);
                 bool transmit=radio && radio.WantsTransmit;
                 // Route the live mic to both channels while powered on; VAD gates radio playback/noise.

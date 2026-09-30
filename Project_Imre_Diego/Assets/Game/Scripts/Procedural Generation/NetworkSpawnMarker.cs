@@ -8,6 +8,8 @@ namespace SurvivalFP
     {
         [Tooltip("A registered network prefab. Its pivot is placed at this marker.")]
         public NetworkObject prefab;
+        [Tooltip("Keep this exact pose: the closet placer never moves it. Used where a closet was modelled into the room (it replaces the baked copy).")]
+        public bool keepAuthoredPose;
         void OnDrawGizmos()
         {
             Gizmos.color=new Color(1,.55f,.1f,.8f);Gizmos.matrix=transform.localToWorldMatrix;

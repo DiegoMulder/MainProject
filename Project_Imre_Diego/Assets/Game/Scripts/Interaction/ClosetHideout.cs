@@ -17,7 +17,27 @@ namespace SurvivalFP
         [Range(.05f,1)] public float noiseMultiplier=.7f;
         public NetworkVariable<ulong> Occupant=new(Empty);
         public NetworkVariable<bool> ExitBlocked=new(false);
+        [Header("CLOSET AUDIO (empty = Sound Library)")]
+        public SoundEvent openSound;
+        public SoundEvent closeSound, enterSound, exitSound;
+        [Tooltip("Seconds between the doors opening and closing again around an entry or exit.")]
+        [Min(0)] public float doorCloseDelay=.55f;
         float nextExitCheck;
+        SoundEvent Opening=>SoundLibrary.Pick(openSound,l=>l.closetOpen);
+        SoundEvent Closing=>SoundLibrary.Pick(closeSound,l=>l.closetClose);
+        SoundEvent GoingIn=>SoundLibrary.Pick(enterSound,l=>l.closetEnter);
+        SoundEvent Leaving=>SoundLibrary.Pick(exitSound,l=>l.closetExit);
+        Vector3 DoorPoint=>(entryPoint?Vector3.Lerp(transform.position,entryPoint.position,.35f):transform.position)+Vector3.up*1.1f;
+        // Every client: the doors creak open, the body goes in (or out), the doors close behind.
+        void OccupantChanged(ulong old,ulong value)
+        {
+            bool entering=old==Empty && value!=Empty, leaving=old!=Empty && value==Empty;
+            if(!entering && !leaving)return;
+            if(Opening)Opening.Play(DoorPoint);
+            var body=entering?GoingIn:Leaving;if(body)body.Play(DoorPoint);
+            if(Closing && isActiveAndEnabled)StartCoroutine(CloseLater());
+        }
+        System.Collections.IEnumerator CloseLater(){yield return new WaitForSeconds(doorCloseDelay);if(Closing)Closing.Play(DoorPoint);}
         void Update()
         {
             if(!IsServer || Occupant.Value==Empty || Time.time<nextExitCheck)return;
@@ -26,7 +46,7 @@ namespace SurvivalFP
             ExitBlocked.Value=player && !HasClearExit(player);
         }
         public Vector3 InvestigationPosition=>investigationPoint?investigationPoint.position:exitPosition.position;
-        public override void OnNetworkSpawn() { All.Add(this); NetworkObject.AutoObjectParentSync=false; }
+        public override void OnNetworkSpawn() { All.Add(this); NetworkObject.AutoObjectParentSync=false; Occupant.OnValueChanged+=OccupantChanged; }
         public override void OnNetworkDespawn()
         {
             if(IsServer && !(GameSession.Instance && GameSession.Instance.Transitioning))
@@ -34,6 +54,7 @@ namespace SurvivalFP
                 var player=NetworkPlayer.Players.Find(p=>p && p.OwnerClientId==Occupant.Value);
                 if(player) { player.SetHiding(null); if(RoundManager.Instance && RoundManager.Instance.World.Built)player.Motor.Teleport(RoundManager.Instance.World.SpawnPosition); }
             }
+            Occupant.OnValueChanged-=OccupantChanged;
             All.Remove(this);
         }
         public string Prompt(PlayerInteraction interaction)
@@ -62,6 +83,8 @@ namespace SurvivalFP
                 !hiddenPosition || !cameraPosition || !exitPosition || !HasClearExit(player)) return false;
             // Let ordinary perception observe the player BEFORE they move behind the door.
             Entering?.Invoke(player,this);
+            // Heard while the player is still outside: the enemy investigates the closet front, it is not told who is inside.
+            var heard=GoingIn?GoingIn:Opening;if(heard)heard.EmitHearing(DoorPoint,player.gameObject);
             Occupant.Value=player.OwnerClientId;
             player.SetHiding(this);
             player.Motor.Teleport(hiddenPosition.position);
@@ -73,6 +96,7 @@ namespace SurvivalFP
             if(!IsServer || !player || Occupant.Value!=player.OwnerClientId || !TryExitPosition(player,out var point))return false;
             player.Motor.Teleport(point);
             Occupant.Value=Empty;player.SetHiding(null);
+            var heard=Leaving?Leaving:Opening;if(heard)heard.EmitHearing(point,player.gameObject);
             Physics.SyncTransforms();return true;
         }
         public void Forget(NetworkPlayer player)

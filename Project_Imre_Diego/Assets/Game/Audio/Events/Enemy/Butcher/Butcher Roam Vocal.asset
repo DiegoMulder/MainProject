@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ec160c2baaed44998a21b0a47751b9, type: 3}
+  m_Name: Butcher Roam Vocal
+  m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.SoundEvent
+  clips:
+  - {fileID: 8300000, guid: 10e7a4720063a9045b4d77c2c6750c90, type: 3}
+  - {fileID: 8300000, guid: e8faea8c854146c4ca6343739a00e77d, type: 3}
+  - {fileID: 8300000, guid: 84e32f23a982de049a5d5d653add7de0, type: 3}
+  - {fileID: 8300000, guid: 6c950e29d3999b444a25729c88542f70, type: 3}
+  - {fileID: 8300000, guid: 6e23c260c5a279d47a5be9234ca59784, type: 3}
+  - {fileID: 8300000, guid: 534dcc2eabd10234bbea62b58e5c1501, type: 3}
+  - {fileID: 8300000, guid: 3c732b6586202d1418fa1cb164cc5a00, type: 3}
+  avoidRepeat: 1
+  volume: 0.45
+  volumeVariation: 0.1
+  pitch: 0.78
+  pitchVariation: 0.06
+  bus: 3
+  spatialBlend: 1
+  minDistance: 2
+  maxDistance: 18
+  reverbMix: 1
+  alertsEnemy: 0
+  hearingRadius: 0
+  hearingCategory: 3
