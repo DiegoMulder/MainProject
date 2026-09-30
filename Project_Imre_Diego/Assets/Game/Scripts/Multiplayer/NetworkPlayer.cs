@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using Unity.Netcode.Components;
@@ -36,6 +36,8 @@ namespace SurvivalFP
         public NetworkVariable<float> Height = new(1.75f), Pitch = new(0f), Yaw = new(0f);
         public NetworkVariable<Vector3> Velocity = new(Vector3.zero);
         public NetworkVariable<int> Selection = new(-1), Gait = new(0);
+        // Which holding pose the body animator plays (animator float "ItemNumber"); written by the server from the held item.
+        public NetworkVariable<float> HeldItemNumber = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public NetworkVariable<bool> Grounded = new(true);
         public bool Active => IsSpawned;
         public bool CanMove=>IsSpawned && (Life.Value==PlayerLife.Alive || Life.Value==PlayerLife.Downed) && !IsHidden && !IsGrabbed
@@ -88,11 +90,13 @@ namespace SurvivalFP
             GetComponent<PlayerAudio>().enabled = IsOwner;
             ApplyBodyVisibility();
             Life.OnValueChanged += OnLife; Selection.OnValueChanged += OnSelection; HiddenClosetId.OnValueChanged+=OnHiding;
+            HeldItemNumber.OnValueChanged += OnHeldItemNumberChanged; ApplyHeldItemAnimation(HeldItemNumber.Value);
             if (IsOwner) { CameraMotion.ApplySettings(); Controller.SetCursor(true); }
             OnLife(Life.Value, Life.Value);
         }
         public override void OnNetworkDespawn()
         {
+            HeldItemNumber.OnValueChanged -= OnHeldItemNumberChanged;
             if(IsServer && HiddenCloset)HiddenCloset.Forget(this);
             HiddenClosetId.OnValueChanged-=OnHiding;
             if (IsServer && RoundManager.Instance && !(GameSession.Instance && GameSession.Instance.Transitioning)) RoundManager.Instance.ReleaseItems(this);
@@ -100,6 +104,19 @@ namespace SurvivalFP
             Players.Remove(this); if(Local==this) Local=null; Life.OnValueChanged -= OnLife; Selection.OnValueChanged -= OnSelection;
             if (IsOwner) Controller.SetCursor(false);
             if (IsServer && RoundManager.Instance && !(GameSession.Instance && GameSession.Instance.Transitioning)) RoundManager.Instance.EvaluateRound();
+        }
+        // Holding poses: flashlight 1, generic 2, capsule 3, none/cube 0. Server-authoritative, replayed on every client.
+        public void SetHeldItemAnimation(PickupKind kind)
+        {
+            if (!IsServer) return;
+            HeldItemNumber.Value = kind switch { PickupKind.Flashlight => 1f, PickupKind.Generic => 2f, PickupKind.Capsule => 3f, PickupKind.Cube => 0f, _ => 0f };
+        }
+        public void ClearHeldItemAnimation() { if (IsServer) HeldItemNumber.Value = 0f; }
+        void OnHeldItemNumberChanged(float oldValue, float newValue) => ApplyHeldItemAnimation(newValue);
+        void ApplyHeldItemAnimation(float value)
+        {
+            if (!animationDriver) animationDriver = GetComponent<PlayerAnimationDriver>();
+            if (animationDriver && animationDriver.animator) animationDriver.animator.SetFloat("ItemNumber", value);
         }
         void OnSelection(int old, int value) { if (value >= 0) Inventory.ApplySelection(value); }
         void OnLife(PlayerLife old, PlayerLife value)
