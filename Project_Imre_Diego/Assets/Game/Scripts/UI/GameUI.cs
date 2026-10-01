@@ -60,7 +60,7 @@ namespace SurvivalFP
             var titleBlock = NewBox("title-block", "title-block--dark").AddTo(side);
             titleBlock.schedule.Execute(() => titleBlock.RemoveFromClassList("title-block--dark")).StartingIn(500);
             NewLabel("CO-OP SURVIVAL HORROR", "menu-kicker").AddTo(titleBlock);
-            menuTitle = NewLabel("THE\nMANSION", "menu-title").AddTo(titleBlock);
+            menuTitle = NewLabel("MOURN", "menu-title").AddTo(titleBlock);
             NewBox("menu-rule").AddTo(titleBlock);
             NewLabel("Find the objectives. Unlock the exit. Stay quiet.", "menu-subtitle").AddTo(titleBlock);
             NewBox("spacer-l").AddTo(side);
@@ -188,7 +188,7 @@ namespace SurvivalFP
             var party = NewSection(right, "Survivors");
             playerCount = NewLabel("", "section__count").AddTo(party.Q(className: "section__head"));
             playerList = NewBox("player-list").AddTo(party);
-            var expedition = NewSection(right, "The house");
+            var expedition = NewSection(right, "Area");
             (mapPrev, mapValue, mapNext) = Stepper(expedition, "MAP", -1, true);
             (difficultyPrev, difficultyValue, difficultyNext) = Stepper(expedition, "DIFFICULTY", -1, false);
             difficultyDetail = NewLabel("", "stepper__detail").AddTo(expedition);
