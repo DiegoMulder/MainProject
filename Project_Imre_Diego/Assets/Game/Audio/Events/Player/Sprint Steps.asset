@@ -16,7 +16,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 6dc89b43eddc5534fa88cc0c8c29a757, type: 3}
   - {fileID: 8300000, guid: 883e6a13f0603e8498c333fa388b438a, type: 3}
   - {fileID: 8300000, guid: 67ec180981ba3884ba212db10e0a551d, type: 3}
-  - {fileID: 8300000, guid: 3d228ffdca309c24db5f93b5359c93b2, type: 3}
   - {fileID: 8300000, guid: 2baeed8d94bc7d644831675dd4a4525b, type: 3}
   - {fileID: 8300000, guid: 9336752a0efe4f14aa8f196a2ddf685f, type: 3}
   - {fileID: 8300000, guid: 3e3cb70991aa24249be62bd369791a3b, type: 3}
@@ -24,7 +23,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 21c23c0f3b41f69448eef289ca217ceb, type: 3}
   - {fileID: 8300000, guid: 2988edf7d8cc4e648bc99356af270864, type: 3}
   avoidRepeat: 1
-  volume: 0.82
+  volume: 0.6
   volumeVariation: 0.1
   pitch: 0.9
   pitchVariation: 0.06

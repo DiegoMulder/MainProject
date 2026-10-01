@@ -13,13 +13,17 @@ MonoBehaviour:
   m_Name: Crouch Steps
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.SoundEvent
   clips:
-  - {fileID: 8300000, guid: 7880b185a22dce04b99f3822088bcf0b, type: 3}
-  - {fileID: 8300000, guid: a52961a2d8f795b4c8ad98a592a5c663, type: 3}
-  - {fileID: 8300000, guid: 6e0e5d54a0324014bb157b9a3f63b958, type: 3}
-  - {fileID: 8300000, guid: f7ef9de333bcf6848ab1300619259be2, type: 3}
-  - {fileID: 8300000, guid: ab214456002ab6e4bb6dc38a729d54d3, type: 3}
+  - {fileID: 8300000, guid: 6dc89b43eddc5534fa88cc0c8c29a757, type: 3}
+  - {fileID: 8300000, guid: 883e6a13f0603e8498c333fa388b438a, type: 3}
+  - {fileID: 8300000, guid: 67ec180981ba3884ba212db10e0a551d, type: 3}
+  - {fileID: 8300000, guid: 2baeed8d94bc7d644831675dd4a4525b, type: 3}
+  - {fileID: 8300000, guid: 9336752a0efe4f14aa8f196a2ddf685f, type: 3}
+  - {fileID: 8300000, guid: 3e3cb70991aa24249be62bd369791a3b, type: 3}
+  - {fileID: 8300000, guid: 8d1b4485de58545438fcef0bd79991f3, type: 3}
+  - {fileID: 8300000, guid: 21c23c0f3b41f69448eef289ca217ceb, type: 3}
+  - {fileID: 8300000, guid: 2988edf7d8cc4e648bc99356af270864, type: 3}
   avoidRepeat: 1
-  volume: 0.2
+  volume: 0.15
   volumeVariation: 0.15
   pitch: 0.95
   pitchVariation: 0.05

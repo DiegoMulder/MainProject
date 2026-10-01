@@ -13,13 +13,17 @@ MonoBehaviour:
   m_Name: Walk Steps
   m_EditorClassIdentifier: Assembly-CSharp::SurvivalFP.SoundEvent
   clips:
-  - {fileID: 8300000, guid: e78c90ba560fee1428f001cbbd6f22f6, type: 3}
-  - {fileID: 8300000, guid: 177e8e3f1504eaa4fa9ac5c3e9dd0cc9, type: 3}
-  - {fileID: 8300000, guid: bb0882c84573a0c4795ca35eec539516, type: 3}
-  - {fileID: 8300000, guid: 0161625efef83854ba3bcc11817a9108, type: 3}
-  - {fileID: 8300000, guid: e633ad8b5dd2fd04683dae60c661c5c9, type: 3}
+  - {fileID: 8300000, guid: 6dc89b43eddc5534fa88cc0c8c29a757, type: 3}
+  - {fileID: 8300000, guid: 883e6a13f0603e8498c333fa388b438a, type: 3}
+  - {fileID: 8300000, guid: 67ec180981ba3884ba212db10e0a551d, type: 3}
+  - {fileID: 8300000, guid: 2baeed8d94bc7d644831675dd4a4525b, type: 3}
+  - {fileID: 8300000, guid: 9336752a0efe4f14aa8f196a2ddf685f, type: 3}
+  - {fileID: 8300000, guid: 3e3cb70991aa24249be62bd369791a3b, type: 3}
+  - {fileID: 8300000, guid: 8d1b4485de58545438fcef0bd79991f3, type: 3}
+  - {fileID: 8300000, guid: 21c23c0f3b41f69448eef289ca217ceb, type: 3}
+  - {fileID: 8300000, guid: 2988edf7d8cc4e648bc99356af270864, type: 3}
   avoidRepeat: 1
-  volume: 0.5
+  volume: 0.3
   volumeVariation: 0.14
   pitch: 1
   pitchVariation: 0.06
