@@ -83,7 +83,7 @@ namespace SurvivalFP
             {
                 lamp.type = LightType.Point; lamp.color = flameColour; lamp.range = range;
                 lamp.shadows = LightShadows.None; lamp.shadowStrength = .9f; lamp.shadowNearPlane = .1f;
-                lamp.renderMode = LightRenderMode.ForcePixel; lamp.lightmapBakeType = LightmapBakeType.Realtime;
+                //lamp.renderMode = LightRenderMode.ForcePixel; lamp.lightmapBakeType = LightmapBakeType.Realtime;
                 // Baked room: the walls already hold this light, so it only lights players, enemies and props.
                 lamp.renderingLayerMask = baked ? (int)RoomBakedLighting.DynamicLayer : -1;
                 var data = lamp.GetUniversalAdditionalLightData();

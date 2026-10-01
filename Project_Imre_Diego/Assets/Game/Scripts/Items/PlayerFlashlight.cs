@@ -124,7 +124,7 @@ namespace SurvivalFP
             beam.color = new Color(1f, .93f, .8f);
             beam.cookie = Cookie;
             beam.renderMode = LightRenderMode.ForcePixel;
-            beam.lightmapBakeType = LightmapBakeType.Realtime;
+            //beam.lightmapBakeType = LightmapBakeType.Realtime;
             // One hard spot shadow per torch keeps the beam from shining through walls and doors.
             beam.shadows = LightShadows.Hard; beam.shadowStrength = .92f; beam.shadowNearPlane = .2f;
             var data = beam.GetUniversalAdditionalLightData();
